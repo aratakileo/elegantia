@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "elegantia",
+  "version": "${version}",
+  "name": "Elegantia",
+  "description": "GUI library for Minecraft",
+  "authors": [
+    "Arataki Leo"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/elegantia",
+    "sources": "https://github.com/aratakileo/elegantia",
+    "issues": "https://github.com/aratakileo/elegantia/issues"
+  },
+  "license": "LGPL-3.0",
+  "icon": "assets/elegantia/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "io.github.aratakileo.elegantia.Elegantia"
+    ]
+  },
+  "depends": {
+    "fabric-api": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ]
+    }
+  },
+  "mixins": [
+    "elegantia.mixins.json"
+  ]
+}
