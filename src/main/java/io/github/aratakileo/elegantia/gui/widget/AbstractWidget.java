@@ -114,7 +114,12 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
         renderWidget(guiGraphics, mouseX, mouseY, dt);
 
-        if (Objects.nonNull(tooltip) && isVisible && (isFocused() | isHovered))
+        if (
+                Objects.nonNull(tooltip)
+                        && isVisible
+                        && (isFocused() | isHovered)
+                        && Objects.nonNull(Minecraft.getInstance().screen)
+        )
             Minecraft.getInstance().screen.setTooltipForNextRenderPass(
                     tooltip,
                     tooltipPositionerGetter.get(),
