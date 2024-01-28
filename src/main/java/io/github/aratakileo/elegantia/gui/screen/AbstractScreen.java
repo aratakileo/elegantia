@@ -37,11 +37,11 @@ public abstract class AbstractScreen extends Screen {
         GuiUtil.drawCenteredText(guiGraphics, title, width / 2, 15, 0xffffff);
     }
 
-    public int horizontalCenter() {
+    public int getCenterHorizontal() {
         return width / 2;
     }
 
-    public int verticalCenter() {
+    public int getCenterVertical() {
         return height / 2;
     }
 }
