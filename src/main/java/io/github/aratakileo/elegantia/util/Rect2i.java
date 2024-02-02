@@ -1,6 +1,7 @@
 package io.github.aratakileo.elegantia.util;
 
 import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import org.jetbrains.annotations.NotNull;
 
 public class Rect2i extends net.minecraft.client.renderer.Rect2i {
@@ -10,6 +11,10 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
 
     public Rect2i(int x, int y, int width, int height) {
         super(x, y, width, height);
+    }
+
+    public boolean isExists() {
+        return getWidth() > 0 && getHeight() > 0;
     }
 
     @Override
@@ -166,6 +171,11 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         setY(bottom - getHeight());
     }
 
+    @Override
+    public @NotNull String toString() {
+        return "Rect2i{%d, %d, %d, %d}".formatted(getX(), getY(), getWidth(), getHeight());
+    }
+
     public @NotNull Rect2i copy() {
         return new Rect2i(getX(), getY(), getWidth(), getHeight());
     }
@@ -176,6 +186,19 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
                 layoutElement.getY(),
                 layoutElement.getWidth(),
                 layoutElement.getHeight()
+        );
+    }
+
+    public static @NotNull Rect2i of(@NotNull net.minecraft.client.renderer.Rect2i rect2i) {
+        return new Rect2i(rect2i.getX(), rect2i.getY(), rect2i.getWidth(), rect2i.getHeight());
+    }
+    
+    public static @NotNull Rect2i of(@NotNull ScreenRectangle screenRectangle) {
+        return new Rect2i(
+                screenRectangle.left(),
+                screenRectangle.top(),
+                screenRectangle.width(),
+                screenRectangle.height()
         );
     }
 }
