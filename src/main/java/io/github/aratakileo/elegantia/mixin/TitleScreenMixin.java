@@ -23,8 +23,8 @@ public class TitleScreenMixin {
                 final var btn = new Button(new Rect2i(2, 2, 100, 20), Component.literal("Click to close this screen"));
                 btn.setTooltip("Button_228");
                 btn.setTooltipPositionerGetter(TooltipPositioner.HoveredTooltipPositioner::new);
-                btn.setOnClickListener(widget -> {
-                    Elegantia.LOGGER.info("Button clicked!");
+                btn.setOnClickListener((button, byUser) -> {
+                    Elegantia.LOGGER.info("Button clicked! By user: " + byUser);
 
                     this.onClose();
 

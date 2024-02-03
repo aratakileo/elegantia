@@ -171,7 +171,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     public boolean onMouseRelease(double mouseX, double mouseY) {
         if (wasHoveredBeforeRelease) {
             wasHoveredBeforeRelease = false;
-            return onClick();
+            return onClick(true);
         }
 
         return false;
@@ -214,13 +214,17 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
         return false;
     }
 
-    public boolean onClick() {
+    public boolean onClick(boolean byUser) {
         return false;
     }
 
     @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        return isActive && isFocused() && isVisible && (keyCode == 257 || keyCode == 32 || keyCode == 335) && onClick();
+        return isActive
+                && isFocused()
+                && isVisible
+                && (keyCode == 257 || keyCode == 32 || keyCode == 335)
+                && onClick(true);
     }
 
     @Override
