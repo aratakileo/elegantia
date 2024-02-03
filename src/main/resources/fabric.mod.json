@@ -21,7 +21,6 @@
     ]
   },
   "depends": {
-    "fabric-api": "*"
   },
   "custom": {
     "modmenu": {
