@@ -51,6 +51,22 @@ public abstract class Config {
         setFieldValue(fieldName, !getBooleanFieldValue(fieldName));
     }
 
+    public int getIntegerFieldValue(@NotNull String fieldName) {
+        return (Integer) getFieldValue(fieldName);
+    }
+
+    public float getFloatFieldValue(@NotNull String fieldName) {
+        return (Float) getFieldValue(fieldName);
+    }
+
+    public double getDoubleFieldValue(@NotNull String fieldName) {
+        return (Double) getFieldValue(fieldName);
+    }
+
+    public String getStringFieldValue(@NotNull String fieldName) {
+        return (String) getFieldValue(fieldName);
+    }
+
     public void save() {
         save(this, getConfigFile(this.getClass()));
     }
