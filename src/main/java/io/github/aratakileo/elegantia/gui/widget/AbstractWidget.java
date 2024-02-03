@@ -42,6 +42,10 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
         setMessage(message);
     }
 
+    public AbstractWidget(@NotNull Rect2i bounds) {
+        this(bounds, null);
+    }
+
     public int getWidth() {
         return bounds.getWidth();
     }
