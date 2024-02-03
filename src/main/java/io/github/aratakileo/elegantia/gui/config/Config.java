@@ -47,6 +47,14 @@ public abstract class Config {
         return (Boolean) getFieldValue(fieldName);
     }
 
+    public void invertBooleanFieldValue(@NotNull String fieldName) {
+        setFieldValue(fieldName, !getBooleanFieldValue(fieldName));
+    }
+
+    public void save() {
+        save(this, getConfigFile(this.getClass()));
+    }
+
     public static <T extends Config> @Nullable T load(@NotNull Class<T> configClass, @NotNull File file) {
         if (file.exists()) {
             try {
@@ -146,10 +154,17 @@ public abstract class Config {
         if (!configs.containsKey(configClass))
             return null;
 
-        return (T) configs.get(configClass).configInstance;
+        return (T) configs.get(configClass).instance;
     }
 
-    public record ConfigInfo(@NotNull String modId, @NotNull Config configInstance, @NotNull List<Field> fields) {}
+    public static @Nullable File getConfigFile(@NotNull Class<? extends Config> configClass) {
+        if (!configs.containsKey(configClass))
+            return null;
+
+        return new File("config/" + getConfigInfo(configClass).modId + ".json");
+    }
+
+    public record ConfigInfo(@NotNull String modId, @NotNull Config instance, @NotNull List<Field> fields) {}
 
     public static class ConfigInitException extends RuntimeException {
         public ConfigInitException(@NotNull String message) {

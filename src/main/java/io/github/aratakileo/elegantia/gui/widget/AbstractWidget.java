@@ -320,7 +320,12 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     public void setTooltip(@NotNull Component text) {
-        tooltip = Tooltip.create(text);
+        if (text.getString().isBlank()) {
+            tooltip = null;
+            return;
+        }
+
+        setTooltip(Tooltip.create(text));
     }
 
     public void setTooltip(@NotNull Tooltip tooltip) {

@@ -14,7 +14,7 @@ public class Elegantia implements ClientModInitializer {
         @ConfigField
         public String testText = "我操你妈";
 
-        @ConfigField(title = "Test boolean")
+        @ConfigField(description = "I was too lazy to set title to this field")
         public boolean testBoolean = false;
 
         @SerializedName("super_turbo_fast_boolean")

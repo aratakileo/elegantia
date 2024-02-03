@@ -17,8 +17,7 @@ public abstract class AbstractScreen extends Screen {
     }
 
     protected AbstractScreen(@NotNull Component component) {
-        super(component);
-        this.parent = Minecraft.getInstance().screen;
+        this(component, getCurrentScreen());
     }
 
     @Override
@@ -47,5 +46,9 @@ public abstract class AbstractScreen extends Screen {
 
     public int getCenterVertical() {
         return height / 2;
+    }
+
+    public static @Nullable Screen getCurrentScreen() {
+        return Minecraft.getInstance().screen;
     }
 }
