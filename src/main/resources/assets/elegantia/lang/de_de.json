@@ -1,0 +1,6 @@
+{
+  "elegantia.gui.config.title": "%s Einstellungen",
+  "elegantia.gui.config.button.save_and_quit": "Speichern und beenden",
+  "elegantia.gui.state.enabled": "Aktiviert",
+  "elegantia.gui.state.disabled": "Deaktiviert"
+}

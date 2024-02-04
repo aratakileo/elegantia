@@ -8,6 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface ConfigField {
-    String title() default "";
-    String description() default "";
+    String translationKey() default "";
 }

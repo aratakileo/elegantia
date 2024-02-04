@@ -1,0 +1,6 @@
+{
+  "elegantia.gui.config.title": "%s 設置",
+  "elegantia.gui.config.button.save_and_quit": "完成",
+  "elegantia.gui.state.enabled": "啟用",
+  "elegantia.gui.state.disabled": "停用"
+}

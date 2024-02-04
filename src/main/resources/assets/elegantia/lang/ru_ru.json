@@ -1,0 +1,6 @@
+{
+  "elegantia.gui.config.title": "Настройки %s",
+  "elegantia.gui.config.button.save_and_quit": "Сохранить и выйти",
+  "elegantia.gui.state.enabled": "Включено",
+  "elegantia.gui.state.disabled": "Выключено"
+}

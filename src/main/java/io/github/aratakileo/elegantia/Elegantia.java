@@ -14,11 +14,11 @@ public class Elegantia implements ClientModInitializer {
         @ConfigField
         public String testText = "我操你妈";
 
-        @ConfigField(description = "I was too lazy to set title to this field")
+        @ConfigField(translationKey = "eee")
         public boolean testBoolean = false;
 
         @SerializedName("super_turbo_fast_boolean")
-        @ConfigField(title = "Test boolean 2")
+        @ConfigField
         public boolean testBoolean2 = false;
     }
 

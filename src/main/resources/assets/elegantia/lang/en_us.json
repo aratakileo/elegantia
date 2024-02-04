@@ -1,0 +1,8 @@
+{
+  "elegantia.config.entry.eee.description": "eee description",
+  "elegantia.config.entry.test_boolean2.title": "super turbo fast boolean",
+  "elegantia.gui.config.title": "%s settings",
+  "elegantia.gui.config.button.save_and_quit": "Save & Quit",
+  "elegantia.gui.state.enabled": "Enabled",
+  "elegantia.gui.state.disabled": "Disabled"
+}

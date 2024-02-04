@@ -4,8 +4,10 @@ import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.config.ConfigField;
 import io.github.aratakileo.elegantia.gui.widget.Button;
 import io.github.aratakileo.elegantia.util.Rect2i;
+import io.github.aratakileo.elegantia.util.Strings;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,15 +22,23 @@ public class ConfigScreen extends AbstractScreen {
             @NotNull Config.ConfigInfo configInfo,
             @Nullable Screen parent
     ) {
-        super(Component.literal(
+        this(
+                configInfo,
                 FabricLoader.getInstance()
                         .getModContainer(configInfo.modId())
                         .get()
                         .getMetadata()
-                        .getName() + " settings"
-                ),
+                        .getName(),
                 parent
         );
+    }
+
+    protected ConfigScreen(
+            @NotNull Config.ConfigInfo configInfo,
+            @NotNull String modName,
+            @Nullable Screen parent
+    ) {
+        super(Component.translatable("elegantia.gui.config.title", modName), parent);
         this.configInfo = configInfo;
     }
 
@@ -48,7 +58,18 @@ public class ConfigScreen extends AbstractScreen {
                         return true;
                     })
                     .build();
-            button.setTooltip(field.getAnnotation(ConfigField.class).description());
+
+            final var descriptionTranslationKey = Strings.doesNoMeetCondition(
+                    field.getAnnotation(ConfigField.class).translationKey(),
+                    String::isBlank,
+                    Strings.camelToSnake(fieldName)
+            );
+
+            button.setTooltip(Strings.requireReturnNotAsArgument(
+                    configInfo.modId() + ".config.entry." + descriptionTranslationKey + ".description",
+                    Language.getInstance()::getOrDefault,
+                    ""
+            ));
 
             addRenderableWidget(button);
 
@@ -57,7 +78,7 @@ public class ConfigScreen extends AbstractScreen {
 
         addRenderableWidget(
                 new Button.Builder()
-                        .setMessage(Component.literal("Save & Quit"))
+                        .setMessage(Component.translatable("elegantia.gui.config.button.save_and_quit"))
                         .setBounds(new Rect2i(getCenterHorizontal(), height - 20, 0, 0))
                         .setHasTopGravity(false)
                         .setOnClickListener((btn, byUser) -> {
@@ -78,14 +99,22 @@ public class ConfigScreen extends AbstractScreen {
             @NotNull Field field,
             @NotNull Config.ConfigInfo configInfo
     ) {
-        final var annotationTitle = field.getAnnotation(ConfigField.class).title();
         final var state = configInfo.instance().getBooleanFieldValue(field.getName());
+        final var fieldName = field.getName();
 
-        return Component.literal(
-                (annotationTitle.isBlank() ? field.getName() : annotationTitle)
-                        + ": §l"
-                        + (state ? "§2" : "§c")
-                        + (state ? "Enabled" : "Disabled")
+        final var translationKey = Strings.doesNoMeetCondition(
+                field.getAnnotation(ConfigField.class).translationKey(),
+                String::isBlank,
+                Strings.camelToSnake(fieldName)
+        );
+        final var buttonMessageText = Strings.requireReturnNotAsArgument(
+                configInfo.modId() + ".config.entry." + translationKey + ".title",
+                Language.getInstance()::getOrDefault,
+                fieldName
+        );
+
+        return Component.literal(buttonMessageText + ": §l" + (state ? "§2" : "§c")
+                + Language.getInstance().getOrDefault("elegantia.gui.state." + (state ? "enabled" : "disabled"))
         );
     }
 
