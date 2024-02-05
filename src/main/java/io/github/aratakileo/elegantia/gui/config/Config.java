@@ -68,7 +68,7 @@ public abstract class Config {
     }
 
     public void save() {
-        save(this, getConfigFile(this.getClass()));
+        save(this, Objects.requireNonNull(getConfigFile(this.getClass())));
     }
 
     public static <T extends Config> @Nullable T load(@NotNull Class<T> configClass, @NotNull File file) {
@@ -103,8 +103,14 @@ public abstract class Config {
     public static void save(@NotNull Config configInstance, @NotNull File file) {
         final var parentFile = file.getParentFile();
 
-        if (!parentFile.exists())
-            parentFile.mkdir();
+        if (!parentFile.exists() && !parentFile.mkdir())
+            Elegantia.LOGGER.warn(
+                    "Failed to make dir `"
+                            + parentFile.getPath()
+                            + "` for `"
+                            + file.getName()
+                            + "`. Possible reason: insufficient permissions to perform this action"
+            );
 
         try {
             final var fileWriter = new FileWriter(file);
