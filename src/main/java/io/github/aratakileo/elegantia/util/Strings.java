@@ -22,10 +22,10 @@ public class Strings {
     }
 
     public static @NotNull String doesNotMeetCondition(
-            @NotNull String elseValue,
+            @NotNull String ifValue,
             @NotNull Function<@NotNull String, @NotNull Boolean> condition,
-            @NotNull String ifValue
+            @NotNull String elseValue
     ) {
-        return !condition.apply(elseValue) ? elseValue : ifValue;
+        return !condition.apply(ifValue) ? ifValue : elseValue;
     }
 }

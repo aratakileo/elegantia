@@ -3,6 +3,7 @@ package io.github.aratakileo.elegantia.gui.screen;
 import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.config.ConfigField;
 import io.github.aratakileo.elegantia.gui.widget.Button;
+import io.github.aratakileo.elegantia.util.ModMetadata;
 import io.github.aratakileo.elegantia.util.Rect2i;
 import io.github.aratakileo.elegantia.util.Strings;
 import net.fabricmc.loader.api.FabricLoader;
@@ -24,21 +25,21 @@ public class ConfigScreen extends AbstractScreen {
     ) {
         this(
                 configInfo,
-                FabricLoader.getInstance()
-                        .getModContainer(configInfo.modId())
-                        .get()
-                        .getMetadata()
-                        .getName(),
+                ModMetadata.get(configInfo.modId()).map(ModMetadata::getName).orElse(null),
                 parent
         );
     }
 
     protected ConfigScreen(
             @NotNull Config.ConfigInfo configInfo,
-            @NotNull String modName,
+            @Nullable String modName,
             @Nullable Screen parent
     ) {
-        super(Component.translatable("elegantia.gui.config.title", modName), parent);
+        super(Component.translatable(
+                "elegantia.gui.config.title",
+                Objects.isNull(modName) ? "<invalid mod>" : modName
+        ), parent);
+        
         this.configInfo = configInfo;
     }
 
@@ -66,7 +67,7 @@ public class ConfigScreen extends AbstractScreen {
             );
 
             button.setTooltip(Strings.requireReturnNotAsArgument(
-                    configInfo.modId() + ".config.entry." + descriptionTranslationKey + ".description",
+                    "%s.config.entry.%s.description".formatted(configInfo.modId(), descriptionTranslationKey),
                     Language.getInstance()::getOrDefault,
                     ""
             ));
@@ -108,7 +109,7 @@ public class ConfigScreen extends AbstractScreen {
                 Strings.camelToSnake(fieldName)
         );
         final var buttonMessageText = Strings.requireReturnNotAsArgument(
-                configInfo.modId() + ".config.entry." + translationKey + ".title",
+                "%s.config.entry.%s.title".formatted(configInfo.modId(), translationKey),
                 Language.getInstance()::getOrDefault,
                 fieldName
         );
