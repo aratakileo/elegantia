@@ -21,7 +21,7 @@ public class Strings {
         return functionReturn.equals(argumentValue) ? elseValue : functionReturn;
     }
 
-    public static @NotNull String doesNoMeetCondition(
+    public static @NotNull String doesNotMeetCondition(
             @NotNull String elseValue,
             @NotNull Function<@NotNull String, @NotNull Boolean> condition,
             @NotNull String ifValue

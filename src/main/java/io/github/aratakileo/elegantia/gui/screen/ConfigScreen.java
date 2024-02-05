@@ -59,7 +59,7 @@ public class ConfigScreen extends AbstractScreen {
                     })
                     .build();
 
-            final var descriptionTranslationKey = Strings.doesNoMeetCondition(
+            final var descriptionTranslationKey = Strings.doesNotMeetCondition(
                     field.getAnnotation(ConfigField.class).translationKey(),
                     String::isBlank,
                     Strings.camelToSnake(fieldName)
@@ -102,7 +102,7 @@ public class ConfigScreen extends AbstractScreen {
         final var state = configInfo.instance().getBooleanFieldValue(field.getName());
         final var fieldName = field.getName();
 
-        final var translationKey = Strings.doesNoMeetCondition(
+        final var translationKey = Strings.doesNotMeetCondition(
                 field.getAnnotation(ConfigField.class).translationKey(),
                 String::isBlank,
                 Strings.camelToSnake(fieldName)
