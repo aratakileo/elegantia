@@ -121,6 +121,20 @@ public abstract class Config {
         }
     }
 
+    public static @Nullable File getConfigFile(@NotNull Class<? extends Config> configClass) {
+        if (!configs.containsKey(configClass))
+            return null;
+
+        return getConfigFile(configs.get(configClass).modId);
+    }
+
+    /**
+     * @return Theoretically possible config file for the specified mod id
+     */
+    public static @NotNull File getConfigFile(@NotNull String modId) {
+        return new File("config/" + modId + ".json");
+    }
+
     public static <T extends Config> @Nullable T init(@NotNull Class<T> configClass, @NotNull String modId) {
         if (Modifier.isAbstract(configClass.getModifiers()))
             throw new ConfigInitException(
@@ -155,7 +169,7 @@ public abstract class Config {
             fields.add(field);
         }
 
-        final var configInstance = load(configClass, new File("config/" + modId + ".json"));
+        final var configInstance = load(configClass, getConfigFile(modId));
 
         if (Objects.isNull(configInstance)) {
             Elegantia.LOGGER.warn("Failed to init config `" + configClass.getName() + '`');
@@ -177,13 +191,6 @@ public abstract class Config {
             return null;
 
         return (T) configs.get(configClass).instance;
-    }
-
-    public static @Nullable File getConfigFile(@NotNull Class<? extends Config> configClass) {
-        if (!configs.containsKey(configClass))
-            return null;
-
-        return new File("config/" + getConfigInfo(configClass).modId + ".json");
     }
 
     public record ConfigInfo(@NotNull String modId, @NotNull Config instance, @NotNull List<Field> fields) {}
