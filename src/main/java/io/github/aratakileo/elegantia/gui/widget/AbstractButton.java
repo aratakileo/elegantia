@@ -1,13 +1,12 @@
 package io.github.aratakileo.elegantia.gui.widget;
 
-import io.github.aratakileo.elegantia.util.GuiUtil;
+import io.github.aratakileo.elegantia.util.GuiGraphicsUtil;
 import io.github.aratakileo.elegantia.util.Rect2i;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 public abstract class AbstractButton extends AbstractWidget {
     private @Nullable OnClickListener onClickListener;
@@ -19,7 +18,7 @@ public abstract class AbstractButton extends AbstractWidget {
     @Override
     public boolean onClick(boolean byUser) {
         if (Objects.nonNull(onClickListener) && onClickListener.onClick(this, byUser)) {
-            if (byUser) GuiUtil.playClickSound();
+            if (byUser) GuiGraphicsUtil.playClickSound();
             return true;
         }
 

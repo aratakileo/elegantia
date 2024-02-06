@@ -12,7 +12,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
-public class GuiUtil {
+public class GuiGraphicsUtil {
     public static void drawRect(@NotNull GuiGraphics guiGraphics, @NotNull Rect2i bounds, int color) {
         drawRect(guiGraphics, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), color);
     }

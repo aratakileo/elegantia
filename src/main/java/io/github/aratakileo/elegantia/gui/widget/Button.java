@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.gui.widget;
 
-import io.github.aratakileo.elegantia.util.GuiUtil;
+import io.github.aratakileo.elegantia.util.GuiGraphicsUtil;
 import io.github.aratakileo.elegantia.util.Rect2i;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,13 +17,13 @@ public class Button extends AbstractButton {
 
     @Override
     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        GuiUtil.drawRect(guiGraphics, getBounds(), 0xaa222222);
+        GuiGraphicsUtil.drawRect(guiGraphics, getBounds(), 0xaa222222);
 
         if (isHovered || isFocused())
-            GuiUtil.drawRectStroke(guiGraphics, getBounds(), 1, 0xffffffff);
-        else GuiUtil.drawRectStroke(guiGraphics, getBounds(), 1, 0xaa000000);
+            GuiGraphicsUtil.drawRectStroke(guiGraphics, getBounds(), 1, 0xffffffff);
+        else GuiGraphicsUtil.drawRectStroke(guiGraphics, getBounds(), 1, 0xaa000000);
 
-        GuiUtil.renderScrollingText(
+        GuiGraphicsUtil.renderScrollingText(
                 guiGraphics,
                 getMessage(),
                 getBounds().moveIpHorizontal(5, -5),

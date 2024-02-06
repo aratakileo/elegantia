@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.gui.screen;
 
-import io.github.aratakileo.elegantia.util.GuiUtil;
+import io.github.aratakileo.elegantia.util.GuiGraphicsUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -33,7 +33,7 @@ public abstract class AbstractScreen extends Screen {
     }
 
     public void renderContent(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        GuiUtil.drawCenteredText(guiGraphics, title, width / 2, 15, 0xffffff);
+        GuiGraphicsUtil.drawCenteredText(guiGraphics, title, width / 2, 15, 0xffffff);
     }
 
     public int getContentY() {

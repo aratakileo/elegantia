@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.gui.widget;
 
-import io.github.aratakileo.elegantia.util.GuiUtil;
+import io.github.aratakileo.elegantia.util.GuiGraphicsUtil;
 import io.github.aratakileo.elegantia.util.Rect2i;
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +91,7 @@ public class VerticalScrollbar extends AbstractWidget {
 
     @Override
     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        GuiUtil.drawRect(
+        GuiGraphicsUtil.drawRect(
                 guiGraphics,
                 bounds,
                 0xaa222222,
@@ -99,7 +99,7 @@ public class VerticalScrollbar extends AbstractWidget {
                 0xaa000000
         );
 
-        GuiUtil.drawRect(
+        GuiGraphicsUtil.drawRect(
                 guiGraphics,
                 getRenderableThumbRect(),
                 (getRenderableThumbRect().contains(mouseX, mouseY)) ? 0xaacbcbcb : 0xaa6c757d
