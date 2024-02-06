@@ -6,6 +6,7 @@ import io.github.aratakileo.elegantia.gui.widget.Button;
 import io.github.aratakileo.elegantia.util.ModInfo;
 import io.github.aratakileo.elegantia.util.Rect2i;
 import io.github.aratakileo.elegantia.util.Strings;
+import io.github.aratakileo.elegantia.util.WidgetPositioner;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -44,23 +45,34 @@ public class ConfigScreen extends AbstractScreen {
 
         for (final var field: configInfo.fields()) {
             final var fieldName = field.getName();
-
-            final var button = new Button.Builder()
-                    .setMessage(getBooleanButtonMessage(field, configInfo))
-                    .setBounds(new Rect2i(getCenterHorizontal(), y, 0, 0))
-                    .setOnClickListener((btn, byUser) -> {
-                        configInfo.instance().invertBooleanFieldValue(fieldName);
-                        ((Button)btn).setMessage(getBooleanButtonMessage(field, configInfo), 5);
-                        return true;
-                    })
-                    .build();
-
             final var descriptionTranslationKey = Strings.doesNotMeetCondition(
                     field.getAnnotation(ConfigField.class).translationKey(),
                     String::isBlank,
                     Strings.camelToSnake(fieldName)
             );
 
+            final var button = new Button(
+                    WidgetPositioner.ofMessageContent(getBooleanButtonMessage(
+                            field,
+                            configInfo
+                    )).setGravity(WidgetPositioner.GRAVITY_CENTER_HORIZONTAL)
+                            .setPadding(5)
+                            .getNewBounds()
+                            .moveIpY(y),
+                    getBooleanButtonMessage(field, configInfo)
+            );
+            button.setOnClickListener((btn, byUser) -> {
+                configInfo.instance().invertBooleanFieldValue(fieldName);
+                btn.setMessage(getBooleanButtonMessage(field, configInfo));
+                btn.setBounds(
+                        WidgetPositioner.ofMessageContent(btn.getMessage())
+                                .setGravity(WidgetPositioner.GRAVITY_CENTER_HORIZONTAL)
+                                .setPadding(5)
+                                .getNewBounds(btn.getBounds())
+                );
+
+                return true;
+            });
             button.setTooltip(Strings.requireReturnNotAsArgument(
                     "%s.config.entry.%s.description".formatted(configInfo.modId(), descriptionTranslationKey),
                     Language.getInstance()::getOrDefault,
@@ -72,23 +84,24 @@ public class ConfigScreen extends AbstractScreen {
             y += 20;
         }
 
-        addRenderableWidget(
-                new Button.Builder()
-                        .setMessage(Component.translatable("elegantia.gui.config.button.save_and_quit"))
-                        .setBounds(new Rect2i(getCenterHorizontal(), height - 20, 0, 0))
-                        .setHasTopGravity(false)
-                        .setOnClickListener((btn, byUser) -> {
-                            onClose();
-                            return true;
-                        })
-                        .build()
-        );
-    }
+        final var quitButtonMessage = Component.translatable("elegantia.gui.config.button.save_and_quit");
 
-    @Override
-    public void onClose() {
-        configInfo.instance().save();
-        super.onClose();
+        final var quitButton = new Button(
+                WidgetPositioner.ofMessageContent(quitButtonMessage)
+                        .setGravity(WidgetPositioner.GRAVITY_CENTER_HORIZONTAL | WidgetPositioner.GRAVITY_BOTTOM)
+                        .setPadding(5)
+                        .setMarginBottom(10)
+                        .getNewBounds(),
+                quitButtonMessage
+        );
+        quitButton.setOnClickListener((btn, byUser) -> {
+            configInfo.instance().save();
+            onClose();
+
+            return true;
+        });
+
+        addRenderableWidget(quitButton);
     }
 
     protected static @NotNull Component getBooleanButtonMessage(
