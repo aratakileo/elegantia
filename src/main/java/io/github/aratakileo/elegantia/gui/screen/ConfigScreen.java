@@ -3,10 +3,9 @@ package io.github.aratakileo.elegantia.gui.screen;
 import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.config.ConfigField;
 import io.github.aratakileo.elegantia.gui.widget.Button;
-import io.github.aratakileo.elegantia.util.ModMetadata;
+import io.github.aratakileo.elegantia.util.ModInfo;
 import io.github.aratakileo.elegantia.util.Rect2i;
 import io.github.aratakileo.elegantia.util.Strings;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -25,21 +24,17 @@ public class ConfigScreen extends AbstractScreen {
     ) {
         this(
                 configInfo,
-                ModMetadata.get(configInfo.modId()).map(ModMetadata::getName).orElse(null),
+                ModInfo.getName(configInfo.modId()).orElse("Unknown"),
                 parent
         );
     }
 
     protected ConfigScreen(
             @NotNull Config.ConfigInfo configInfo,
-            @Nullable String modName,
+            @NotNull String modName,
             @Nullable Screen parent
     ) {
-        super(Component.translatable(
-                "elegantia.gui.config.title",
-                Objects.isNull(modName) ? "<invalid mod>" : modName
-        ), parent);
-        
+        super(Component.translatable("elegantia.gui.config.title", modName), parent);
         this.configInfo = configInfo;
     }
 
