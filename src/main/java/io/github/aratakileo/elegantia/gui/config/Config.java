@@ -4,7 +4,8 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.aratakileo.elegantia.Elegantia;
-import net.fabricmc.loader.api.FabricLoader;
+import io.github.aratakileo.elegantia.util.Classes;
+import io.github.aratakileo.elegantia.util.ModInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,33 +15,58 @@ import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 public abstract class Config {
-    private final static Gson gson = new GsonBuilder()
+    private final static Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .setPrettyPrinting()
             .create();
 
-    private final static ConcurrentHashMap<Class<? extends Config>, ConfigInfo> configs = new ConcurrentHashMap<>();
+    private final static Pattern TRIGGER_NAME_PATTERN = Pattern.compile("^(?![0-9-]+)[A-Za-z0-9_-]+[^-]$");
+
+    private final static ConcurrentHashMap<Class<? extends Config>, ConfigInfo> CONFIGS_INFO = new ConcurrentHashMap<>();
 
     public void setFieldValue(@NotNull String fieldName, @Nullable Object value) {
         try {
             getClass().getField(fieldName).set(this, value);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            Elegantia.LOGGER.warn("Failed to set config field `" + fieldName + '`', e);
+        } catch (IllegalAccessException e) {
+            Elegantia.LOGGER.warn(
+                    "Failed to set config field `" + Classes.getFieldView(getClass(), fieldName) + '`',
+                    e
+            );
+        } catch (NoSuchFieldException e) {
+            Elegantia.LOGGER.error(
+                    "Failed to set a non-existent config field `"
+                            + Classes.getFieldView(getClass(), fieldName)
+                            + '`',
+                    e
+            );
         }
     }
 
     public @Nullable Object getFieldValue(@NotNull String fieldName) {
         try {
             return getClass().getField(fieldName).get(this);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            Elegantia.LOGGER.warn("Failed to get config field `" + fieldName + '`', e);
-            return null;
+        } catch (IllegalAccessException e) {
+            Elegantia.LOGGER.warn(
+                    "Failed to get config field `" + Classes.getFieldView(getClass(), fieldName) + '`',
+                    e
+            );
+        } catch (NoSuchFieldException e) {
+            Elegantia.LOGGER.error(
+                    "Failed to get a non-existent config field `"
+                            + Classes.getFieldView(getClass(), fieldName)
+                            + '`',
+                    e
+            );
         }
+
+        return null;
     }
 
     public boolean getBooleanFieldValue(@NotNull String fieldName) {
@@ -75,7 +101,7 @@ public abstract class Config {
         if (file.exists()) {
             try {
                 final var fileReader = new FileReader(file);
-                final var configInstance = gson.fromJson(fileReader, configClass);
+                final var configInstance = GSON.fromJson(fileReader, configClass);
 
                 fileReader.close();
 
@@ -107,14 +133,12 @@ public abstract class Config {
             Elegantia.LOGGER.warn(
                     "Failed to make dir `"
                             + parentFile.getPath()
-                            + "` for `"
-                            + file.getName()
                             + "`. Possible reason: insufficient permissions to perform this action"
             );
 
         try {
             final var fileWriter = new FileWriter(file);
-            fileWriter.write(gson.toJson(configInstance));
+            fileWriter.write(GSON.toJson(configInstance));
             fileWriter.close();
         } catch (Exception e) {
             Elegantia.LOGGER.error("Failed to save config by path `" + file.getPath() + "`: ", e);
@@ -122,10 +146,10 @@ public abstract class Config {
     }
 
     public static @Nullable File getConfigFile(@NotNull Class<? extends Config> configClass) {
-        if (!configs.containsKey(configClass))
+        if (!CONFIGS_INFO.containsKey(configClass))
             return null;
 
-        return getConfigFile(configs.get(configClass).modId);
+        return getConfigFile(CONFIGS_INFO.get(configClass).modId);
     }
 
     /**
@@ -137,37 +161,17 @@ public abstract class Config {
 
     public static <T extends Config> @Nullable T init(@NotNull Class<T> configClass, @NotNull String modId) {
         if (Modifier.isAbstract(configClass.getModifiers()))
-            throw new ConfigInitException(
+            throw new ElegantiaConfigException(
                     "Abstract classes such as `" + configClass.getName() + "` is not allowed here!"
             );
 
-
-        if (configs.containsKey(configClass)) {
+        if (CONFIGS_INFO.containsKey(configClass)) {
             Elegantia.LOGGER.warn("Config `" + configClass.getName() + "` is already inited!");
             return null;
         }
 
-        if (FabricLoader.getInstance().getModContainer(modId).isEmpty())
-            throw new ConfigInitException("Mod with id `" + modId + "` does not exist!");
-
-        final var fields = new ArrayList<Field>();
-
-        for (final var field: configClass.getFields()) {
-            if (!field.isAnnotationPresent(ConfigField.class)) continue;
-
-            if (field.getType() != boolean.class) {
-                Elegantia.LOGGER.warn(
-                        "Field `"
-                                + field.getName()
-                                + "` of `"
-                                + configClass.getName()
-                                + "` has unsupported config field type. This field will be skipped"
-                );
-                continue;
-            }
-
-            fields.add(field);
-        }
+        if (!ModInfo.isModLoaded(modId))
+            throw new ElegantiaConfigException("Mod with id `" + modId + "` does not exist!");
 
         final var configInstance = load(configClass, getConfigFile(modId));
 
@@ -176,27 +180,109 @@ public abstract class Config {
             return null;
         }
 
-        configs.put(configClass, new ConfigInfo(modId, configInstance, fields));
+        final var fields = new ArrayList<Field>();
+        final var triggeredFields = new HashMap<String, String>();
+
+        for (final var field: configClass.getFields()) {
+            final var isTrigger = field.isAnnotationPresent(Trigger.class);
+
+            if (!field.isAnnotationPresent(ConfigField.class)) {
+                if (isTrigger)
+                    Elegantia.LOGGER.warn(
+                            "Field `"
+                                    + Classes.getFieldView(field)
+                                    + "` is not marked with the @ConfigField annotation "
+                                    + "which means that this field will not be displayed "
+                                    + "on the mod configuration screen"
+                    );
+
+                continue;
+            }
+
+            if (field.getType() != boolean.class) {
+                Elegantia.LOGGER.warn(
+                        "Field `"
+                                + Classes.getFieldView(field)
+                                + "` has unsupported config field type. This field will be skipped"
+                );
+                continue;
+            }
+
+            fields.add(field);
+
+            if (isTrigger) {
+                final var triggerName = field.getAnnotation(Trigger.class).value();
+
+                if (!TRIGGER_NAME_PATTERN.matcher(triggerName).find())
+                    throw new ConfigTriggerException(
+                            "Invalid trigger name `"
+                                    + triggerName
+                                    + "` does not match the pattern `"
+                                    + TRIGGER_NAME_PATTERN
+                                    + "` (trigger field: `"
+                                    + Classes.getFieldView(field)
+                                    + "`)!"
+                    );
+
+                if (!field.getAnnotation(ConfigField.class).triggeredBy().isEmpty()) {
+                    throw new ConfigTriggerException(
+                            "Trigger cannot be triggered (trigger field: "
+                                    + Classes.getFieldView(field)
+                                    + ")!"
+                    );
+                }
+
+                triggeredFields.put(triggerName, field.getName());
+            }
+        }
+
+        for (final var field: fields) {
+            final var triggeredBy = field.getAnnotation(ConfigField.class).triggeredBy();
+
+            if (triggeredBy.isEmpty()) continue;
+
+            if (!triggeredFields.containsKey(triggeredBy))
+                throw new ElegantiaConfigException(
+                        "Field `"
+                                + Classes.getFieldView(field)
+                                + "` indicates a dependency on trigger `"
+                                + triggeredBy
+                                + "`, which does not exist!"
+                );
+        }
+
+        CONFIGS_INFO.put(configClass, new ConfigInfo(modId, configInstance, fields, triggeredFields));
 
         return configInstance;
     }
 
     public static @Nullable ConfigInfo getConfigInfo(@NotNull Class<? extends Config> configClass) {
-        return configs.get(configClass);
+        return CONFIGS_INFO.get(configClass);
     }
 
     @SuppressWarnings("unchecked")
     public static <T extends Config> @Nullable T getInstance(@NotNull Class<T> configClass) {
-        if (!configs.containsKey(configClass))
+        if (!CONFIGS_INFO.containsKey(configClass))
             return null;
 
-        return (T) configs.get(configClass).instance;
+        return (T) CONFIGS_INFO.get(configClass).instance;
     }
 
-    public record ConfigInfo(@NotNull String modId, @NotNull Config instance, @NotNull List<Field> fields) {}
+    public record ConfigInfo(
+            @NotNull String modId,
+            @NotNull Config instance,
+            @NotNull List<Field> fields,
+            @NotNull HashMap<String, String> triggeredFields
+    ) {}
 
-    public static class ConfigInitException extends RuntimeException {
-        public ConfigInitException(@NotNull String message) {
+    public static class ElegantiaConfigException extends RuntimeException {
+        public ElegantiaConfigException(@NotNull String message) {
+            super(message);
+        }
+    }
+
+    public static class ConfigTriggerException extends RuntimeException {
+        public ConfigTriggerException(@NotNull String message) {
             super(message);
         }
     }

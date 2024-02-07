@@ -2,9 +2,9 @@ package io.github.aratakileo.elegantia.gui.screen;
 
 import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.config.ConfigField;
+import io.github.aratakileo.elegantia.gui.config.Trigger;
 import io.github.aratakileo.elegantia.gui.widget.Button;
 import io.github.aratakileo.elegantia.util.ModInfo;
-import io.github.aratakileo.elegantia.util.Rect2i;
 import io.github.aratakileo.elegantia.util.Strings;
 import io.github.aratakileo.elegantia.util.WidgetPositioner;
 import net.minecraft.client.gui.screens.Screen;
@@ -14,10 +14,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class ConfigScreen extends AbstractScreen {
     private final Config.ConfigInfo configInfo;
+    private HashMap<String, List<String>> triggeredFields;
+    private HashMap<String, Button> fieldToButton;
 
     protected ConfigScreen(
             @NotNull Config.ConfigInfo configInfo,
@@ -41,12 +46,19 @@ public class ConfigScreen extends AbstractScreen {
 
     @Override
     protected void init() {
+        triggeredFields = new HashMap<>();
+        fieldToButton = new HashMap<>();
+
+        final var configInstance = configInfo.instance();
         var y = getContentY();
 
         for (final var field: configInfo.fields()) {
             final var fieldName = field.getName();
+            final var fieldAnnotation = field.getAnnotation(ConfigField.class);
+            final var triggeredBy = fieldAnnotation.triggeredBy();
+            final var isTriggered = !triggeredBy.isEmpty();
             final var descriptionTranslationKey = Strings.doesNotMeetCondition(
-                    field.getAnnotation(ConfigField.class).translationKey(),
+                    fieldAnnotation.translationKey(),
                     String::isBlank,
                     Strings.camelToSnake(fieldName)
             );
@@ -62,7 +74,7 @@ public class ConfigScreen extends AbstractScreen {
                     getBooleanButtonMessage(field, configInfo)
             );
             button.setOnClickListener((btn, byUser) -> {
-                configInfo.instance().invertBooleanFieldValue(fieldName);
+                configInstance.invertBooleanFieldValue(fieldName);
                 btn.setMessage(getBooleanButtonMessage(field, configInfo));
                 btn.setBounds(
                         WidgetPositioner.ofMessageContent(btn.getMessage())
@@ -71,6 +83,20 @@ public class ConfigScreen extends AbstractScreen {
                                 .getNewBounds(btn.getBounds())
                 );
 
+                if (field.isAnnotationPresent(Trigger.class))
+                    for (
+                            final var triggeredFieldName:
+                            triggeredFields.get(field.getAnnotation(Trigger.class).value())
+                    ) {
+                        final var triggeredButton = fieldToButton.get(triggeredFieldName);
+                        final var triggerValue = configInstance.getBooleanFieldValue(fieldName);
+
+                        if (!triggerValue && configInstance.getBooleanFieldValue(triggeredFieldName))
+                            triggeredButton.onClick(false);
+
+                        triggeredButton.isVisible = triggerValue;
+                    }
+
                 return true;
             });
             button.setTooltip(Strings.requireReturnNotAsArgument(
@@ -78,6 +104,17 @@ public class ConfigScreen extends AbstractScreen {
                     Language.getInstance()::getOrDefault,
                     ""
             ));
+            button.isVisible = !isTriggered
+                    || configInstance.getBooleanFieldValue(configInfo.triggeredFields().get(triggeredBy));
+
+            fieldToButton.put(fieldName, button);
+
+            if(isTriggered) {
+                if (!triggeredFields.containsKey(triggeredBy))
+                    triggeredFields.put(triggeredBy, new ArrayList<>());
+
+                triggeredFields.get(triggeredBy).add(fieldName);
+            }
 
             addRenderableWidget(button);
 
@@ -95,7 +132,7 @@ public class ConfigScreen extends AbstractScreen {
                 quitButtonMessage
         );
         quitButton.setOnClickListener((btn, byUser) -> {
-            configInfo.instance().save();
+            configInstance.save();
             onClose();
 
             return true;

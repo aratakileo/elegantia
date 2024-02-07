@@ -3,6 +3,7 @@ package io.github.aratakileo.elegantia;
 import com.google.gson.annotations.SerializedName;
 import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.config.ConfigField;
+import io.github.aratakileo.elegantia.gui.config.Trigger;
 import io.github.aratakileo.elegantia.util.Platform;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -17,13 +18,14 @@ public class Elegantia implements ClientModInitializer {
 
     static public class ElegantiaConfig extends Config {
         @ConfigField
-        public String testText = "我操你妈";
+        public transient String testText = "我操你妈";
 
+        @Trigger("debug")
         @ConfigField(translationKey = "eee")
         public boolean testBoolean = false;
 
         @SerializedName("super_turbo_fast_boolean")
-        @ConfigField
+        @ConfigField(triggeredBy = "debug")
         public boolean testBoolean2 = false;
     }
 
