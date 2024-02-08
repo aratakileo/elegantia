@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface ModInfo {
     @NotNull String getVersion();
     @NotNull String getName();
+    @NotNull Optional<String> getSourcesUrl();
 
     static @NotNull Optional<ModInfo> get(@NotNull String modId) {
         final var modMetadata = FabricLoader.getInstance()
@@ -30,6 +31,11 @@ public interface ModInfo {
             public @NotNull String getName() {
                 return modMetadata.getName();
             }
+
+            @Override
+            public @NotNull Optional<String> getSourcesUrl() {
+                return modMetadata.getContact().get("sources");
+            }
         });
     }
 
@@ -39,6 +45,10 @@ public interface ModInfo {
 
     static @NotNull Optional<String> getVersion(@NotNull String modId) {
         return get(modId).map(ModInfo::getVersion);
+    }
+
+    static @NotNull Optional<String> getSourcesUrl(@NotNull String modId) {
+        return get(modId).flatMap(ModInfo::getSourcesUrl);
     }
 
     static boolean isModLoaded(@NotNull String modId) {

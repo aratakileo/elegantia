@@ -28,39 +28,44 @@ public class ModrinthUpdateChecker {
     ) -> Objects.nonNull(currentVersion) && Version.parse(currentVersion).compareTo(Version.parse(latestVersion)) >= 1;
 
     private final static HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
+    private final static String REQUEST_HEADER = "github.com/aratakileo/elegantia@{version}";
 
     private @NotNull BiPredicate<@Nullable String, @NotNull String> versionsComparator = DEFAULT_VERSION_COMPARATOR;
 
-    private final String modId, minecraftVersion;
+    private final String modId, projectId, minecraftVersion;
     private final Platform platform;
 
-    public ModrinthUpdateChecker(@NotNull String modId) {
-        this(modId, Platform.getCurrentMinecraftVersion());
+    public ModrinthUpdateChecker(@NotNull String modAndProjectId) {
+        this(modAndProjectId, modAndProjectId);
     }
 
-    public ModrinthUpdateChecker(@NotNull String modId, @NotNull String minecraftVersion) {
-        this(modId, minecraftVersion, Platform.getCurrentPlatform());
+    public ModrinthUpdateChecker(@NotNull String modAndProjectId, @NotNull Platform platform) {
+        this(modAndProjectId, modAndProjectId, platform);
     }
 
-    public ModrinthUpdateChecker(@NotNull String modId, @NotNull String minecraftVersion, @NotNull Platform platform) {
+    public ModrinthUpdateChecker(@NotNull String modId, @NotNull String projectId) {
+        this(modId, projectId, Platform.getCurrentPlatform());
+    }
+
+    public ModrinthUpdateChecker(@NotNull String modId, @NotNull String projectId, @NotNull Platform platform) {
+        this(modId, projectId, Platform.getCurrentMinecraftVersion(), platform);
+    }
+
+    public ModrinthUpdateChecker(
+            @NotNull String modId,
+            @NotNull String projectId,
+            @NotNull String minecraftVersion,
+            @NotNull Platform platform
+    ) {
         this.modId = modId;
+        this.projectId = projectId;
         this.minecraftVersion = minecraftVersion;
         this.platform = platform;
     }
 
     public @NotNull ResponseCode check() {
         final var request = HttpRequest.newBuilder(URI.create(getFormattedUrl(NOT_FORMATTED_REQUEST_URL)))
-                .setHeader(
-                        "User-Agent",
-                        "github.com/aratakileo/elegantia"
-                                + '@'
-                                + ModInfo.getVersion(Elegantia.MODID).orElse("unknown")
-                                + " (aratakileo@gmail.com)"
-                                + (
-                                        modId.equals(Elegantia.MODID) ? "" : (
-                                        " for third party mod `" + ModInfo.getName(modId).orElse("unknown") + '`')
-                                )
-                )
+                .setHeader("User-Agent", getRequestHeader())
                 .build();
 
         try {
@@ -77,7 +82,11 @@ public class ModrinthUpdateChecker {
             Elegantia.LOGGER.error(
                     "Failed to check updates for `"
                             + ModInfo.getName(modId).orElse("unknown")
-                            + "` (modId:" + modId +") v"
+                            + "` (mod id:"
+                            + modId
+                            + ", project id: "
+                            + projectId
+                            + ") v"
                             + ModInfo.getVersion(modId).orElse("-unknown"),
                     e
             );
@@ -91,9 +100,32 @@ public class ModrinthUpdateChecker {
     }
 
     public @NotNull String getFormattedUrl(@NotNull String notFormattedUrl) {
-        return notFormattedUrl.replace("{project_id}", modId)
+        return notFormattedUrl.replace("{project_id}", projectId)
                 .replace("{minecraft_version}", minecraftVersion)
                 .replace("{platform}", platform.name().toLowerCase());
+    }
+
+    private @NotNull String getRequestHeader() {
+        final var baseRequestHeader = REQUEST_HEADER.replace(
+                "{version}",
+                ModInfo.getVersion(Elegantia.MODID).orElse("unknown")
+        );
+
+        if (modId.equals(Elegantia.MODID))
+            return baseRequestHeader;
+
+        final var requestHeaderBuilder = new StringBuilder(baseRequestHeader)
+                .append(" for third party mod `")
+                .append(ModInfo.getName(modId).orElse("unknown"))
+                .append('`');
+
+        ModInfo.getSourcesUrl(modId).ifPresent(
+                sourceUrl -> requestHeaderBuilder.append('(')
+                        .append(sourceUrl.startsWith("https://") ? sourceUrl.substring(8) : sourceUrl)
+                        .append(')')
+        );
+
+        return requestHeaderBuilder.toString();
     }
 
     public enum ResponseCode {
