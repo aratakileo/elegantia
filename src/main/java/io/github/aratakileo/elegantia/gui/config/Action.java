@@ -54,8 +54,8 @@ public class Action {
         ));
     }
 
-    public Runnable getOnClick() {
-        return onClick;
+    public void execute() {
+        onClick.run();
     }
 
     public @Nullable String getTriggeredBy() {

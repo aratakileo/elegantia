@@ -146,7 +146,7 @@ public class ConfigScreen extends AbstractScreen {
                     actionTitle
             );
             actionButton.setOnClickListener((button, byUSer) -> {
-                action.getOnClick().run();
+                action.execute();
                 return true;
             });
             actionButton.setTooltip(action.getDescription(modId));
