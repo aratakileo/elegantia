@@ -25,16 +25,24 @@ public class Action {
         this.triggeredBy = triggeredBy;
     }
 
+    private @NotNull String getTranslationKey() {
+        return Strings.doesNotMeetCondition(
+                translationKey,
+                String::isBlank,
+                Objects.isNull(actionName) ? "" : Strings.camelToSnake(actionName)
+        );
+    }
+
     public @NotNull Component getDescription(@NotNull String modId) {
         return Component.literal(Strings.requireReturnNotAsArgument(
-                "%s.config.entry.%s.description".formatted(modId, translationKey),
+                "%s.config.entry.%s.description".formatted(modId, getTranslationKey()),
                 Language.getInstance()::getOrDefault,
                 ""
         ));
     }
 
     public @NotNull Component getTitle(@NotNull String modId) {
-        final var fullTranslationKey = "%s.config.entry.%s.title".formatted(modId, translationKey);
+        final var fullTranslationKey = "%s.config.entry.%s.title".formatted(modId, getTranslationKey());
 
         if (Objects.isNull(actionName))
             return Component.translatable(fullTranslationKey);
