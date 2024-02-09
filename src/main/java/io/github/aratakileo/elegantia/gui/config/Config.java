@@ -4,9 +4,11 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.aratakileo.elegantia.Elegantia;
+import io.github.aratakileo.elegantia.gui.screen.ConfigScreen;
 import io.github.aratakileo.elegantia.util.Classes;
 import io.github.aratakileo.elegantia.util.ModInfo;
 import io.github.aratakileo.elegantia.util.Strings;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.locale.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -108,6 +110,14 @@ public abstract class Config {
 
     public void save() {
         save(this, Objects.requireNonNull(getConfigFile(this.getClass())));
+    }
+
+    public @Nullable ConfigScreen getScreen() {
+        return ConfigScreen.of(getClass());
+    }
+
+    public @Nullable ConfigScreen getScreen(@NotNull Screen parent) {
+        return ConfigScreen.of(getClass(), parent);
     }
 
     public static <T extends Config> @Nullable T load(@NotNull Class<T> configClass, @NotNull File file) {

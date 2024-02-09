@@ -19,7 +19,7 @@ public class ModMenuGetter implements ModMenuApi {
         return new HashMap<>() {{
             Config.forEach((configClass, configInfo) -> put(
                     configInfo.modId(),
-                    parent -> ConfigScreen.of(configClass, parent)
+                    parent -> configInfo.instance().getScreen(parent)
             ));
         }};
     }
