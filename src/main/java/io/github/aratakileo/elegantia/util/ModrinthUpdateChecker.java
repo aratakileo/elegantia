@@ -30,10 +30,11 @@ public class ModrinthUpdateChecker {
     private final static HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
     private final static String REQUEST_HEADER = "github.com/aratakileo/elegantia@{version}";
 
-    private @NotNull BiPredicate<@Nullable String, @NotNull String> versionsComparator = DEFAULT_VERSION_COMPARATOR;
-
     private final String modId, projectId, minecraftVersion;
     private final Platform platform;
+
+    private @NotNull BiPredicate<@Nullable String, @NotNull String> versionsComparator = DEFAULT_VERSION_COMPARATOR;
+    private @Nullable Response lastResponse = null;
 
     public ModrinthUpdateChecker(@NotNull String modAndProjectId) {
         this(modAndProjectId, modAndProjectId);
@@ -63,7 +64,7 @@ public class ModrinthUpdateChecker {
         this.platform = platform;
     }
 
-    public @NotNull ResponseCode check() {
+    public @NotNull Response check() {
         final var request = HttpRequest.newBuilder(URI.create(getFormattedUrl(NOT_FORMATTED_REQUEST_URL)))
                 .setHeader("User-Agent", getRequestHeader())
                 .build();
@@ -72,12 +73,20 @@ public class ModrinthUpdateChecker {
             final var basicResponse = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
             final var versionsMetadata = JsonParser.parseString(basicResponse.body()).getAsJsonArray();
 
-            if (versionsMetadata.isEmpty()) return ResponseCode.DOES_NOT_EXIST_AT_MODRINTH;
+            if (versionsMetadata.isEmpty()) {
+                lastResponse = new Response(ResponseCode.DOES_NOT_EXIST_AT_MODRINTH);
+                return lastResponse;
+            }
 
-            return versionsComparator.test(
-                    ModInfo.getVersion(modId).orElse(null),
-                    versionsMetadata.get(0).getAsJsonObject().get("version_number").getAsString()
-            ) ? ResponseCode.NEW_VERSION_IS_AVAILABLE : ResponseCode.SUCCESSFUL;
+            final var definedVersion = versionsMetadata.get(0).getAsJsonObject().get("version_number").getAsString();
+
+            lastResponse = new Response(
+                    versionsComparator.test(
+                            ModInfo.getVersion(modId).orElse(null),
+                            definedVersion
+                    ) ? ResponseCode.NEW_VERSION_IS_AVAILABLE : ResponseCode.SUCCESSFUL,
+                    definedVersion
+            );
         } catch (IOException | InterruptedException e) {
             Elegantia.LOGGER.error(
                     "Failed to check updates for `"
@@ -90,9 +99,15 @@ public class ModrinthUpdateChecker {
                             + ModInfo.getVersion(modId).orElse("-unknown"),
                     e
             );
+
+            lastResponse = new Response(ResponseCode.FAILED);
         }
 
-        return ResponseCode.FAILED;
+        return lastResponse;
+    }
+
+    public @Nullable Response getLastResponse() {
+        return lastResponse;
     }
 
     public void setVersionsComparator(@NotNull BiPredicate<@Nullable String, @NotNull String> versionsComparator) {
@@ -128,10 +143,48 @@ public class ModrinthUpdateChecker {
         return requestHeaderBuilder.toString();
     }
 
+    public static class Response {
+        private final ResponseCode responseCode;
+        private final @Nullable String definedVersion;
+
+        public Response(@NotNull ResponseCode responseCode) {
+            this(responseCode, null);
+        }
+
+        public Response(@NotNull ResponseCode responseCode, @Nullable String definedVersion) {
+            this.responseCode = responseCode;
+            this.definedVersion = definedVersion;
+        }
+
+        public @Nullable String getDefinedVersion() {
+            return definedVersion;
+        }
+
+        public @NotNull ResponseCode getResponseCode() {
+            return responseCode;
+        }
+    }
+
     public enum ResponseCode {
         FAILED,
         DOES_NOT_EXIST_AT_MODRINTH,
         SUCCESSFUL,
-        NEW_VERSION_IS_AVAILABLE
+        NEW_VERSION_IS_AVAILABLE;
+
+        public boolean isFailed() {
+            return this == FAILED;
+        }
+
+        public boolean doesNotExistAtModrinth() {
+            return this == DOES_NOT_EXIST_AT_MODRINTH;
+        }
+
+        public boolean isSuccessful() {
+            return this == SUCCESSFUL;
+        }
+
+        public boolean isNewVersionAvailable() {
+            return this == NEW_VERSION_IS_AVAILABLE;
+        }
     }
 }
