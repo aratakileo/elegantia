@@ -13,6 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class TitleScreenMixin {
     @Inject(method = "init", at = @At("TAIL"))
     public void init(CallbackInfo ci) {
-        Minecraft.getInstance().setScreen(ConfigScreen.of(Elegantia.ElegantiaConfig.class, (TitleScreen)(Object)this));
+//        Minecraft.getInstance().setScreen(ConfigScreen.of(Elegantia.ElegantiaConfig.class, (TitleScreen)(Object)this));
     }
 }

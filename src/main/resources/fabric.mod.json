@@ -18,9 +18,10 @@
   "entrypoints": {
     "client": [
       "io.github.aratakileo.elegantia.Elegantia"
+    ],
+    "modmenu": [
+      "io.github.aratakileo.elegantia.ModMenuGetter"
     ]
-  },
-  "depends": {
   },
   "custom": {
     "modmenu": {

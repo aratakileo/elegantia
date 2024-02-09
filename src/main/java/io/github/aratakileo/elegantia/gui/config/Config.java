@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
 public abstract class Config {
@@ -266,6 +267,10 @@ public abstract class Config {
             return null;
 
         return (T) CONFIGS_INFO.get(configClass).instance;
+    }
+
+    public static void forEach(@NotNull BiConsumer<@NotNull Class<? extends Config>, @NotNull ConfigInfo> consumer) {
+        CONFIGS_INFO.forEach(consumer);
     }
 
     public record ConfigInfo(
