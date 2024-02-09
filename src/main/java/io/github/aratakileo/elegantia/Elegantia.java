@@ -1,16 +1,13 @@
 package io.github.aratakileo.elegantia;
 
 import com.google.gson.annotations.SerializedName;
+import io.github.aratakileo.elegantia.gui.config.Action;
 import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.config.ConfigField;
 import io.github.aratakileo.elegantia.gui.config.Trigger;
-import io.github.aratakileo.elegantia.util.Platform;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
 
 public class Elegantia implements ClientModInitializer {
     public final static Logger LOGGER = LoggerFactory.getLogger(Elegantia.class);
@@ -27,6 +24,16 @@ public class Elegantia implements ClientModInitializer {
         @SerializedName("super_turbo_fast_boolean")
         @ConfigField(triggeredBy = "debug")
         public boolean testBoolean2 = false;
+
+        @ConfigField(triggeredBy = "debug", translationKey = "eee")
+        public void smthAction() {
+            LOGGER.info("You clicked smth action");
+        }
+
+        @ConfigField
+        public static void test() {
+            LOGGER.info("Really???");
+        }
     }
 
     @Override

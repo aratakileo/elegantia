@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder;
 import io.github.aratakileo.elegantia.Elegantia;
 import io.github.aratakileo.elegantia.util.Classes;
 import io.github.aratakileo.elegantia.util.ModInfo;
+import io.github.aratakileo.elegantia.util.Strings;
+import net.minecraft.locale.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +15,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,18 +35,27 @@ public abstract class Config {
 
     private final static ConcurrentHashMap<Class<? extends Config>, ConfigInfo> CONFIGS_INFO = new ConcurrentHashMap<>();
 
+    public boolean getTriggerValue(@NotNull String trigger) {
+        final var triggerFields = getConfigInfo(getClass()).triggerFields;
+
+        if (!triggerFields.containsKey(trigger))
+            throw new ElegantiaConfigException("Trigger `" + trigger + "` does not exist");
+
+        return getBooleanFieldValue(triggerFields.get(trigger));
+    }
+
     public void setFieldValue(@NotNull String fieldName, @Nullable Object value) {
         try {
             getClass().getField(fieldName).set(this, value);
         } catch (IllegalAccessException e) {
             Elegantia.LOGGER.warn(
-                    "Failed to set config field `" + Classes.getFieldView(getClass(), fieldName) + '`',
+                    "Failed to set config field `" + Classes.getFieldOrMethodView(getClass(), fieldName) + '`',
                     e
             );
         } catch (NoSuchFieldException e) {
             Elegantia.LOGGER.error(
                     "Failed to set a non-existent config field `"
-                            + Classes.getFieldView(getClass(), fieldName)
+                            + Classes.getFieldOrMethodView(getClass(), fieldName)
                             + '`',
                     e
             );
@@ -55,13 +67,13 @@ public abstract class Config {
             return getClass().getField(fieldName).get(this);
         } catch (IllegalAccessException e) {
             Elegantia.LOGGER.warn(
-                    "Failed to get config field `" + Classes.getFieldView(getClass(), fieldName) + '`',
+                    "Failed to get config field `" + Classes.getFieldOrMethodView(getClass(), fieldName) + '`',
                     e
             );
         } catch (NoSuchFieldException e) {
             Elegantia.LOGGER.error(
                     "Failed to get a non-existent config field `"
-                            + Classes.getFieldView(getClass(), fieldName)
+                            + Classes.getFieldOrMethodView(getClass(), fieldName)
                             + '`',
                     e
             );
@@ -252,7 +264,57 @@ public abstract class Config {
                 );
         }
 
-        CONFIGS_INFO.put(configClass, new ConfigInfo(modId, configInstance, fields, triggeredFields));
+        final var actions = new ArrayList<Action>();
+
+        for (final var method: configClass.getMethods()) {
+            if (!method.isAnnotationPresent(ConfigField.class)) continue;
+
+            if (method.getReturnType() != void.class)
+                throw new ElegantiaConfigException(
+                        "Method `"
+                                + Classes.getMethodView(method)
+                                + "` cannot be represented as an action because it has a return type other than `void`"
+                );
+
+            if (method.getParameterCount() != 0)
+                throw new ElegantiaConfigException(
+                        "Method `"
+                                + Classes.getMethodView(method)
+                                + "` cannot be represented as an action because it has parameters"
+                );
+
+            final var annotation = method.getAnnotation(ConfigField.class);
+            final var triggeredBy = annotation.triggeredBy();
+
+            if (!triggeredBy.isEmpty() && !triggeredFields.containsKey(triggeredBy))
+                throw new ElegantiaConfigException(
+                        "Method `"
+                                + Classes.getMethodView(method)
+                                + "` indicates a dependency on trigger `"
+                                + triggeredBy
+                                + "`, which does not exist!"
+                );
+
+            actions.add(new Action(method.getName(), annotation.translationKey(), () -> {
+                try {
+                    method.invoke(getInstance(configClass));
+                } catch (IllegalAccessException e) {
+                    throw new ElegantiaConfigException(
+                            "Failed to execute method `"
+                                    + Classes.getMethodView(method)
+                                    + "` as an action because cannot be accessed"
+                    );
+                } catch (InvocationTargetException ignore) {}
+            }, triggeredBy));
+        }
+
+        CONFIGS_INFO.put(configClass, new ConfigInfo(
+                modId,
+                configInstance,
+                fields,
+                triggeredFields,
+                actions
+        ));
 
         return configInstance;
     }
@@ -277,7 +339,8 @@ public abstract class Config {
             @NotNull String modId,
             @NotNull Config instance,
             @NotNull List<Field> fields,
-            @NotNull HashMap<String, String> triggeredFields
+            @NotNull HashMap<String, String> triggerFields,
+            @NotNull List<Action> actions
     ) {}
 
     public static class ElegantiaConfigException extends RuntimeException {

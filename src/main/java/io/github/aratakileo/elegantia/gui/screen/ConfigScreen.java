@@ -3,6 +3,7 @@ package io.github.aratakileo.elegantia.gui.screen;
 import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.config.ConfigField;
 import io.github.aratakileo.elegantia.gui.config.Trigger;
+import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
 import io.github.aratakileo.elegantia.gui.widget.Button;
 import io.github.aratakileo.elegantia.util.ModInfo;
 import io.github.aratakileo.elegantia.util.Strings;
@@ -12,6 +13,7 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import oshi.util.tuples.Pair;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class ConfigScreen extends AbstractScreen {
+    private final List<Pair<AbstractWidget, String>> configFieldWidgets = new ArrayList<>();
     private final Config.ConfigInfo configInfo;
     private HashMap<String, List<String>> triggeredFields;
     private HashMap<String, Button> fieldToButton;
@@ -44,82 +47,113 @@ public class ConfigScreen extends AbstractScreen {
         this.configInfo = configInfo;
     }
 
+    protected void addConfigFieldWidget(@NotNull Button button, String triggeredBy) {
+        configFieldWidgets.add(new Pair<>(button, triggeredBy));
+        addRenderableWidget(button);
+    }
+
+    protected void applyWidgetsVisibility(@NotNull Config configInstance) {
+        var y = getContentY();
+
+        for (final var widgetEntry: configFieldWidgets) {
+            final var triggeredBy = widgetEntry.getB();
+            final var shouldBeShown = triggeredBy.isEmpty() || configInstance.getTriggerValue(triggeredBy);
+            final var widget = widgetEntry.getA();
+
+            widget.isVisible = shouldBeShown;
+
+            if (!shouldBeShown) continue;
+
+            widget.setY(y);
+            y += widget.getHeight() + 2;
+        }
+    }
+
     @Override
     protected void init() {
         triggeredFields = new HashMap<>();
         fieldToButton = new HashMap<>();
 
         final var configInstance = configInfo.instance();
-        var y = getContentY();
+        final var modId = configInfo.modId();
 
         for (final var field: configInfo.fields()) {
-            final var fieldName = field.getName();
             final var fieldAnnotation = field.getAnnotation(ConfigField.class);
             final var triggeredBy = fieldAnnotation.triggeredBy();
-            final var isTriggered = !triggeredBy.isEmpty();
+
+            final var fieldName = field.getName();
             final var descriptionTranslationKey = Strings.doesNotMeetCondition(
                     fieldAnnotation.translationKey(),
                     String::isBlank,
                     Strings.camelToSnake(fieldName)
             );
 
-            final var button = new Button(
+            final var fieldButton = new Button(
                     WidgetPositioner.ofMessageContent(getBooleanButtonMessage(
                             field,
                             configInfo
                     )).setGravity(WidgetPositioner.GRAVITY_CENTER_HORIZONTAL)
                             .setPadding(5)
-                            .getNewBounds()
-                            .moveIpY(y),
+                            .getNewBounds(),
                     getBooleanButtonMessage(field, configInfo)
             );
-            button.setOnClickListener((btn, byUser) -> {
+            fieldButton.setOnClickListener((button, byUser) -> {
                 configInstance.invertBooleanFieldValue(fieldName);
-                btn.setMessage(getBooleanButtonMessage(field, configInfo));
-                btn.setBounds(
-                        WidgetPositioner.ofMessageContent(btn.getMessage())
+                button.setMessage(getBooleanButtonMessage(field, configInfo));
+                button.setBounds(
+                        WidgetPositioner.ofMessageContent(button.getMessage())
                                 .setGravity(WidgetPositioner.GRAVITY_CENTER_HORIZONTAL)
                                 .setPadding(5)
-                                .getNewBounds(btn.getBounds())
+                                .getNewBounds(button.getBounds())
                 );
 
-                if (field.isAnnotationPresent(Trigger.class))
-                    for (
-                            final var triggeredFieldName:
-                            triggeredFields.get(field.getAnnotation(Trigger.class).value())
-                    ) {
-                        final var triggeredButton = fieldToButton.get(triggeredFieldName);
-                        final var triggerValue = configInstance.getBooleanFieldValue(fieldName);
+                if (!field.isAnnotationPresent(Trigger.class)) return true;
 
-                        if (!triggerValue && configInstance.getBooleanFieldValue(triggeredFieldName))
-                            triggeredButton.onClick(false);
+                for (final var triggeredFieldName : triggeredFields.get(field.getAnnotation(Trigger.class).value()))
+                    if (configInstance.getBooleanFieldValue(triggeredFieldName))
+                        fieldToButton.get(triggeredFieldName).onClick(false);
 
-                        triggeredButton.isVisible = triggerValue;
-                    }
+                applyWidgetsVisibility(configInstance);
 
                 return true;
             });
-            button.setTooltip(Strings.requireReturnNotAsArgument(
-                    "%s.config.entry.%s.description".formatted(configInfo.modId(), descriptionTranslationKey),
+            fieldButton.setTooltip(Strings.requireReturnNotAsArgument(
+                    "%s.config.entry.%s.description".formatted(modId, descriptionTranslationKey),
                     Language.getInstance()::getOrDefault,
                     ""
             ));
-            button.isVisible = !isTriggered
-                    || configInstance.getBooleanFieldValue(configInfo.triggeredFields().get(triggeredBy));
 
-            fieldToButton.put(fieldName, button);
+            fieldToButton.put(fieldName, fieldButton);
 
-            if(isTriggered) {
+            if (!triggeredBy.isEmpty()) {
                 if (!triggeredFields.containsKey(triggeredBy))
                     triggeredFields.put(triggeredBy, new ArrayList<>());
 
                 triggeredFields.get(triggeredBy).add(fieldName);
             }
 
-            addRenderableWidget(button);
-
-            y += 20;
+            addConfigFieldWidget(fieldButton, triggeredBy);
         }
+
+        for (final var action: configInfo.actions()) {
+            final var actionTitle = action.getTitle(modId);
+
+            final var actionButton = new Button(
+                    WidgetPositioner.ofMessageContent(actionTitle)
+                            .setGravity(WidgetPositioner.GRAVITY_CENTER_HORIZONTAL)
+                            .setPadding(5)
+                            .getNewBounds(),
+                    actionTitle
+            );
+            actionButton.setOnClickListener((button, byUSer) -> {
+                action.getOnClick().run();
+                return true;
+            });
+            actionButton.setTooltip(action.getDescription(modId));
+            addConfigFieldWidget(actionButton, action.getTriggeredBy());
+        }
+
+        applyWidgetsVisibility(configInstance);
 
         final var quitButtonMessage = Component.translatable("elegantia.gui.config.button.save_and_quit");
 

@@ -3,13 +3,18 @@ package io.github.aratakileo.elegantia.util;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public interface Classes {
     static @NotNull String getFieldView(@NotNull Field field) {
-        return getFieldView(field.getDeclaringClass(), field.getName());
+        return getFieldOrMethodView(field.getDeclaringClass(), field.getName());
     }
 
-    static @NotNull String getFieldView(@NotNull Class<?> owner, @NotNull String fieldName) {
+    static @NotNull String getMethodView(@NotNull Method method) {
+        return getFieldOrMethodView(method.getDeclaringClass(), method.getName());
+    }
+
+    static @NotNull String getFieldOrMethodView(@NotNull Class<?> owner, @NotNull String fieldName) {
         return owner.getName() + '#' + fieldName;
     }
 }
