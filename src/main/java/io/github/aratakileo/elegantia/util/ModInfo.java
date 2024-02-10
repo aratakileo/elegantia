@@ -3,6 +3,7 @@ package io.github.aratakileo.elegantia.util;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import io.github.aratakileo.elegantia.Elegantia;
+import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.screen.ConfigScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface ModInfo {
     @NotNull String getVersion();
@@ -59,8 +61,17 @@ public interface ModInfo {
     }
 
     @SuppressWarnings("unchecked")
-    static void setConfigScreenGetter(@NotNull String modId, @NotNull Consumer<Screen> configScreenGetter) {
+    static void setConfigScreenGetter(@NotNull String modId, @NotNull Function<Screen, Screen> configScreenGetter) {
         if (!isModLoaded("modmenu")) return;
+
+        if (!isModLoaded(modId)) {
+            Elegantia.LOGGER.error(
+                    "Failed to set config screen getter for mod id `"
+                            + modId
+                            + "`, because mod does not exist"
+            );
+            return;
+        }
 
         try {
             /*
@@ -71,12 +82,12 @@ public interface ModInfo {
             field.setAccessible(true);
 
             final var configScreenFactories = (Map<String, ConfigScreenFactory<?>>) field.get(null);
-            configScreenFactories.put(modId, parent -> ConfigScreen.of(Elegantia.ElegantiaConfig.class, parent));
+            configScreenFactories.put(modId, configScreenGetter::apply);
 
             field.set(null, configScreenFactories);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             Elegantia.LOGGER.error(
-                    "Something went wrong while trying to set config screen getter for `" + modId + '`',
+                    "Something went wrong while trying to set config screen getter for mod id `" + modId + '`',
                     e
             );
         }
