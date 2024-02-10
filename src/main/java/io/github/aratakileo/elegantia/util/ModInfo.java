@@ -1,11 +1,18 @@
 package io.github.aratakileo.elegantia.util;
 
+import com.terraformersmc.modmenu.ModMenu;
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import io.github.aratakileo.elegantia.Elegantia;
+import io.github.aratakileo.elegantia.gui.screen.ConfigScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public interface ModInfo {
     @NotNull String getVersion();
@@ -49,6 +56,30 @@ public interface ModInfo {
 
     static @NotNull Optional<String> getSourcesUrl(@NotNull String modId) {
         return get(modId).flatMap(ModInfo::getSourcesUrl);
+    }
+
+    @SuppressWarnings("unchecked")
+    static void setConfigScreenGetter(@NotNull String modId, @NotNull Consumer<Screen> configScreenGetter) {
+        if (!isModLoaded("modmenu")) return;
+
+        try {
+            /*
+             * Adding configuration screens is necessary in this way, due to the fact
+             * that the `ModMenuApi#getProvidedConfigScreenFactories` interface works every other time
+             */
+            final var field = ModMenu.class.getDeclaredField("configScreenFactories");
+            field.setAccessible(true);
+
+            final var configScreenFactories = (Map<String, ConfigScreenFactory<?>>) field.get(null);
+            configScreenFactories.put(modId, parent -> ConfigScreen.of(Elegantia.ElegantiaConfig.class, parent));
+
+            field.set(null, configScreenFactories);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            Elegantia.LOGGER.error(
+                    "Something went wrong while trying to set config screen getter for `" + modId + '`',
+                    e
+            );
+        }
     }
 
     static boolean isModLoaded(@NotNull String modId) {

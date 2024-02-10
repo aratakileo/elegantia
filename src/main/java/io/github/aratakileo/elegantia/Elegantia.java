@@ -1,7 +1,6 @@
 package io.github.aratakileo.elegantia;
 
 import com.google.gson.annotations.SerializedName;
-import io.github.aratakileo.elegantia.gui.config.Action;
 import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.config.ConfigField;
 import io.github.aratakileo.elegantia.gui.config.Trigger;

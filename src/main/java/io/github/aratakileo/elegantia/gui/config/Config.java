@@ -7,9 +7,7 @@ import io.github.aratakileo.elegantia.Elegantia;
 import io.github.aratakileo.elegantia.gui.screen.ConfigScreen;
 import io.github.aratakileo.elegantia.util.Classes;
 import io.github.aratakileo.elegantia.util.ModInfo;
-import io.github.aratakileo.elegantia.util.Strings;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.locale.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,10 +17,7 @@ import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
@@ -325,6 +320,8 @@ public abstract class Config {
                 triggeredFields,
                 actions
         ));
+
+        ModInfo.setConfigScreenGetter(modId, parent -> ConfigScreen.of(configClass, parent));
 
         return configInstance;
     }
