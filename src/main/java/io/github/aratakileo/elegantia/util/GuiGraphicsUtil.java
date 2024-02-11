@@ -2,6 +2,7 @@ package io.github.aratakileo.elegantia.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
+import io.github.aratakileo.elegantia.math.Rect2i;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

@@ -1,23 +1,21 @@
-package io.github.aratakileo.elegantia.util;
+package io.github.aratakileo.elegantia.math;
 
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector2dc;
 import org.joml.Vector2fc;
-import org.joml.Vector2ic;
 
 public class Rect2i extends net.minecraft.client.renderer.Rect2i {
     public Rect2i(int @NotNull [] rect) {
         super(rect[0], rect[1], rect[2], rect[3]);
     }
 
-    public Rect2i(@NotNull Vector2ic vector2ic, int size) {
-        this(vector2ic, size, size);
+    public Rect2i(@NotNull Vector2iInterface position, int size) {
+        this(position, size, size);
     }
 
-    public Rect2i(@NotNull Vector2ic vector2ic, int width, int height) {
-        super(vector2ic.x(), vector2ic.y(), width, height);
+    public Rect2i(@NotNull Vector2iInterface position, int width, int height) {
+        super(position.x(), position.y(), width, height);
     }
 
     public Rect2i(int x, int y, int size) {
@@ -72,7 +70,11 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
-    public void setPosition(@NotNull Vector2ic position) {
+    public @NotNull Vector2ic getPosition() {
+        return new Vector2ic(getX(), getY());
+    }
+
+    public void setPosition(@NotNull Vector2iInterface position) {
         super.setPosition(position.x(), position.y());
     }
 
@@ -81,7 +83,7 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         super.setPosition(x, y);
     }
 
-    public @NotNull Rect2i setIpPosition(@NotNull Vector2ic position) {
+    public @NotNull Rect2i setIpPosition(@NotNull Vector2iInterface position) {
         setPosition(position);
         return this;
     }
@@ -143,16 +145,20 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
-    public void setLeftTop(@NotNull Vector2ic vector2ic) {
-        setPosition(vector2ic);
+    public @NotNull Vector2ic getLeftTop() {
+        return new Vector2ic(getX(), getY());
+    }
+
+    public void setLeftTop(@NotNull Vector2iInterface leftTop) {
+        setPosition(leftTop);
     }
 
     public void setLeftTop(int left, int top) {
         setPosition(left, top);
     }
 
-    public @NotNull Rect2i setIpLeftTop(@NotNull Vector2ic vector2ic) {
-        setPosition(vector2ic);
+    public @NotNull Rect2i setIpLeftTop(@NotNull Vector2iInterface leftTop) {
+        setPosition(leftTop);
         return this;
     }
 
@@ -161,9 +167,13 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
-    public void setRightBottom(@NotNull Vector2ic vector2ic) {
-        setRight(vector2ic.x());
-        setBottom(vector2ic.y());
+    public @NotNull Vector2ic getRightBottom() {
+        return new Vector2ic(getRight(), getBottom());
+    }
+
+    public void setRightBottom(@NotNull Vector2iInterface rightBottom) {
+        setRight(rightBottom.x());
+        setBottom(rightBottom.y());
     }
 
     public void setRightBottom(int right, int bottom) {
@@ -171,8 +181,8 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         setBottom(bottom);
     }
 
-    public @NotNull Rect2i setIpRightBottom(@NotNull Vector2ic vector2ic) {
-        setRightBottom(vector2ic);
+    public @NotNull Rect2i setIpRightBottom(@NotNull Vector2iInterface rightBottom) {
+        setRightBottom(rightBottom);
         return this;
     }
 
@@ -212,8 +222,8 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
-    public boolean contains(@NotNull Vector2ic vector2ic) {
-        return super.contains(vector2ic.x(), vector2ic.y());
+    public boolean contains(@NotNull Vector2iInterface position) {
+        return super.contains(position.x(), position.y());
     }
 
     @Override
@@ -221,16 +231,16 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return super.contains(x, y);
     }
 
-    public boolean contains(@NotNull Vector2fc vector2fc) {
-        return contains(vector2fc.x(), vector2fc.y());
+    public boolean contains(@NotNull Vector2fc position) {
+        return contains(position.x(), position.y());
     }
 
     public boolean contains(float x, float y) {
         return contains((int) Math.ceil(x), (int) Math.ceil(y));
     }
 
-    public boolean contains(@NotNull Vector2dc vector2dc) {
-        return contains(vector2dc.x(), vector2dc.y());
+    public boolean contains(@NotNull Vector2dInterface position) {
+        return contains(position.x(), position.y());
     }
 
     public boolean contains(double x, double y) {
@@ -255,17 +265,17 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
-    public @NotNull Rect2i move(@NotNull Vector2ic vector2ic) {
-        return copy().moveIp(vector2ic);
+    public @NotNull Rect2i move(@NotNull Vector2iInterface position) {
+        return copy().moveIp(position);
     }
 
     public @NotNull Rect2i move(int x, int y) {
         return copy().moveIp(x, y);
     }
 
-    public @NotNull Rect2i moveIp(@NotNull Vector2ic vector2ic) {
-        setX(getX() + vector2ic.x());
-        setY(getY() + vector2ic.y());
+    public @NotNull Rect2i moveIp(@NotNull Vector2iInterface position) {
+        setX(getX() + position.x());
+        setY(getY() + position.y());
 
         return this;
     }

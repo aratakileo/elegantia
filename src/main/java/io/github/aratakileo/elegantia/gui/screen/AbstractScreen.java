@@ -40,14 +40,6 @@ public abstract class AbstractScreen extends Screen {
         return 40;
     }
 
-    public int getCenterHorizontal() {
-        return width / 2;
-    }
-
-    public int getCenterVertical() {
-        return height / 2;
-    }
-
     public static @Nullable Screen getCurrentScreen() {
         return Minecraft.getInstance().screen;
     }

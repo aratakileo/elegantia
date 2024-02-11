@@ -1,7 +1,10 @@
 package io.github.aratakileo.elegantia.gui.widget;
 
 import io.github.aratakileo.elegantia.gui.TooltipPositioner;
-import io.github.aratakileo.elegantia.util.Rect2i;
+import io.github.aratakileo.elegantia.math.Rect2i;
+import io.github.aratakileo.elegantia.math.Vector2iInterface;
+import io.github.aratakileo.elegantia.math.Vector2ic;
+import io.github.aratakileo.elegantia.util.Mouse;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiGraphics;
@@ -90,6 +93,15 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
         bounds.setX(x);
     }
 
+    public @NotNull Vector2ic getPosition() {
+        return bounds.getPosition();
+    }
+
+    public void setPosition(@NotNull Vector2iInterface position) {
+        setX(position.x());
+        setY(position.y());
+    }
+
     public void setPosition(int x, int y) {
         setX(x);
         setY(y);
@@ -152,10 +164,10 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
     @Override
     public final boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return mouseClicked(mouseX, mouseY, MouseButton.of(button));
+        return mouseClicked(mouseX, mouseY, Mouse.Button.of(button));
     }
 
-    public boolean mouseClicked(double mouseX, double mouseY, @NotNull MouseButton button) {
+    public boolean mouseClicked(double mouseX, double mouseY, @NotNull Mouse.Button button) {
         wasHoveredBeforeRelease = false;
 
         return isActive
@@ -173,10 +185,10 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
     @Override
     public final boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return mouseReleased(mouseX, mouseY, MouseButton.of(button));
+        return mouseReleased(mouseX, mouseY, Mouse.Button.of(button));
     }
 
-    public boolean mouseReleased(double mouseX, double mouseY, @NotNull MouseButton button) {
+    public boolean mouseReleased(double mouseX, double mouseY, @NotNull Mouse.Button button) {
         return isActive
                 && isVisible
                 && button.isLeft()
@@ -195,7 +207,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
     @Override
     public final boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        return mouseDragged(mouseX, mouseY, deltaX, deltaY, MouseButton.of(button));
+        return mouseDragged(mouseX, mouseY, deltaX, deltaY, Mouse.Button.of(button));
     }
 
     public boolean mouseDragged(
@@ -203,7 +215,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
             double mouseY,
             double deltaX,
             double deltaY,
-            @NotNull MouseButton button
+            @NotNull Mouse.Button button
     ) {
         return isActive
                 && isVisible
@@ -358,27 +370,5 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
     public void setTooltipPositionerGetter(@NotNull Supplier<@NotNull TooltipPositioner> tooltipPositionerGetter) {
         this.tooltipPositionerGetter = tooltipPositionerGetter;
-    }
-
-    public enum MouseButton {
-        LEFT,
-        RIGHT,
-        MIDDLE;
-
-        public boolean isLeft() {
-            return this == LEFT;
-        }
-
-        public boolean isRight() {
-            return this == RIGHT;
-        }
-
-        public boolean isMiddle() {
-            return this == MIDDLE;
-        }
-
-        public static @NotNull MouseButton of(int button) {
-            return button == 1 ? RIGHT : (button == 2 ? MIDDLE : LEFT);
-        }
     }
 }

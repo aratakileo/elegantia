@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.gui;
 
-import io.github.aratakileo.elegantia.util.Rect2i;
+import io.github.aratakileo.elegantia.math.Rect2i;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;

@@ -104,7 +104,7 @@ public class ConfigScreen extends AbstractScreen {
                         WidgetPositioner.ofMessageContent(button.getMessage())
                                 .setGravity(WidgetPositioner.GRAVITY_CENTER_HORIZONTAL)
                                 .setPadding(5)
-                                .getNewBounds(button.getBounds())
+                                .getNewBoundsOf(button.getBounds())
                 );
 
                 if (!field.isAnnotationPresent(Trigger.class)) return true;

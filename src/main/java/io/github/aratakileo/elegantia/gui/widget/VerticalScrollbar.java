@@ -1,7 +1,8 @@
 package io.github.aratakileo.elegantia.gui.widget;
 
 import io.github.aratakileo.elegantia.util.GuiGraphicsUtil;
-import io.github.aratakileo.elegantia.util.Rect2i;
+import io.github.aratakileo.elegantia.math.Rect2i;
+import io.github.aratakileo.elegantia.util.Mouse;
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;
 
@@ -135,7 +136,7 @@ public class VerticalScrollbar extends AbstractWidget {
             double mouseY,
             double deltaX,
             double deltaY,
-            @NotNull MouseButton button
+            @NotNull Mouse.Button button
     ) {
         if (!isScrolling()) return false;
 

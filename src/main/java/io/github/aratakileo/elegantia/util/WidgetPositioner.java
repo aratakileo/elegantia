@@ -1,6 +1,7 @@
 package io.github.aratakileo.elegantia.util;
 
 import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
+import io.github.aratakileo.elegantia.math.Rect2i;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -107,19 +108,27 @@ public class WidgetPositioner {
     }
 
     public @NotNull Rect2i getNewBounds() {
-        return getNewBounds(null);
+        return getNewBounds(null, null);
     }
 
-    public @NotNull Rect2i getNewBounds(@Nullable Rect2i oldBounds) {
+    public @NotNull Rect2i getNewBoundsOf(@Nullable Rect2i oldBounds) {
+        return getNewBounds(null, oldBounds);
+    }
+
+    public @NotNull Rect2i getNewBoundsInside(@Nullable Rect2i parent) {
+        return getNewBounds(parent, null);
+    }
+
+    public @NotNull Rect2i getNewBounds(@Nullable Rect2i parent, @Nullable Rect2i oldBounds) {
         final var minecraftWindow = Minecraft.getInstance().getWindow();
-        final var parentBounds = new Rect2i(
+        final var parentBounds = Objects.nonNull(parent) ? parent : new Rect2i(
                 0,
                 0,
                 minecraftWindow.getGuiScaledWidth(),
                 minecraftWindow.getGuiScaledHeight()
         );
 
-        final var newBounds = (Objects.isNull(oldBounds)) ? new Rect2i(0, 0, 0) : oldBounds.copy();
+        final var newBounds = Objects.isNull(oldBounds) ? new Rect2i(0, 0, 0) : oldBounds.copy();
 
         newBounds.setWidth(paddingLeft + contentWidth + paddingRight);
         newBounds.setHeight(paddingTop + contentHeight + paddingBottom);
