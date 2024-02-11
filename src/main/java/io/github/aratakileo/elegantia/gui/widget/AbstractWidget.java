@@ -46,6 +46,18 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
         this(bounds, null);
     }
 
+    public boolean isHovered() {
+        return isHovered;
+    }
+
+    public boolean wasHovered() {
+        return wasHovered;
+    }
+
+    public boolean wasHoveredBeforeRelease() {
+        return wasHoveredBeforeRelease;
+    }
+
     public int getWidth() {
         return bounds.getWidth();
     }
