@@ -3,8 +3,6 @@ package io.github.aratakileo.elegantia.util;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import io.github.aratakileo.elegantia.Elegantia;
-import io.github.aratakileo.elegantia.gui.config.Config;
-import io.github.aratakileo.elegantia.gui.screen.ConfigScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.gui.screens.Screen;
@@ -13,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface ModInfo {
