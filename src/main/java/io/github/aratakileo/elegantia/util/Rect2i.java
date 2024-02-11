@@ -3,18 +3,53 @@ package io.github.aratakileo.elegantia.util;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2dc;
+import org.joml.Vector2fc;
+import org.joml.Vector2ic;
 
 public class Rect2i extends net.minecraft.client.renderer.Rect2i {
+    public Rect2i(int @NotNull [] rect) {
+        super(rect[0], rect[1], rect[2], rect[3]);
+    }
+
+    public Rect2i(@NotNull Vector2ic vector2ic, int size) {
+        this(vector2ic, size, size);
+    }
+
+    public Rect2i(@NotNull Vector2ic vector2ic, int width, int height) {
+        super(vector2ic.x(), vector2ic.y(), width, height);
+    }
+
     public Rect2i(int x, int y, int size) {
-        this(x, y, size, size);
+        super(x, y, size, size);
     }
 
     public Rect2i(int x, int y, int width, int height) {
         super(x, y, width, height);
     }
 
-    public boolean isExists() {
+    public boolean isExist() {
         return getWidth() > 0 && getHeight() > 0;
+    }
+
+    public int get(int index) {
+        return switch (index) {
+            case 0 -> getX();
+            case 1 -> getY();
+            case 2 -> getWidth();
+            case 3 -> getHeight();
+            default -> throw new IllegalArgumentException();
+        };
+    }
+
+    public @NotNull Rect2i set(int index, int value) {
+        return switch (index) {
+            case 0 -> setIpX(value);
+            case 1 -> setIpY(value);
+            case 2 -> setIpWidth(value);
+            case 3 -> setIpHeight(value);
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override
@@ -37,9 +72,18 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
+    public void setPosition(@NotNull Vector2ic position) {
+        super.setPosition(position.x(), position.y());
+    }
+
     @Override
     public void setPosition(int x, int y) {
         super.setPosition(x, y);
+    }
+
+    public @NotNull Rect2i setIpPosition(@NotNull Vector2ic position) {
+        setPosition(position);
+        return this;
     }
 
     public @NotNull Rect2i setIpPosition(int x, int y) {
@@ -99,8 +143,17 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
+    public void setLeftTop(@NotNull Vector2ic vector2ic) {
+        setPosition(vector2ic);
+    }
+
     public void setLeftTop(int left, int top) {
         setPosition(left, top);
+    }
+
+    public @NotNull Rect2i setIpLeftTop(@NotNull Vector2ic vector2ic) {
+        setPosition(vector2ic);
+        return this;
     }
 
     public @NotNull Rect2i setIpLeftTop(int left, int top) {
@@ -108,9 +161,19 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
+    public void setRightBottom(@NotNull Vector2ic vector2ic) {
+        setRight(vector2ic.x());
+        setBottom(vector2ic.y());
+    }
+
     public void setRightBottom(int right, int bottom) {
         setRight(right);
         setBottom(bottom);
+    }
+
+    public @NotNull Rect2i setIpRightBottom(@NotNull Vector2ic vector2ic) {
+        setRightBottom(vector2ic);
+        return this;
     }
 
     public @NotNull Rect2i setIpRightBottom(int right, int bottom) {
@@ -149,13 +212,25 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
+    public boolean contains(@NotNull Vector2ic vector2ic) {
+        return super.contains(vector2ic.x(), vector2ic.y());
+    }
+
     @Override
     public boolean contains(int x, int y) {
         return super.contains(x, y);
     }
 
+    public boolean contains(@NotNull Vector2fc vector2fc) {
+        return contains(vector2fc.x(), vector2fc.y());
+    }
+
     public boolean contains(float x, float y) {
         return contains((int) Math.ceil(x), (int) Math.ceil(y));
+    }
+
+    public boolean contains(@NotNull Vector2dc vector2dc) {
+        return contains(vector2dc.x(), vector2dc.y());
     }
 
     public boolean contains(double x, double y) {
@@ -180,8 +255,19 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
+    public @NotNull Rect2i move(@NotNull Vector2ic vector2ic) {
+        return copy().moveIp(vector2ic);
+    }
+
     public @NotNull Rect2i move(int x, int y) {
         return copy().moveIp(x, y);
+    }
+
+    public @NotNull Rect2i moveIp(@NotNull Vector2ic vector2ic) {
+        setX(getX() + vector2ic.x());
+        setY(getY() + vector2ic.y());
+
+        return this;
     }
 
     public @NotNull Rect2i moveIp(int x, int y) {
@@ -191,16 +277,16 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
-    public @NotNull Rect2i moveHorizontal(int horizontal) {
-        return copy().moveIpHorizontal(horizontal);
+    public @NotNull Rect2i cutLeft(int length) {
+        return copy().cutIpLeft(length);
     }
 
     public @NotNull Rect2i moveHorizontal(int left, int right) {
         return copy().moveIpHorizontal(left, right);
     }
 
-    public @NotNull Rect2i moveIpHorizontal(int horizontal) {
-        return moveIpHorizontal(horizontal, 0);
+    public @NotNull Rect2i cutIpLeft(int length) {
+        return moveIpHorizontal(length, 0);
     }
 
     public @NotNull Rect2i moveIpHorizontal(int left, int right) {
@@ -215,16 +301,16 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return this;
     }
 
-    public @NotNull Rect2i moveVertical(int vertical) {
-        return copy().moveIpVertical(vertical);
+    public @NotNull Rect2i cutTop(int length) {
+        return copy().cutIpTop(length);
     }
 
     public @NotNull Rect2i moveVertical(int top, int bottom) {
         return copy().moveIpVertical(top, bottom);
     }
 
-    public @NotNull Rect2i moveIpVertical(int vertical) {
-        return moveIpVertical(vertical, 0);
+    public @NotNull Rect2i cutIpTop(int length) {
+        return moveIpVertical(length, 0);
     }
 
     public @NotNull Rect2i moveIpVertical(int top, int bottom) {
