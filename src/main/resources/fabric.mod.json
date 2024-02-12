@@ -15,19 +15,11 @@
   "license": "LGPL-3.0",
   "icon": "assets/elegantia/icon.png",
   "environment": "client",
-  "entrypoints": {
-    "client": [
-      "io.github.aratakileo.elegantia.Elegantia"
-    ]
-  },
   "custom": {
     "modmenu": {
       "badges": [
         "library"
       ]
     }
-  },
-  "mixins": [
-    "elegantia.mixins.json"
-  ]
+  }
 }

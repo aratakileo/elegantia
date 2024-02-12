@@ -136,12 +136,12 @@ public class WidgetPositioner {
         if (Objects.isNull(oldBounds)) {
             if ((gravity & GRAVITY_RIGHT) >= 1) newBounds.setRight(parentBounds.getRight() - marginRight);
             else if ((gravity & GRAVITY_CENTER_HORIZONTAL) >= 1)
-                newBounds.setLeft((parentBounds.getRight() - newBounds.getWidth()) / 2);
+                newBounds.setIpLeft((parentBounds.getWidth() - newBounds.getWidth()) / 2).moveIpX(parentBounds.getX());
             else newBounds.setLeft(parentBounds.getLeft() + marginLeft);
 
             if ((gravity & GRAVITY_BOTTOM) >= 1) newBounds.setBottom(parentBounds.getBottom() - marginBottom);
             else if ((gravity & GRAVITY_CENTER_VERTICAL) >= 1)
-                newBounds.setTop((parentBounds.getBottom() - newBounds.getHeight()) / 2);
+                newBounds.setIpTop((parentBounds.getHeight() - newBounds.getHeight()) / 2).moveIpY(parentBounds.getY());
             else newBounds.setTop(parentBounds.getTop() + marginTop);
 
             return newBounds;
