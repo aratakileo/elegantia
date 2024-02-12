@@ -3,7 +3,7 @@
   "id": "elegantia",
   "version": "${version}",
   "name": "Elegantia",
-  "description": "GUI library for Minecraft",
+  "description": "GUI library for Minecraft and more",
   "authors": [
     "Arataki Leo"
   ],
