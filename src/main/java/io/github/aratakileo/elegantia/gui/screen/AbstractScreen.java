@@ -27,7 +27,10 @@ public abstract class AbstractScreen extends Screen {
 
     @Override
     public final void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+// 1.20-1.20.1
         renderBackground(guiGraphics);
+// 1.20.2-1.20.4
+//        renderBackground(guiGraphics, mouseX, mouseY, dt);
         super.render(guiGraphics, mouseX, mouseY, dt);
         renderContent(guiGraphics, mouseX, mouseY, dt);
     }

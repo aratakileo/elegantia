@@ -228,6 +228,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
         return false;
     }
 
+// 1.20-1.20.1 only
     @Override
     public final boolean mouseScrolled(double mouseX, double mouseY, double verticalAmount) {
         return mouseScrolled(mouseX, mouseY, 0, verticalAmount);
