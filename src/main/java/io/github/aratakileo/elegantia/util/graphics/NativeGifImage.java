@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.util;
+package io.github.aratakileo.elegantia.util.graphics;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.fabricmc.api.EnvType;

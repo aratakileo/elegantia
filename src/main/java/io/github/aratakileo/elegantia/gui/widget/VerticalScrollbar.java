@@ -1,8 +1,9 @@
 package io.github.aratakileo.elegantia.gui.widget;
 
-import io.github.aratakileo.elegantia.util.GuiGraphicsUtil;
+import io.github.aratakileo.elegantia.util.graphics.GuiGraphicsUtil;
 import io.github.aratakileo.elegantia.math.Rect2i;
 import io.github.aratakileo.elegantia.util.Mouse;
+import io.github.aratakileo.elegantia.util.graphics.RectDrawer;
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,19 +93,11 @@ public class VerticalScrollbar extends AbstractWidget {
 
     @Override
     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        GuiGraphicsUtil.drawRect(
-                guiGraphics,
-                bounds,
-                0xaa222222,
-                padding,
-                0xaa000000
-        );
-
-        GuiGraphicsUtil.drawRect(
-                guiGraphics,
-                getRenderableThumbRect(),
-                (getRenderableThumbRect().contains(mouseX, mouseY)) ? 0xaacbcbcb : 0xaa6c757d
-        );
+        new RectDrawer(guiGraphics, bounds)
+                .draw(0xaa222222)
+                .drawStroke(0xaa000000, padding)
+                .redefineBounds(getRenderableThumbRect())
+                .draw(getRenderableThumbRect().contains(mouseX, mouseY) ? 0xaacbcbcb : 0xaa6c757d);
     }
 
     @Override

@@ -1,6 +1,5 @@
-package io.github.aratakileo.elegantia.util;
+package io.github.aratakileo.elegantia.util.graphics;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
 import io.github.aratakileo.elegantia.math.Rect2i;
 import net.minecraft.Util;
@@ -8,162 +7,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 public class GuiGraphicsUtil {
-    public static void drawRect(@NotNull GuiGraphics guiGraphics, @NotNull Rect2i bounds, int color) {
-        drawRect(guiGraphics, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), color);
-    }
-
-    public static void drawRect(@NotNull GuiGraphics guiGraphics, int x, int y, int width, int height, int color) {
-        guiGraphics.fill(x, y, x + width, y + height, color);
-    }
-
-    public static void drawRectStroke(
-            @NotNull GuiGraphics guiGraphics,
-            @NotNull Rect2i bounds,
-            int strokeThickness,
-            int strokeColor
-    ) {
-        drawRectStroke(
-                guiGraphics,
-                bounds.getX(),
-                bounds.getY(),
-                bounds.getWidth(),
-                bounds.getHeight(),
-                strokeThickness,
-                strokeColor
-        );
-    }
-
-    public static void drawRectStroke(
-            @NotNull GuiGraphics guiGraphics,
-            int x,
-            int y,
-            int width,
-            int height,
-            int strokeThickness,
-            int strokeColor
-    ) {
-        guiGraphics.fill(x, y, x + width, y + strokeThickness, strokeColor);
-        guiGraphics.fill(x, y + height - strokeThickness, x + width, y + height, strokeColor);
-
-        guiGraphics.fill(
-                x,
-                y + strokeThickness,
-                x + strokeThickness,
-                y + height - strokeThickness,
-                strokeColor
-        );
-        guiGraphics.fill(
-                x + width - strokeThickness,
-                y + strokeThickness,
-                x + width,
-                y + height - strokeThickness,
-                strokeColor
-        );
-    }
-
-    public static void drawRect(
-            @NotNull GuiGraphics guiGraphics,
-            @NotNull Rect2i bounds,
-            int color,
-            int strokeThickness,
-            int strokeColor
-    ) {
-        drawRect(guiGraphics, bounds, color);
-        drawRectStroke(guiGraphics, bounds, strokeThickness, strokeColor);
-    }
-
-    public static void drawRect(
-            @NotNull GuiGraphics guiGraphics,
-            int x,
-            int y,
-            int width,
-            int height,
-            int color,
-            int strokeThickness,
-            int strokeColor
-    ) {
-        drawRect(guiGraphics, x, y, width, height, color);
-        drawRectStroke(guiGraphics, x, y, width, height, strokeThickness, strokeColor);
-    }
-
-    public static void renderTexture(
-            @NotNull GuiGraphics guiGraphics,
-            @NotNull ResourceLocation resourceLocation,
-            @NotNull Rect2i textureBounds
-    ) {
-        renderTexture(
-                guiGraphics,
-                resourceLocation,
-                textureBounds.getX(),
-                textureBounds.getY(),
-                textureBounds.getWidth(),
-                textureBounds.getHeight()
-        );
-    }
-
-    public static void renderTexture(
-            @NotNull GuiGraphics guiGraphics,
-            @NotNull ResourceLocation resourceLocation,
-            int x,
-            int y,
-            int width,
-            int height
-    ) {
-        RenderSystem.enableBlend();
-        guiGraphics.blit(resourceLocation, x, y, 0f, 0f, width, height, width, height);
-        RenderSystem.disableBlend();
-    }
-
-    public static void renderFittedCenterTexture(
-            @NotNull GuiGraphics guiGraphics,
-            @NotNull ResourceLocation resourceLocation,
-            @NotNull Rect2i textureBounds,
-            int textureWidth,
-            int textureHeight
-    ) {
-        renderFittedCenterTexture(
-                guiGraphics,
-                resourceLocation,
-                textureBounds.getX(),
-                textureBounds.getY(),
-                textureBounds.getWidth(),
-                textureBounds.getHeight(),
-                textureWidth,
-                textureHeight
-        );
-    }
-
-    public static void renderFittedCenterTexture(
-            @NotNull GuiGraphics guiGraphics,
-            @NotNull ResourceLocation resourceLocation,
-            int x,
-            int y,
-            int renderWidth,
-            int renderHeight,
-            int textureWidth,
-            int textureHeight
-    ) {
-        if (textureWidth < textureHeight) {
-            final var oldRenderWidth = renderWidth;
-
-            renderWidth *= ((float) textureWidth / textureHeight);
-            x += (oldRenderWidth - renderWidth) / 2;
-        } else if (textureHeight < textureWidth) {
-            final var oldRenderHeight = renderHeight;
-
-            renderHeight *= ((float) textureHeight / textureWidth);
-            y += (oldRenderHeight - renderHeight) / 2;
-        }
-
-        renderTexture(guiGraphics, resourceLocation, x, y, renderWidth, renderHeight);
-    }
-
     public static void renderScrollingText(
             @NotNull GuiGraphics guiGraphics,
             @NotNull Component text,

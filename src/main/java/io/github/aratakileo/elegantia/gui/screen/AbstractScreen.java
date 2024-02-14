@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.gui.screen;
 
-import io.github.aratakileo.elegantia.util.GuiGraphicsUtil;
+import io.github.aratakileo.elegantia.util.graphics.GuiGraphicsUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -27,12 +27,23 @@ public abstract class AbstractScreen extends Screen {
 
     @Override
     public final void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-// 1.20-1.20.1
-        renderBackground(guiGraphics);
-// 1.20.2-1.20.4
-//        renderBackground(guiGraphics, mouseX, mouseY, dt);
+        renderBackground(guiGraphics, mouseX, mouseY, dt);
         super.render(guiGraphics, mouseX, mouseY, dt);
         renderContent(guiGraphics, mouseX, mouseY, dt);
+    }
+
+// 1.20-1.20.1 only
+    @Override
+    @Deprecated(since = "0.0.1-beta", forRemoval = true)
+    public final void renderBackground(GuiGraphics guiGraphics) {
+        throw new RuntimeException("The use of this variant of the method is prohibited!");
+    }
+
+    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+// 1.20-1.20.1
+        super.renderBackground(guiGraphics);
+// 1.20.2-1.20.4
+//        super.renderBackground(guiGraphics, mouseX, mouseY, dt);
     }
 
     public void renderContent(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
@@ -45,5 +56,9 @@ public abstract class AbstractScreen extends Screen {
 
     public static @Nullable Screen getCurrentScreen() {
         return Minecraft.getInstance().screen;
+    }
+
+    public static void setScreen(@NotNull Screen screen) {
+        Minecraft.getInstance().setScreen(screen);
     }
 }

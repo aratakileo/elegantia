@@ -1,6 +1,5 @@
-package io.github.aratakileo.elegantia.util;
+package io.github.aratakileo.elegantia.gui;
 
-import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
 import io.github.aratakileo.elegantia.math.Rect2i;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -22,6 +21,11 @@ public class WidgetPositioner {
     private int paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0;
     private int marginLeft = 0, marginTop = 0, marginRight = 0, marginBottom = 0;
     private int gravity = GRAVITY_LEFT | GRAVITY_TOP;
+
+    public WidgetPositioner(int contentSize) {
+        this.contentWidth = contentSize;
+        this.contentHeight = contentSize;
+    }
 
     public WidgetPositioner(int contentWidth, int contentHeight) {
         this.contentWidth = contentWidth;
@@ -168,21 +172,21 @@ public class WidgetPositioner {
         return newBounds;
     }
 
-    public static @NotNull WidgetPositioner of(@NotNull AbstractWidget abstractWidget, int padding) {
-        return of(abstractWidget, padding, padding, padding, padding);
+    public static @NotNull WidgetPositioner of(@NotNull Rect2i sourceBounds, int padding) {
+        return of(sourceBounds, padding, padding, padding, padding);
     }
 
     public static @NotNull WidgetPositioner of(
-            @NotNull AbstractWidget abstractWidget,
+            @NotNull Rect2i sourceBounds,
             int paddingLeft,
             int paddingTop,
             int paddingRight,
             int paddingBottom
     ) {
         return new WidgetPositioner(
-                abstractWidget.getWidth() - paddingLeft - paddingRight,
-                abstractWidget.getHeight() - paddingTop - paddingBottom
-        );
+                sourceBounds.getWidth() - paddingLeft - paddingRight,
+                sourceBounds.getHeight() - paddingTop - paddingBottom
+        ).setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
     }
 
     public static @NotNull WidgetPositioner ofMessageContent(@NotNull Component message) {

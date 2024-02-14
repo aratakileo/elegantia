@@ -33,10 +33,10 @@ public abstract class Config {
     private final static ConcurrentHashMap<Class<? extends Config>, ConfigInfo> CONFIGS_INFO = new ConcurrentHashMap<>();
 
     public boolean getTriggerValue(@NotNull String trigger) {
-        final var triggerFields = getConfigInfo(getClass()).triggerFields;
+        final var triggerFields = Objects.requireNonNull(getConfigInfo(getClass())).triggerFields;
 
         if (!triggerFields.containsKey(trigger))
-            throw new ElegantiaConfigException("Trigger `" + trigger + "` does not exist");
+            throw new ConfigTriggerException("Trigger `" + trigger + "` does not exist");
 
         return getBooleanFieldValue(triggerFields.get(trigger));
     }
@@ -198,13 +198,14 @@ public abstract class Config {
             return null;
         }
 
-        final var fields = new ArrayList<Field>();
+        final var entryFields = new ArrayList<Field>();
+        final var entries = new ArrayList<EntryInfo>();
         final var triggeredFields = new HashMap<String, String>();
 
         for (final var field: configClass.getFields()) {
             final var isTrigger = field.isAnnotationPresent(Trigger.class);
 
-            if (!field.isAnnotationPresent(ConfigField.class)) {
+            if (!field.isAnnotationPresent(ConfigEntry.class)) {
                 if (isTrigger)
                     Elegantia.LOGGER.warn(
                             "Field `"
@@ -226,7 +227,7 @@ public abstract class Config {
                 continue;
             }
 
-            fields.add(field);
+            entryFields.add(field);
 
             if (isTrigger) {
                 final var triggerName = field.getAnnotation(Trigger.class).value();
@@ -242,7 +243,7 @@ public abstract class Config {
                                     + "`)!"
                     );
 
-                if (!field.getAnnotation(ConfigField.class).triggeredBy().isEmpty()) {
+                if (!field.getAnnotation(ConfigEntry.class).triggeredBy().isEmpty()) {
                     throw new ConfigTriggerException(
                             "Trigger cannot be triggered (trigger field: "
                                     + Classes.getFieldView(field)
@@ -254,8 +255,9 @@ public abstract class Config {
             }
         }
 
-        for (final var field: fields) {
-            final var triggeredBy = field.getAnnotation(ConfigField.class).triggeredBy();
+        for (final var field: entryFields) {
+            final var entryAnnotation = field.getAnnotation(ConfigEntry.class);
+            final var triggeredBy = entryAnnotation.triggeredBy();
 
             if (triggeredBy.isEmpty()) continue;
 
@@ -267,12 +269,19 @@ public abstract class Config {
                                 + triggeredBy
                                 + "`, which does not exist!"
                 );
+
+
+            entries.add(EntryInfo.value(
+                    EntryInfo.Type.BOOLEAN,
+                    field.getName(),
+                    field.isAnnotationPresent(Trigger.class) ? field.getAnnotation(Trigger.class).value() : null,
+                    triggeredBy,
+                    entryAnnotation.translationKey()
+            ));
         }
 
-        final var actions = new ArrayList<Action>();
-
         for (final var method: configClass.getMethods()) {
-            if (!method.isAnnotationPresent(ConfigField.class)) continue;
+            if (!method.isAnnotationPresent(ConfigEntry.class)) continue;
 
             if (method.getReturnType() != void.class)
                 throw new ElegantiaConfigException(
@@ -288,8 +297,8 @@ public abstract class Config {
                                 + "` cannot be represented as an action because it has parameters"
                 );
 
-            final var annotation = method.getAnnotation(ConfigField.class);
-            final var triggeredBy = annotation.triggeredBy();
+            final var annotationEntry = method.getAnnotation(ConfigEntry.class);
+            final var triggeredBy = annotationEntry.triggeredBy();
 
             if (!triggeredBy.isEmpty() && !triggeredFields.containsKey(triggeredBy))
                 throw new ElegantiaConfigException(
@@ -300,7 +309,7 @@ public abstract class Config {
                                 + "`, which does not exist!"
                 );
 
-            actions.add(new Action(method.getName(), annotation.translationKey(), () -> {
+            entries.add(EntryInfo.action(method.getName(), triggeredBy, annotationEntry.translationKey(), () -> {
                 try {
                     method.invoke(getInstance(configClass));
                 } catch (IllegalAccessException e) {
@@ -310,15 +319,14 @@ public abstract class Config {
                                     + "` as an action because cannot be accessed"
                     );
                 } catch (InvocationTargetException ignore) {}
-            }, triggeredBy));
+            }));
         }
 
         CONFIGS_INFO.put(configClass, new ConfigInfo(
                 modId,
                 configInstance,
-                fields,
-                triggeredFields,
-                actions
+                entries,
+                triggeredFields
         ));
 
         ModInfo.setConfigScreenGetter(modId, parent -> ConfigScreen.of(configClass, parent));
@@ -345,9 +353,8 @@ public abstract class Config {
     public record ConfigInfo(
             @NotNull String modId,
             @NotNull Config instance,
-            @NotNull List<Field> fields,
-            @NotNull HashMap<String, String> triggerFields,
-            @NotNull List<Action> actions
+            @NotNull List<EntryInfo> entries,
+            @NotNull HashMap<String, String> triggerFields
     ) {}
 
     public static class ElegantiaConfigException extends RuntimeException {

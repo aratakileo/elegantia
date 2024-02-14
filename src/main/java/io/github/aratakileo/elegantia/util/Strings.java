@@ -1,5 +1,6 @@
 package io.github.aratakileo.elegantia.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
@@ -7,6 +8,8 @@ import java.util.function.Function;
 
 public interface Strings {
     static @NotNull String camelToSnake(@NotNull String value) {
+        if (value.isEmpty()) return value;
+
         return value.replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2")
                 .replaceAll("([a-z])([A-Z])", "$1_$2")
                 .toLowerCase();
@@ -45,5 +48,9 @@ public interface Strings {
         }
 
         return source.substring(beginIndex, endIndex);
+    }
+
+    static @NotNull String capitalize(@NotNull String source) {
+        return StringUtils.capitalize(source);
     }
 }

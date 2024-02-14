@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
-public @interface ConfigField {
+public @interface ConfigEntry {
     String translationKey() default "";
     String triggeredBy() default "";
 }
