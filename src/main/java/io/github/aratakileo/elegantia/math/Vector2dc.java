@@ -26,12 +26,8 @@ public class Vector2dc implements Vector2dInterface {
     }
 
     @Override
-    public double get(int index) {
-        return switch (index) {
-            case 0 -> x;
-            case 1 -> y;
-            default -> throw new IllegalArgumentException();
-        };
+    public @NotNull Vector2dc sub(double value) {
+        return new Vector2dc(x - value, y - value);
     }
 
     @Override
@@ -65,6 +61,11 @@ public class Vector2dc implements Vector2dInterface {
     }
 
     @Override
+    public @NotNull Vector2dc add(double value) {
+        return new Vector2dc(x + value, y + value);
+    }
+
+    @Override
     public @NotNull Vector2dc add(double x, double y) {
         return new Vector2dc(this.x + x, this.y + y);
     }
@@ -95,6 +96,41 @@ public class Vector2dc implements Vector2dInterface {
     }
 
     @Override
+    public @NotNull Vector2dc mul(double value) {
+        return new Vector2dc(x * value, y * value);
+    }
+
+    @Override
+    public @NotNull Vector2dc mul(double x, double y) {
+        return new Vector2dc(this.x * x, this.y * y);
+    }
+
+    @Override
+    public @NotNull Vector2dc mul(@NotNull Vector2iInterface vector2iInterface) {
+        return new Vector2dc(x * vector2iInterface.x(), y * vector2iInterface.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc mul(@NotNull Vector2dInterface vector2dInterface) {
+        return new Vector2dc(x * vector2dInterface.x(), y * vector2dInterface.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc mul(@NotNull org.joml.Vector2ic vector2ic) {
+        return new Vector2dc(x * vector2ic.x(), y * vector2ic.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc mul(@NotNull org.joml.Vector2dc vector2dc) {
+        return new Vector2dc(x * vector2dc.x(), y * vector2dc.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc mul(@NotNull org.joml.Vector2fc vector2fc) {
+        return new Vector2dc(x * vector2fc.x(), y * vector2fc.y());
+    }
+
+    @Override
     public @NotNull Vector2dc copy() {
         return new Vector2dc(x, y);
     }
@@ -106,5 +142,21 @@ public class Vector2dc implements Vector2dInterface {
     @Override
     public String toString() {
         return "Vector2dc{%s, %s}".formatted(x, y);
+    }
+
+    public static @NotNull Vector2dc of(@NotNull Vector2iInterface vector2iInterface) {
+        return new Vector2dc(vector2iInterface.x(), vector2iInterface.y());
+    }
+
+    public static @NotNull Vector2dc of(@NotNull org.joml.Vector2ic vector2ic) {
+        return new Vector2dc(vector2ic.x(), vector2ic.y());
+    }
+
+    public static @NotNull Vector2dc of(@NotNull org.joml.Vector2dc vector2dc) {
+        return new Vector2dc(vector2dc.x(), vector2dc.y());
+    }
+
+    public static @NotNull Vector2dc of(@NotNull org.joml.Vector2fc vector2fc) {
+        return new Vector2dc(vector2fc.x(), vector2fc.y());
     }
 }

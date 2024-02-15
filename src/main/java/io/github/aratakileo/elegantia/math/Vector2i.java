@@ -25,15 +25,6 @@ public class Vector2i implements Vector2iInterface {
         return y;
     }
 
-    @Override
-    public int get(int index) {
-        return switch (index) {
-            case 0 -> x;
-            case 1 -> y;
-            default -> throw new IllegalArgumentException();
-        };
-    }
-
     public @NotNull Vector2i set(int index, int value) {
         switch (index) {
             case 0 -> this.x = value;
@@ -42,6 +33,11 @@ public class Vector2i implements Vector2iInterface {
         }
 
         return this;
+    }
+
+    @Override
+    public @NotNull Vector2i sub(int value) {
+        return sub(value, value);
     }
 
     @Override
@@ -57,8 +53,13 @@ public class Vector2i implements Vector2iInterface {
     }
 
     @Override
-    public @NotNull Vector2i sub(org.joml.@NotNull Vector2ic vector2ic) {
+    public @NotNull Vector2i sub(@NotNull org.joml.Vector2ic vector2ic) {
         return sub(vector2ic.x(), vector2ic.y());
+    }
+
+    @Override
+    public @NotNull Vector2i add(int value) {
+        return add(value, value);
     }
 
     @Override
@@ -74,8 +75,30 @@ public class Vector2i implements Vector2iInterface {
     }
 
     @Override
-    public @NotNull Vector2i add(org.joml.@NotNull Vector2ic vector2ic) {
+    public @NotNull Vector2i add(@NotNull org.joml.Vector2ic vector2ic) {
         return add(vector2ic.x(), vector2ic.y());
+    }
+
+    @Override
+    public @NotNull Vector2i mul(int value) {
+        return mul(value, value);
+    }
+
+    @Override
+    public @NotNull Vector2i mul(int x, int y) {
+        this.x *= x;
+        this.y *= y;
+        return this;
+    }
+
+    @Override
+    public @NotNull Vector2i mul(@NotNull Vector2iInterface vector2iInterface) {
+        return mul(vector2iInterface.x(), vector2iInterface.y());
+    }
+
+    @Override
+    public @NotNull Vector2i mul(@NotNull org.joml.Vector2ic vector2ic) {
+        return mul(vector2ic.x(), vector2ic.y());
     }
 
     @Override
@@ -90,5 +113,9 @@ public class Vector2i implements Vector2iInterface {
     @Override
     public String toString() {
         return "Vector2i{%d, %d}".formatted(x, y);
+    }
+
+    public static @NotNull Vector2i of(@NotNull org.joml.Vector2ic vector2ic) {
+        return new Vector2i(vector2ic.x(), vector2ic.y());
     }
 }

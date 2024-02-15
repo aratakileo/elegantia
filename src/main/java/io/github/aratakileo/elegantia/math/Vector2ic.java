@@ -26,12 +26,8 @@ public class Vector2ic implements Vector2iInterface {
     }
 
     @Override
-    public int get(int index) {
-        return switch (index) {
-            case 0 -> x;
-            case 1 -> y;
-            default -> throw new IllegalArgumentException();
-        };
+    public @NotNull Vector2ic sub(int value) {
+        return sub(value, value);
     }
 
     @Override
@@ -50,6 +46,11 @@ public class Vector2ic implements Vector2iInterface {
     }
 
     @Override
+    public @NotNull Vector2ic add(int value) {
+        return sub(value, value);
+    }
+
+    @Override
     public @NotNull Vector2ic add(int x, int y) {
         return new Vector2ic(this.x + x, this.y + y);
     }
@@ -65,6 +66,26 @@ public class Vector2ic implements Vector2iInterface {
     }
 
     @Override
+    public @NotNull Vector2ic mul(int value) {
+        return new Vector2ic(x * value, y * value);
+    }
+
+    @Override
+    public @NotNull Vector2ic mul(int x, int y) {
+        return new Vector2ic(this.x * x, this.y * y);
+    }
+
+    @Override
+    public @NotNull Vector2ic mul(@NotNull Vector2iInterface vector2iInterface) {
+        return new Vector2ic(x * vector2iInterface.x(), y * vector2iInterface.y());
+    }
+
+    @Override
+    public @NotNull Vector2ic mul(@NotNull org.joml.Vector2ic vector2ic) {
+        return new Vector2ic(x * vector2ic.x(), y * vector2ic.y());
+    }
+
+    @Override
     public @NotNull Vector2ic copy() {
         return new Vector2ic(x, y);
     }
@@ -76,5 +97,9 @@ public class Vector2ic implements Vector2iInterface {
     @Override
     public String toString() {
         return "Vector2ic{%d, %d}".formatted(x, y);
+    }
+
+    public static @NotNull Vector2ic of(@NotNull org.joml.Vector2ic vector2ic) {
+        return new Vector2ic(vector2ic.x(), vector2ic.y());
     }
 }
