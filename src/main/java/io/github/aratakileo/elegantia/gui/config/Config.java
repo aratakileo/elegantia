@@ -259,9 +259,7 @@ public abstract class Config {
             final var entryAnnotation = field.getAnnotation(ConfigEntry.class);
             final var triggeredBy = entryAnnotation.triggeredBy();
 
-            if (triggeredBy.isEmpty()) continue;
-
-            if (!triggeredFields.containsKey(triggeredBy))
+            if (!triggeredBy.isEmpty() && !triggeredFields.containsKey(triggeredBy))
                 throw new ElegantiaConfigException(
                         "Field `"
                                 + Classes.getFieldView(field)
@@ -269,7 +267,6 @@ public abstract class Config {
                                 + triggeredBy
                                 + "`, which does not exist!"
                 );
-
 
             entries.add(EntryInfo.value(
                     EntryInfo.Type.BOOLEAN,
@@ -297,8 +294,8 @@ public abstract class Config {
                                 + "` cannot be represented as an action because it has parameters"
                 );
 
-            final var annotationEntry = method.getAnnotation(ConfigEntry.class);
-            final var triggeredBy = annotationEntry.triggeredBy();
+            final var entryAnnotation = method.getAnnotation(ConfigEntry.class);
+            final var triggeredBy = entryAnnotation.triggeredBy();
 
             if (!triggeredBy.isEmpty() && !triggeredFields.containsKey(triggeredBy))
                 throw new ElegantiaConfigException(
@@ -309,7 +306,7 @@ public abstract class Config {
                                 + "`, which does not exist!"
                 );
 
-            entries.add(EntryInfo.action(method.getName(), triggeredBy, annotationEntry.translationKey(), () -> {
+            entries.add(EntryInfo.action(method.getName(), triggeredBy, entryAnnotation.translationKey(), () -> {
                 try {
                     method.invoke(getInstance(configClass));
                 } catch (IllegalAccessException e) {
