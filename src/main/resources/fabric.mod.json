@@ -21,5 +21,8 @@
         "library"
       ]
     }
+  },
+  "entrypoints": {
+    "client": ["io.github.aratakileo.elegantia.Elegantia"]
   }
 }

@@ -1,5 +1,7 @@
 package io.github.aratakileo.elegantia.gui.widget;
 
+import io.github.aratakileo.elegantia.drawable.Drawable;
+import io.github.aratakileo.elegantia.drawable.InteractableDrawable;
 import io.github.aratakileo.elegantia.gui.TooltipPositioner;
 import io.github.aratakileo.elegantia.math.Rect2i;
 import io.github.aratakileo.elegantia.math.Vector2iInterface;
@@ -24,7 +26,7 @@ import java.util.function.Supplier;
 
 public abstract class AbstractWidget implements Renderable, GuiEventListener, NarratableEntry {
     private boolean isFocused = false, wasFocused = false;
-    public boolean isActive = true, isVisible = true;
+    public boolean isEnabled = true, isVisible = true;
 
     protected boolean isHovered = false, wasHovered = false, wasHoveredBeforeRelease = false;
     protected @NotNull Supplier<@NotNull TooltipPositioner> tooltipPositionerGetter =
@@ -33,6 +35,8 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
                     !isHovered && isFocused() && Minecraft.getInstance().getLastInputType().isKeyboard()
             );
     protected float alpha = 1.0F;
+    protected @Nullable Drawable backgroundDrawable = null;
+
     protected final Rect2i bounds;
 
     private @NotNull Component message;
@@ -155,7 +159,14 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
             );
     }
 
-    public abstract void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt);
+    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+        if (Objects.isNull(backgroundDrawable)) return;
+
+        if (backgroundDrawable instanceof InteractableDrawable interactableDrawable)
+            interactableDrawable.setState(isHovered || isFocused, wasHoveredBeforeRelease, isEnabled);
+
+        backgroundDrawable.render(guiGraphics, bounds, dt);
+    }
 
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
@@ -170,7 +181,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     public boolean mouseClicked(double mouseX, double mouseY, @NotNull Mouse.Button button) {
         wasHoveredBeforeRelease = false;
 
-        return isActive
+        return isEnabled
                 && isVisible
                 && button.isLeft()
                 && bounds.contains(mouseX, mouseY)
@@ -189,7 +200,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     public boolean mouseReleased(double mouseX, double mouseY, @NotNull Mouse.Button button) {
-        return isActive
+        return isEnabled
                 && isVisible
                 && button.isLeft()
                 && bounds.contains(mouseX, mouseY)
@@ -217,7 +228,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
             double deltaY,
             @NotNull Mouse.Button button
     ) {
-        return isActive
+        return isEnabled
                 && isVisible
                 && button.isLeft()
                 && bounds.contains(mouseX, mouseY)
@@ -249,7 +260,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
     @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        return isActive
+        return isEnabled
                 && isFocused()
                 && isVisible
                 && (keyCode == 257 || keyCode == 32 || keyCode == 335)
@@ -263,12 +274,12 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
     @Override
     public ComponentPath nextFocusPath(FocusNavigationEvent focusNavigationEvent) {
-        return isActive && isVisible && !isFocused() ? ComponentPath.leaf(this) : null;
+        return isEnabled && isVisible && !isFocused() ? ComponentPath.leaf(this) : null;
     }
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return isActive && bounds.contains(mouseX, mouseY);
+        return isEnabled && bounds.contains(mouseX, mouseY);
     }
 
     @Override
@@ -310,7 +321,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
     @Override
     public boolean isActive() {
-        return isActive;
+        return isEnabled;
     }
 
     @Override
@@ -371,5 +382,9 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
     public void setTooltipPositionerGetter(@NotNull Supplier<@NotNull TooltipPositioner> tooltipPositionerGetter) {
         this.tooltipPositionerGetter = tooltipPositionerGetter;
+    }
+
+    public void setBackgroundDrawable(@Nullable Drawable backgroundDrawable) {
+        this.backgroundDrawable = backgroundDrawable;
     }
 }
