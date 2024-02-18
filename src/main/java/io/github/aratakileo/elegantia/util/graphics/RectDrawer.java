@@ -6,6 +6,7 @@ import io.github.aratakileo.elegantia.math.Rect2i;
 import io.github.aratakileo.elegantia.math.Vector2iInterface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,69 +14,98 @@ import java.io.IOException;
 
 public class RectDrawer {
     private final GuiGraphics guiGraphics;
-    private int x, y, width, height;
+    public final Rect2i bounds;
 
     public RectDrawer(@NotNull GuiGraphics guiGraphics, @NotNull Rect2i bounds) {
-        this(guiGraphics, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+        this.guiGraphics = guiGraphics;
+        this.bounds = bounds.copy();
+    }
+
+    public RectDrawer(@NotNull GuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int size) {
+        this.guiGraphics = guiGraphics;
+        this.bounds = new Rect2i(pos, size);
     }
 
     public RectDrawer(@NotNull GuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int width, int height) {
-        this(guiGraphics, pos.x(), pos.y(), width, height);
+        this.guiGraphics = guiGraphics;
+        this.bounds = new Rect2i(pos, width, height);
     }
 
     public RectDrawer(@NotNull GuiGraphics guiGraphics, int x, int y, int size) {
         this.guiGraphics = guiGraphics;
-        this.x = x;
-        this.y = y;
-        this.width = size;
-        this.height = size;
+        this.bounds = new Rect2i(x, y, size);
     }
 
     public RectDrawer(@NotNull GuiGraphics guiGraphics, int x, int y, int width, int height) {
         this.guiGraphics = guiGraphics;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        this.bounds = new Rect2i(x, y, width, height);
     }
 
     public @NotNull GuiGraphics getGuiGraphics() {
         return guiGraphics;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public @NotNull Rect2i getBounds() {
-        return new Rect2i(x, y, width, height);
-    }
-
     public @NotNull RectDrawer draw(int color) {
         if (color != 0x0) {
-            guiGraphics.fill(x, y, x + width, y + height, color);
+            guiGraphics.fill(bounds.getX(), bounds.getY(), bounds.getRight(), bounds.getBottom(), color);
             return this;
         }
 
         return this;
     }
 
-    public @NotNull RectDrawer drawGradient(int colorStart, int colorEnd) {
-        if (colorStart != 0x0 && colorEnd != 0x0) {
-            guiGraphics.fillGradient(x, y, x + width, y + height, colorStart, colorEnd);
-            return this;
+    public @NotNull RectDrawer drawGradient(int colorStart, int colorEnd, @NotNull GradientDirection direction) {
+        if (colorStart == 0x0 || colorEnd == 0x0) return this;
+
+        final var buffer = new RectVertexConsumer(
+                bounds,
+                guiGraphics.bufferSource().getBuffer(RenderType.gui()),
+                guiGraphics.pose().last().pose()
+        );
+
+        switch (direction) {
+            case HORIZONTAL -> {
+                buffer.coloredVertex(0, colorStart);
+                buffer.coloredVertex(1, colorStart);
+                buffer.coloredVertex(2, colorEnd);
+                buffer.coloredVertex(3, colorEnd);
+            }
+            case VERTICAL -> {
+                buffer.coloredVertex(0, colorStart);
+                buffer.coloredVertex(1, colorEnd);
+                buffer.coloredVertex(2, colorEnd);
+                buffer.coloredVertex(3, colorStart);
+            }
+            case DIAGONAL -> {
+                buffer.coloredVertex(0, colorEnd);
+                buffer.coloredVertex(1, colorStart);
+                buffer.coloredVertex(2, colorEnd);
+                buffer.coloredVertex(3, colorStart);
+            }
+            case CORNER_LEFT_TOP -> {
+                buffer.coloredVertex(0, colorStart);
+                buffer.coloredVertex(1, colorEnd);
+                buffer.coloredVertex(2, colorEnd);
+                buffer.coloredVertex(3, colorEnd);
+            }
+            case CORNER_LEFT_BOTTOM -> {
+                buffer.coloredVertex(0, colorEnd);
+                buffer.coloredVertex(1, colorStart);
+                buffer.coloredVertex(2, colorEnd);
+                buffer.coloredVertex(3, colorEnd);
+            }
+            case CORNER_RIGHT_BOTTOM -> {
+                buffer.coloredVertex(0, colorEnd);
+                buffer.coloredVertex(1, colorEnd);
+                buffer.coloredVertex(2, colorStart);
+                buffer.coloredVertex(3, colorEnd);
+            }
+            case CORNER_RIGHT_TOP -> {
+                buffer.coloredVertex(0, colorEnd);
+                buffer.coloredVertex(1, colorEnd);
+                buffer.coloredVertex(2, colorEnd);
+                buffer.coloredVertex(3, colorStart);
+            }
         }
 
         return this;
@@ -84,21 +114,21 @@ public class RectDrawer {
     public @NotNull RectDrawer drawStroke(int color, int thickness) {
         if (color == 0x0 || thickness == 0) return this;
 
-        guiGraphics.fill(x, y, x + width, y + thickness, color);
-        guiGraphics.fill(x, y + height - thickness, x + width, y + height, color);
+        guiGraphics.fill(bounds.getX(), bounds.getY(), bounds.getRight(), bounds.getY(), + thickness, color);
+        guiGraphics.fill(bounds.getX(), bounds.getBottom(), - thickness, bounds.getRight(), bounds.getBottom(), color);
 
         guiGraphics.fill(
-                x,
-                y + thickness,
-                x + thickness,
-                y + height - thickness,
+                bounds.getX(),
+                bounds.getY(), + thickness,
+                bounds.getX() + thickness,
+                bounds.getBottom() - thickness,
                 color
         );
         guiGraphics.fill(
-                x + width - thickness,
-                y + thickness,
-                x + width,
-                y + height - thickness,
+                bounds.getRight() - thickness,
+                bounds.getY(), + thickness,
+                bounds.getRight(),
+                bounds.getBottom() - thickness,
                 color
         );
 
@@ -107,7 +137,17 @@ public class RectDrawer {
 
     public @NotNull RectDrawer renderTexture(@NotNull ResourceLocation texture) {
         RenderSystem.enableBlend();
-        guiGraphics.blit(texture, x, y, 0f, 0f, width, height, width, height);
+        guiGraphics.blit(
+                texture,
+                bounds.getX(),
+                bounds.getY(),
+                0f,
+                0f,
+                bounds.getWidth(),
+                bounds.getHeight(),
+                bounds.getWidth(),
+                bounds.getHeight()
+        );
         RenderSystem.disableBlend();
 
         return this;
@@ -130,7 +170,10 @@ public class RectDrawer {
             int textureWidth,
             int textureHeight
     ) {
-        int renderWidth = width, renderHeight = height, renderX = x, renderY = y;
+        int renderWidth = bounds.getWidth(),
+                renderHeight = bounds.getHeight(),
+                renderX = bounds.getX(),
+                renderY = bounds.getY();
 
         if (textureWidth < textureHeight) {
             final var oldRenderWidth = renderWidth;
@@ -160,24 +203,23 @@ public class RectDrawer {
         return this;
     }
 
-    public @NotNull RectDrawer redefineBounds(@NotNull Rect2i bounds) {
-        return redefineBounds(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
-    }
-
-    public @NotNull RectDrawer redefineBounds(@NotNull Vector2iInterface pos, int width, int height) {
-        return redefineBounds(pos.x(), pos.y(), width, height);
-    }
-
-    public @NotNull RectDrawer redefineBounds(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        return this;
-    }
-
     @Override
     public String toString() {
-        return "RectDrawer{%s, %s, %s, %s}".formatted(x, y, width, height);
+        return "RectDrawer{%s, %s, %s, %s}".formatted(
+                bounds.getX(),
+                bounds.getY(),
+                bounds.getWidth(),
+                bounds.getHeight()
+        );
+    }
+
+    public enum GradientDirection {
+        HORIZONTAL,
+        VERTICAL,
+        DIAGONAL,
+        CORNER_LEFT_TOP,
+        CORNER_LEFT_BOTTOM,
+        CORNER_RIGHT_BOTTOM,
+        CORNER_RIGHT_TOP
     }
 }

@@ -94,9 +94,11 @@ public class VerticalScrollbar extends AbstractWidget {
     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
         new RectDrawer(guiGraphics, bounds)
                 .draw(0xaa222222)
-                .drawStroke(0xaa000000, padding)
-                .redefineBounds(getRenderableThumbRect())
-                .draw(getRenderableThumbRect().contains(mouseX, mouseY) ? 0xaacbcbcb : 0xaa6c757d);
+                .drawStroke(0xaa000000, padding);
+
+        new RectDrawer(guiGraphics, getRenderableThumbRect()).draw(
+                getRenderableThumbRect().contains(mouseX, mouseY) ? 0xaacbcbcb : 0xaa6c757d
+        );
     }
 
     @Override

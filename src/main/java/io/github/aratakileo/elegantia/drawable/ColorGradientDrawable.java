@@ -5,10 +5,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class ColorGradientDrawable extends Drawable {
     private int colorStart, colorEnd;
+    private @NotNull RectDrawer.GradientDirection gradientDirection;
 
-    public ColorGradientDrawable(int colorStart, int colorEnd) {
+    public ColorGradientDrawable(
+            int colorStart,
+            int colorEnd,
+            @NotNull RectDrawer.GradientDirection gradientDirection
+    ) {
         this.colorStart = colorStart;
         this.colorEnd = colorEnd;
+        this.gradientDirection = gradientDirection;
     }
 
     public void setColorStart(int colorStart) {
@@ -19,8 +25,12 @@ public class ColorGradientDrawable extends Drawable {
         this.colorEnd = colorEnd;
     }
 
+    public void setGradientDirection(@NotNull RectDrawer.GradientDirection gradientDirection) {
+        this.gradientDirection = gradientDirection;
+    }
+
     @Override
     protected void render(@NotNull RectDrawer rectDrawer, float dt) {
-        rectDrawer.drawGradient(colorStart, colorEnd);
+        rectDrawer.drawGradient(colorStart, colorEnd, gradientDirection);
     }
 }
