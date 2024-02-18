@@ -23,6 +23,14 @@ public class RectDrawer {
         this(guiGraphics, pos.x(), pos.y(), width, height);
     }
 
+    public RectDrawer(@NotNull GuiGraphics guiGraphics, int x, int y, int size) {
+        this.guiGraphics = guiGraphics;
+        this.x = x;
+        this.y = y;
+        this.width = size;
+        this.height = size;
+    }
+
     public RectDrawer(@NotNull GuiGraphics guiGraphics, int x, int y, int width, int height) {
         this.guiGraphics = guiGraphics;
         this.x = x;
