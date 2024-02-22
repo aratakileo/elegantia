@@ -114,19 +114,19 @@ public class RectDrawer {
     public @NotNull RectDrawer drawStroke(int color, int thickness) {
         if (color == 0x0 || thickness == 0) return this;
 
-        guiGraphics.fill(bounds.getX(), bounds.getY(), bounds.getRight(), bounds.getY(), + thickness, color);
-        guiGraphics.fill(bounds.getX(), bounds.getBottom(), - thickness, bounds.getRight(), bounds.getBottom(), color);
+        guiGraphics.fill(bounds.getX(), bounds.getY(), bounds.getRight(), bounds.getY() + thickness, color);
+        guiGraphics.fill(bounds.getX(), bounds.getBottom() - thickness, bounds.getRight(), bounds.getBottom(), color);
 
         guiGraphics.fill(
                 bounds.getX(),
-                bounds.getY(), + thickness,
+                bounds.getY() + thickness,
                 bounds.getX() + thickness,
                 bounds.getBottom() - thickness,
                 color
         );
         guiGraphics.fill(
                 bounds.getRight() - thickness,
-                bounds.getY(), + thickness,
+                bounds.getY() + thickness,
                 bounds.getRight(),
                 bounds.getBottom() - thickness,
                 color
