@@ -51,11 +51,11 @@ public class ModrinthUpdateChecker {
     }
 
     public ModrinthUpdateChecker(@NotNull String modId, @NotNull String projectId) {
-        this(modId, projectId, Platform.getCurrentPlatform());
+        this(modId, projectId, Platform.getCurrent());
     }
 
     public ModrinthUpdateChecker(@NotNull String modId, @NotNull String projectId, @NotNull Platform platform) {
-        this(modId, projectId, Platform.getCurrentMinecraftVersion(), platform);
+        this(modId, projectId, Platform.getMinecraftVersion(), platform);
     }
 
     public ModrinthUpdateChecker(
@@ -141,13 +141,15 @@ public class ModrinthUpdateChecker {
         if (modId.equals(Elegantia.MODID))
             return baseRequestHeader;
 
-        final var requestHeaderBuilder = new StringBuilder("%s for third party mod `%s`".formatted(
+        final var modInfo = ModInfo.get(modId).orElseThrow();
+        final var requestHeaderBuilder = new StringBuilder("%s for 3rd party mod `%s`".formatted(
                 baseRequestHeader,
-                ModInfo.getName(modId).orElse("unknown")
+                modInfo.getName()
         ));
 
-        ModInfo.getSourcesUrl(modId).ifPresent(sourceUrl -> requestHeaderBuilder.append("(%s)".formatted(
-                sourceUrl.startsWith("https://") ? sourceUrl.substring(8) : sourceUrl
+        ModInfo.getSourcesUrl(modId).ifPresent(sourceUrl -> requestHeaderBuilder.append("(%s@%s)".formatted(
+                sourceUrl.strip().replaceFirst("^https?://", ""),
+                modInfo.getVersion()
         )));
 
         return requestHeaderBuilder.toString();

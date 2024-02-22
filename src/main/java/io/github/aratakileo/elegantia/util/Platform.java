@@ -6,15 +6,18 @@ import org.jetbrains.annotations.NotNull;
 public enum Platform {
     FABRIC,
     QUILT,
-    FORGE;
+    FORGE,
+    NEOFORGE;
 
-    public static @NotNull Platform getCurrentPlatform() {
-        if (ModInfo.isModLoaded("forge")) return FORGE;
+    public static @NotNull Platform getCurrent() {
+        if (ModInfo.isModLoaded("forge")) return ModInfo.getName("forge").map(
+                name -> name.equalsIgnoreCase("neoforge") ? NEOFORGE : FORGE
+        ).orElse(FORGE);
 
         return ModInfo.isModLoaded("quilt_loader") ? QUILT : FABRIC;
     }
 
-    public static @NotNull String getCurrentMinecraftVersion() {
+    public static @NotNull String getMinecraftVersion() {
         return SharedConstants.getCurrentVersion().getName();
     }
 }
