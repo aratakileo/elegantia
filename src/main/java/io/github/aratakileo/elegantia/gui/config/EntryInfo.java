@@ -80,7 +80,7 @@ public class EntryInfo {
         return Objects.isNull(name) ? fullTranslationKey : Strings.requireReturnNotAsArgument(
                 fullTranslationKey,
                 Language.getInstance()::getOrDefault,
-                "%s@%s (%s)".formatted(Strings.capitalize(getType().name().toLowerCase()), name, fullTranslationKey)
+                "%s@%s".formatted(Strings.capitalize(getType().name().toLowerCase()), name)
         );
     }
 
