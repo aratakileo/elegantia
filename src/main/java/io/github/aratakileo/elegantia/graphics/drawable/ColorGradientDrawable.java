@@ -1,6 +1,6 @@
-package io.github.aratakileo.elegantia.drawable;
+package io.github.aratakileo.elegantia.graphics.drawable;
 
-import io.github.aratakileo.elegantia.util.graphics.RectDrawer;
+import io.github.aratakileo.elegantia.graphics.RectDrawer;
 import org.jetbrains.annotations.NotNull;
 
 public class ColorGradientDrawable extends Drawable {

@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.util.graphics;
+package io.github.aratakileo.elegantia.graphics;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.aratakileo.elegantia.math.Rect2i;

@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.gui.widget;
 
-import io.github.aratakileo.elegantia.drawable.ButtonDrawable;
-import io.github.aratakileo.elegantia.util.graphics.GuiGraphicsUtil;
+import io.github.aratakileo.elegantia.graphics.drawable.ButtonDrawable;
+import io.github.aratakileo.elegantia.graphics.GuiGraphicsUtil;
 import io.github.aratakileo.elegantia.math.Rect2i;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

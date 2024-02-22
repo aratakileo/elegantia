@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.drawable;
+package io.github.aratakileo.elegantia.graphics.drawable;
 
 public abstract class InteractableDrawable extends Drawable {
     protected boolean isHoveredOrFocused, isPressed, isEnabled;

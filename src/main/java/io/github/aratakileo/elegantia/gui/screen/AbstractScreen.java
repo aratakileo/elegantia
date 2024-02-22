@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.gui.screen;
 
-import io.github.aratakileo.elegantia.util.graphics.GuiGraphicsUtil;
+import io.github.aratakileo.elegantia.graphics.GuiGraphicsUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;

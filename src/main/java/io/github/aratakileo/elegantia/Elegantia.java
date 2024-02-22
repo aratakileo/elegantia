@@ -3,7 +3,7 @@ package io.github.aratakileo.elegantia;
 import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.config.ConfigEntry;
 import io.github.aratakileo.elegantia.util.HudRenderCallback;
-import io.github.aratakileo.elegantia.util.graphics.RectDrawer;
+import io.github.aratakileo.elegantia.graphics.RectDrawer;
 import net.fabricmc.api.ClientModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
