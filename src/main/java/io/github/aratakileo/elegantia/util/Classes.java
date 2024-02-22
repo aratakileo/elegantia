@@ -14,7 +14,7 @@ public interface Classes {
         return getFieldOrMethodView(method.getDeclaringClass(), method.getName());
     }
 
-    static @NotNull String getFieldOrMethodView(@NotNull Class<?> owner, @NotNull String fieldName) {
-        return owner.getName() + '#' + fieldName;
+    static @NotNull String getFieldOrMethodView(@NotNull Class<?> owner, @NotNull String fieldOrMethodName) {
+        return owner.getName() + '#' + fieldOrMethodName;
     }
 }
