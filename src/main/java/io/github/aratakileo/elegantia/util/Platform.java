@@ -12,7 +12,7 @@ public enum Platform {
     public static @NotNull Platform getCurrent() {
         if (ModInfo.isModLoaded("forge")) return ModInfo.getName("forge").map(
                 name -> name.equalsIgnoreCase("neoforge") ? NEOFORGE : FORGE
-        ).orElse(FORGE);
+        ).orElseThrow();
 
         return ModInfo.isModLoaded("quilt_loader") ? QUILT : FABRIC;
     }
