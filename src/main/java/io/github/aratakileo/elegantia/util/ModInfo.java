@@ -45,6 +45,19 @@ public abstract class ModInfo {
     public void setConfigScreenGetter(@NotNull Function<Screen, Screen> configScreenGetter) {
         if (!isModLoaded("modmenu")) return;
 
+        /*
+         * This check is necessary to avoid crashing when launching the mod by Forge/Neoforge in situations:
+         *  - Sinytra Connector is installed without Forgified Fabric API
+         *  - Sinytra Connector and Connector Extras are installed
+         *
+         * NOTE: Mod with id `fabric_api` is Forgified Fabric API
+         */
+        if (
+                isModLoaded("connectormod")
+                        && !isModLoaded("fabric_api")
+                        || isModLoaded("connectorextras")
+        ) return;
+
         try {
             /*
              * Adding configuration screens is necessary in this way, due to the fact
