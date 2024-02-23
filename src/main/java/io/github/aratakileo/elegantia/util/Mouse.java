@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public class Mouse {
+    private Mouse() {}
+
     private static @NotNull MouseHandler getMouseHandler() {
         return Minecraft.getInstance().mouseHandler;
     }

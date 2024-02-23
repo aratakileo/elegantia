@@ -3,13 +3,15 @@ package io.github.aratakileo.elegantia.gui.config;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.github.aratakileo.elegantia.Elegantia;
+import io.github.aratakileo.elegantia.exception.NoSuchModException;
 import io.github.aratakileo.elegantia.gui.screen.ConfigScreen;
 import io.github.aratakileo.elegantia.util.Classes;
 import io.github.aratakileo.elegantia.util.ModInfo;
 import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
@@ -23,6 +25,8 @@ import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
 public abstract class Config {
+    private final static Logger LOGGER = LoggerFactory.getLogger(Config.class);
+
     private final static Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .setPrettyPrinting()
@@ -45,12 +49,12 @@ public abstract class Config {
         try {
             getClass().getField(fieldName).set(this, value);
         } catch (IllegalAccessException e) {
-            Elegantia.LOGGER.warn(
+            LOGGER.warn(
                     "Failed to set config field `" + Classes.getFieldOrMethodView(getClass(), fieldName) + '`',
                     e
             );
         } catch (NoSuchFieldException e) {
-            Elegantia.LOGGER.error(
+            LOGGER.error(
                     "Failed to set a non-existent config field `"
                             + Classes.getFieldOrMethodView(getClass(), fieldName)
                             + '`',
@@ -63,12 +67,12 @@ public abstract class Config {
         try {
             return getClass().getField(fieldName).get(this);
         } catch (IllegalAccessException e) {
-            Elegantia.LOGGER.warn(
+            LOGGER.warn(
                     "Failed to get config field `" + Classes.getFieldOrMethodView(getClass(), fieldName) + '`',
                     e
             );
         } catch (NoSuchFieldException e) {
-            Elegantia.LOGGER.error(
+            LOGGER.error(
                     "Failed to get a non-existent config field `"
                             + Classes.getFieldOrMethodView(getClass(), fieldName)
                             + '`',
@@ -125,7 +129,7 @@ public abstract class Config {
 
                 return configInstance;
             } catch (Exception e) {
-                Elegantia.LOGGER.error("Failed to load config by path `" + file.getPath() + "`: ", e);
+                LOGGER.error("Failed to load config by path `" + file.getPath() + "`: ", e);
             }
 
             return null;
@@ -138,7 +142,7 @@ public abstract class Config {
 
             return configInstance;
         } catch (Exception e) {
-            Elegantia.LOGGER.error("Failed to create a new instance of `" + configClass.getName() + "`: ", e);
+            LOGGER.error("Failed to create a new instance of `" + configClass.getName() + "`: ", e);
         }
 
         return null;
@@ -148,7 +152,7 @@ public abstract class Config {
         final var parentFile = file.getParentFile();
 
         if (!parentFile.exists() && !parentFile.mkdir())
-            Elegantia.LOGGER.warn(
+            LOGGER.warn(
                     "Failed to make dir `"
                             + parentFile.getPath()
                             + "`. Possible reason: insufficient permissions to perform this action"
@@ -159,7 +163,7 @@ public abstract class Config {
             fileWriter.write(GSON.toJson(configInstance));
             fileWriter.close();
         } catch (Exception e) {
-            Elegantia.LOGGER.error("Failed to save config by path `" + file.getPath() + "`: ", e);
+            LOGGER.error("Failed to save config by path `" + file.getPath() + "`: ", e);
         }
     }
 
@@ -184,17 +188,16 @@ public abstract class Config {
             );
 
         if (CONFIGS_INFO.containsKey(configClass)) {
-            Elegantia.LOGGER.warn("Config `" + configClass.getName() + "` is already inited!");
+            LOGGER.warn("Config `" + configClass.getName() + "` is already inited!");
             return null;
         }
 
-        if (!ModInfo.isModLoaded(modId))
-            throw new ElegantiaConfigException("Mod with id `" + modId + "` does not exist!");
+        if (!ModInfo.isModLoaded(modId)) throw new NoSuchModException("id=" + modId);
 
         final var configInstance = load(configClass, getConfigFile(modId));
 
         if (Objects.isNull(configInstance)) {
-            Elegantia.LOGGER.warn("Failed to init config `" + configClass.getName() + '`');
+            LOGGER.warn("Failed to init config `" + configClass.getName() + '`');
             return null;
         }
 
@@ -207,7 +210,7 @@ public abstract class Config {
 
             if (!field.isAnnotationPresent(ConfigEntry.class)) {
                 if (isTrigger)
-                    Elegantia.LOGGER.warn(
+                    LOGGER.warn(
                             "Field `"
                                     + Classes.getFieldView(field)
                                     + "` is not marked with the @ConfigField annotation "
@@ -219,7 +222,7 @@ public abstract class Config {
             }
 
             if (field.getType() != boolean.class) {
-                Elegantia.LOGGER.warn(
+                LOGGER.warn(
                         "Field `"
                                 + Classes.getFieldView(field)
                                 + "` has unsupported config field type. This field will be skipped"
@@ -260,7 +263,7 @@ public abstract class Config {
             final var triggeredBy = entryAnnotation.triggeredBy();
 
             if (!triggeredBy.isEmpty() && !triggeredFields.containsKey(triggeredBy))
-                throw new ElegantiaConfigException(
+                throw new ConfigTriggerException(
                         "Field `"
                                 + Classes.getFieldView(field)
                                 + "` indicates a dependency on trigger `"

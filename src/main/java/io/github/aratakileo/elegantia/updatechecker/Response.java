@@ -3,14 +3,10 @@ package io.github.aratakileo.elegantia.updatechecker;
 import org.jetbrains.annotations.NotNull;
 
 public class Response {
-    private final ResponseCode responseCode;
+    public final ResponseCode responseCode;
 
     protected Response(@NotNull ResponseCode responseCode) {
         this.responseCode = responseCode;
-    }
-
-    public @NotNull ResponseCode getResponseCode() {
-        return responseCode;
     }
 
     public boolean isFailed() {
@@ -19,6 +15,10 @@ public class Response {
 
     public boolean doesNotExistAtModrinth() {
         return responseCode.doesNotExistAtModrinth();
+    }
+
+    public boolean isNoVersionsFound() {
+        return responseCode.isNoVersionsFound();
     }
 
     public boolean isSuccessful() {
@@ -40,5 +40,10 @@ public class Response {
             @NotNull String downloadUrl
     ) {
         return new SuccessfulResponse(responseCode, definedVersion, versionPageUrl, downloadUrl);
+    }
+
+    @Override
+    public String toString() {
+        return "Response{responseCode=%s}".formatted(responseCode);
     }
 }

@@ -53,4 +53,21 @@ public interface Strings {
     static @NotNull String capitalize(@NotNull String source) {
         return StringUtils.capitalize(source);
     }
+
+    static @NotNull String repr(@NotNull String value) {
+        final var stringBuilder = new StringBuilder("\"");
+
+        for (final var ch: value.toCharArray()) {
+            if (ch == '\n') {
+                stringBuilder.append("\\n");
+                continue;
+            }
+
+            if (ch == '"' || ch == '\\') stringBuilder.append('\\');
+
+            stringBuilder.append(ch);
+        }
+
+        return stringBuilder.append('"').toString();
+    }
 }
