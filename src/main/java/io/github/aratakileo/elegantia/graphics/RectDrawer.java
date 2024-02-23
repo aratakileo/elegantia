@@ -16,29 +16,9 @@ public class RectDrawer {
     private final GuiGraphics guiGraphics;
     public final Rect2i bounds;
 
-    public RectDrawer(@NotNull GuiGraphics guiGraphics, @NotNull Rect2i bounds) {
+    private RectDrawer(@NotNull GuiGraphics guiGraphics, @NotNull Rect2i bounds) {
         this.guiGraphics = guiGraphics;
-        this.bounds = bounds.copy();
-    }
-
-    public RectDrawer(@NotNull GuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int size) {
-        this.guiGraphics = guiGraphics;
-        this.bounds = new Rect2i(pos, size);
-    }
-
-    public RectDrawer(@NotNull GuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int width, int height) {
-        this.guiGraphics = guiGraphics;
-        this.bounds = new Rect2i(pos, width, height);
-    }
-
-    public RectDrawer(@NotNull GuiGraphics guiGraphics, int x, int y, int size) {
-        this.guiGraphics = guiGraphics;
-        this.bounds = new Rect2i(x, y, size);
-    }
-
-    public RectDrawer(@NotNull GuiGraphics guiGraphics, int x, int y, int width, int height) {
-        this.guiGraphics = guiGraphics;
-        this.bounds = new Rect2i(x, y, width, height);
+        this.bounds = bounds;
     }
 
     public @NotNull GuiGraphics getGuiGraphics() {
@@ -211,6 +191,31 @@ public class RectDrawer {
                 bounds.getWidth(),
                 bounds.getHeight()
         );
+    }
+
+    public static @NotNull RectDrawer with(@NotNull GuiGraphics guiGraphics, @NotNull Rect2i rect2i) {
+        return new RectDrawer(guiGraphics, rect2i.copy());
+    }
+
+    public static RectDrawer with(@NotNull GuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int size) {
+        return new RectDrawer(guiGraphics, new Rect2i(pos, size));
+    }
+
+    public static RectDrawer with(
+            @NotNull GuiGraphics guiGraphics,
+            @NotNull Vector2iInterface pos,
+            int width,
+            int height
+    ) {
+        return new RectDrawer(guiGraphics, new Rect2i(pos, width, height));
+    }
+
+    public static RectDrawer with(@NotNull GuiGraphics guiGraphics, int x, int y, int size) {
+        return new RectDrawer(guiGraphics, new Rect2i(x, y, size));
+    }
+
+    public static RectDrawer with(@NotNull GuiGraphics guiGraphics, int x, int y, int width, int height) {
+        return new RectDrawer(guiGraphics, new Rect2i(x, y, width, height));
     }
 
     public enum GradientDirection {

@@ -19,7 +19,7 @@ public abstract class Drawable {
     protected abstract void render(@NotNull RectDrawer rectDrawer, float dt);
 
     public void render(@NotNull GuiGraphics guiGraphics, @NotNull Rect2i bounds, float dt) {
-        final var rectDrawer = new RectDrawer(guiGraphics, bounds);
+        final var rectDrawer = RectDrawer.with(guiGraphics, bounds);
 
         render(rectDrawer, dt);
 
