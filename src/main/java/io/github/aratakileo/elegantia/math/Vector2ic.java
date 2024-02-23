@@ -36,6 +36,16 @@ public class Vector2ic implements Vector2iInterface {
     }
 
     @Override
+    public @NotNull Vector2ic neg() {
+        return new Vector2ic(-x, -y);
+    }
+
+    @Override
+    public @NotNull Vector2ic abs() {
+        return new Vector2ic(Math.abs(x), Math.abs(y));
+    }
+
+    @Override
     public @NotNull Vector2ic sub(@NotNull Vector2iInterface vector2iInterface) {
         return new Vector2ic(x - vector2iInterface.x(), y - vector2iInterface.y());
     }
@@ -83,6 +93,26 @@ public class Vector2ic implements Vector2iInterface {
     @Override
     public @NotNull Vector2ic mul(@NotNull org.joml.Vector2ic vector2ic) {
         return new Vector2ic(x * vector2ic.x(), y * vector2ic.y());
+    }
+
+    @Override
+    public @NotNull Vector2ic div(int value) {
+        return new Vector2ic(x / value, y / value);
+    }
+
+    @Override
+    public @NotNull Vector2ic div(int x, int y) {
+        return new Vector2ic(this.x / x, this.y / y);
+    }
+
+    @Override
+    public @NotNull Vector2ic div(@NotNull Vector2iInterface vector2iInterface) {
+        return new Vector2ic(x / vector2iInterface.x(), y / vector2iInterface.y());
+    }
+
+    @Override
+    public @NotNull Vector2ic div(@NotNull org.joml.Vector2ic vector2ic) {
+        return new Vector2ic(x / vector2ic.x(), y / vector2ic.y());
     }
 
     @Override

@@ -26,6 +26,16 @@ public class Vector2dc implements Vector2dInterface {
     }
 
     @Override
+    public @NotNull Vector2dc neg() {
+        return new Vector2dc(-x, -y);
+    }
+
+    @Override
+    public @NotNull Vector2dc abs() {
+        return new Vector2dc(Math.abs(x), Math.abs(y));
+    }
+
+    @Override
     public @NotNull Vector2dc sub(double value) {
         return new Vector2dc(x - value, y - value);
     }
@@ -128,6 +138,56 @@ public class Vector2dc implements Vector2dInterface {
     @Override
     public @NotNull Vector2dc mul(@NotNull org.joml.Vector2fc vector2fc) {
         return new Vector2dc(x * vector2fc.x(), y * vector2fc.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc div(double value) {
+        return new Vector2dc(x / value, x / value);
+    }
+
+    @Override
+    public @NotNull Vector2dc div(double x, double y) {
+        return new Vector2dc(this.x / x, this.y / y);
+    }
+
+    @Override
+    public @NotNull Vector2dc div(@NotNull Vector2iInterface vector2iInterface) {
+        return new Vector2dc(x / vector2iInterface.x(), y / vector2iInterface.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc div(@NotNull Vector2dInterface vector2dInterface) {
+        return new Vector2dc(x / vector2dInterface.x(), y / vector2dInterface.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc div(@NotNull org.joml.Vector2ic vector2ic) {
+        return new Vector2dc(x / vector2ic.x(), y / vector2ic.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc div(@NotNull org.joml.Vector2dc vector2dc) {
+        return new Vector2dc(x / vector2dc.x(), y / vector2dc.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc div(@NotNull org.joml.Vector2fc vector2fc) {
+        return new Vector2dc(x / vector2fc.x(), y / vector2fc.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc floor() {
+        return new Vector2dc(Math.floor(x), Math.floor(y));
+    }
+
+    @Override
+    public @NotNull Vector2dc ceil() {
+        return new Vector2dc(Math.floor(x), Math.floor(y));
+    }
+
+    @Override
+    public @NotNull Vector2dc round() {
+        return new Vector2dc(Math.round(x), Math.round(y));
     }
 
     @Override
