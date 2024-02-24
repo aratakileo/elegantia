@@ -4,6 +4,7 @@
   "package": "io.github.aratakileo.elegantia.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ReloadableResourceManagerMixin"
   ],
   "client": [
     "GuiMixin"

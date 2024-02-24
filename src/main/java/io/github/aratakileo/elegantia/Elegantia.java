@@ -2,8 +2,6 @@ package io.github.aratakileo.elegantia;
 
 import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.config.ConfigEntry;
-import io.github.aratakileo.elegantia.util.HudRenderCallback;
-import io.github.aratakileo.elegantia.graphics.RectDrawer;
 import io.github.aratakileo.elegantia.util.Platform;
 import net.fabricmc.api.ClientModInitializer;
 import org.slf4j.Logger;
@@ -21,30 +19,6 @@ public class Elegantia implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Config.init(Conf.class, "elegantia");
-        HudRenderCallback.EVENT.register((guiGraphics, dt) -> RectDrawer.with(
-                guiGraphics,
-                50,
-                50,
-                50
-        ).drawGradient(0xff4caf50, 0xfff44336, RectDrawer.GradientDirection.CORNER_LEFT_TOP));
-        HudRenderCallback.EVENT.register((guiGraphics, dt) -> RectDrawer.with(
-                guiGraphics,
-                150,
-                50,
-                50
-        ).drawGradient(0xff4caf50, 0xfff44336, RectDrawer.GradientDirection.CORNER_RIGHT_TOP));
-        HudRenderCallback.EVENT.register((guiGraphics, dt) -> RectDrawer.with(
-                guiGraphics,
-                50,
-                150,
-                50
-        ).drawGradient(0xff4caf50, 0xfff44336, RectDrawer.GradientDirection.CORNER_LEFT_BOTTOM));
-        HudRenderCallback.EVENT.register((guiGraphics, dt) -> RectDrawer.with(
-                guiGraphics,
-                150,
-                150,
-                50
-        ).drawGradient(0xff4caf50, 0xfff44336, RectDrawer.GradientDirection.CORNER_RIGHT_BOTTOM));
 
         LOGGER.info("Current platform: {}", Platform.getCurrent().name());
     }
