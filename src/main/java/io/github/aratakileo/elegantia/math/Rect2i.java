@@ -358,6 +358,28 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return copy().setIpSize(getWidth() + horizontal, getHeight() + vertical);
     }
 
+    public @NotNull Rect2i mul(int value) {
+        return new Rect2i(getX() * value, getY() * value, getWidth() * value, getHeight() * value);
+    }
+
+    public @NotNull Rect2i mul(double value) {
+        return new Rect2i(
+                (int) (getX() * value),
+                (int) (getY() * value),
+                (int) (getWidth() * value),
+                (int) (getHeight() * value)
+        );
+    }
+
+    public @NotNull Rect2i mul(float value) {
+        return new Rect2i(
+                (int) (getX() * value),
+                (int) (getY() * value),
+                (int) (getWidth() * value),
+                (int) (getHeight() * value)
+        );
+    }
+
     @Override
     public @NotNull String toString() {
         return "Rect2i{%d, %d, %d, %d}".formatted(getX(), getY(), getWidth(), getHeight());

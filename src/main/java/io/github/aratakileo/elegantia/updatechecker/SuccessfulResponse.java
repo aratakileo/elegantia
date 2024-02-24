@@ -4,7 +4,7 @@ import io.github.aratakileo.elegantia.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public class SuccessfulResponse extends Response {
-    public final @NotNull String definedVersion, versionPageUrl, downloadUrl;
+    private final @NotNull String definedVersion, versionPageUrl, downloadUrl;
 
     protected SuccessfulResponse(
             @NotNull ResponseCode responseCode,
@@ -17,6 +17,18 @@ public class SuccessfulResponse extends Response {
         this.definedVersion = definedVersion;
         this.versionPageUrl = versionPageUrl;
         this.downloadUrl = downloadUrl;
+    }
+
+    public @NotNull String getDefinedVersion() {
+        return definedVersion;
+    }
+
+    public @NotNull String getVersionPageUrl() {
+        return versionPageUrl;
+    }
+
+    public @NotNull String getDownloadUrl() {
+        return downloadUrl;
     }
 
     @Override
