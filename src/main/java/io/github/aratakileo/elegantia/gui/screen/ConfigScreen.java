@@ -2,6 +2,7 @@ package io.github.aratakileo.elegantia.gui.screen;
 
 import io.github.aratakileo.elegantia.gui.config.Config;
 import io.github.aratakileo.elegantia.gui.config.EntryInfo;
+import io.github.aratakileo.elegantia.gui.widget.AbstractButton;
 import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
 import io.github.aratakileo.elegantia.gui.widget.Button;
 import io.github.aratakileo.elegantia.util.ModInfo;
@@ -20,28 +21,19 @@ import java.util.Objects;
 
 public class ConfigScreen extends AbstractScreen {
     private final List<Pair<AbstractWidget, String>> entryWidgets = new ArrayList<>();
-    private final Config.ConfigInfo configInfo;
+    private final Config configInstance;
     private HashMap<String, List<String>> triggeredFieldEntries;
     private HashMap<String, Button> entryFieldToButton;
 
     protected ConfigScreen(
-            @NotNull Config.ConfigInfo configInfo,
+            @NotNull Config configInstance,
             @Nullable Screen parent
     ) {
-        this(
-                configInfo,
-                ModInfo.getName(configInfo.modId()).orElse("Unknown"),
+        super(Component.translatable(
+                "elegantia.gui.config.title", ModInfo.getName(configInstance.getModId()).orElse("Unknown")),
                 parent
         );
-    }
-
-    protected ConfigScreen(
-            @NotNull Config.ConfigInfo configInfo,
-            @NotNull String modName,
-            @Nullable Screen parent
-    ) {
-        super(Component.translatable("elegantia.gui.config.title", modName), parent);
-        this.configInfo = configInfo;
+        this.configInstance = configInstance;
     }
 
     protected void addConfigFieldWidget(@NotNull Button button, @Nullable String triggeredBy) {
@@ -71,10 +63,7 @@ public class ConfigScreen extends AbstractScreen {
         triggeredFieldEntries = new HashMap<>();
         entryFieldToButton = new HashMap<>();
 
-        final var configInstance = configInfo.instance();
-        final var modId = configInfo.modId();
-
-        configInfo.entries().forEach(entryInfo -> {
+        configInstance.getEntries().forEach(entryInfo -> {
             final var message = getEntryMessage(entryInfo);
             final var triggeredBy = entryInfo.getTriggeredBy();
 
@@ -85,13 +74,19 @@ public class ConfigScreen extends AbstractScreen {
                             .build(),
                     message
             );
-            entryButton.setTooltip(entryInfo.getDescriptionComponent(modId));
+            entryButton.setTooltip(entryInfo.getDescriptionComponent(configInstance.getModId()));
 
             addConfigFieldWidget(entryButton, triggeredBy);
 
             if (entryInfo.getType().isAction()) {
                 entryButton.setOnClickListener(((button, byUser) -> {
                     entryInfo.execute();
+
+                    if (entryInfo.isTrigger())
+                        for (final var configEntry: configInstance.getEntries())
+                            if (configEntry.getType() != EntryInfo.Type.ACTION)
+                                updateBooleanButtonState(entryFieldToButton.get(configEntry.getName()), configEntry);
+
                     return true;
                 }));
                 return;
@@ -101,14 +96,7 @@ public class ConfigScreen extends AbstractScreen {
 
             entryButton.setOnClickListener((button, byUser) -> {
                 configInstance.invertBooleanFieldValue(entryName);
-                button.setMessage(getBooleanEntryMessage(entryInfo));
-                button.setBounds(
-                        WidgetBoundsBuilder.ofMessageContent(button.getMessage())
-                                .setGravity(WidgetBoundsBuilder.GRAVITY_CENTER_HORIZONTAL)
-                                .setPadding(5)
-                                .setInitialBounds(button.getBounds())
-                                .build()
-                );
+                updateBooleanButtonState(button, entryInfo);
 
                 if (!entryInfo.isTrigger()) return true;
 
@@ -156,17 +144,28 @@ public class ConfigScreen extends AbstractScreen {
     protected @NotNull Component getEntryMessage(@NotNull EntryInfo entryInfo) {
         if (entryInfo.getType().isBoolean()) return getBooleanEntryMessage(entryInfo);
 
-        return Component.literal(entryInfo.getTitle(configInfo.modId()));
+        return Component.literal(entryInfo.getTitle(configInstance.getModId()));
     }
 
     protected @NotNull Component getBooleanEntryMessage(@NotNull EntryInfo entryInfo) {
-        final var state = configInfo.instance().getBooleanFieldValue(Objects.requireNonNull(entryInfo.getName()));
+        final var state = configInstance.getBooleanFieldValue(Objects.requireNonNull(entryInfo.getName()));
 
         return Component.literal("%s: §l%s%s".formatted(
-                entryInfo.getTitle(configInfo.modId()),
+                entryInfo.getTitle(configInstance.getModId()),
                 (state ? "§2" : "§c"),
                 Language.getInstance().getOrDefault("elegantia.gui.state." + (state ? "enabled" : "disabled"))
         ));
+    }
+
+    protected void updateBooleanButtonState(@NotNull AbstractButton button, @NotNull EntryInfo entryInfo) {
+        button.setMessage(getBooleanEntryMessage(entryInfo));
+        button.setBounds(
+                WidgetBoundsBuilder.ofMessageContent(button.getMessage())
+                        .setGravity(WidgetBoundsBuilder.GRAVITY_CENTER_HORIZONTAL)
+                        .setPadding(5)
+                        .setInitialBounds(button.getBounds())
+                        .build()
+        );
     }
 
     public static @Nullable ConfigScreen of(@NotNull Class<? extends Config> configClass) {
@@ -174,10 +173,10 @@ public class ConfigScreen extends AbstractScreen {
     }
 
     public static @Nullable ConfigScreen of(@NotNull Class<? extends Config> configClass, @Nullable Screen parent) {
-        final var configInfo = Config.getConfigInfo(configClass);
+        final var configInstance = Config.getInstance(configClass);
 
-        if (Objects.isNull(configInfo)) return null;
+        if (Objects.isNull(configInstance)) return null;
 
-        return new ConfigScreen(configInfo, parent);
+        return new ConfigScreen(configInstance, parent);
     }
 }

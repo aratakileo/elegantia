@@ -94,9 +94,17 @@ public class EntryInfo {
             @Nullable String name,
             @Nullable String triggeredBy,
             @Nullable String translationKey,
-            @NotNull Runnable onClick
+            @NotNull Runnable onClick,
+            boolean isInfluential
     ) {
-        return new EntryInfo(Type.ACTION, name, null, triggeredBy, translationKey, onClick);
+        return new EntryInfo(
+                Type.ACTION,
+                name,
+                isInfluential ? "influential" : null,
+                triggeredBy,
+                translationKey,
+                onClick
+        );
     }
 
     public static @NotNull EntryInfo value(

@@ -10,8 +10,14 @@ public interface Strings {
     static @NotNull String camelToSnake(@NotNull String value) {
         if (value.isEmpty()) return value;
 
-        return value.replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2")
-                .replaceAll("([a-z])([A-Z])", "$1_$2")
+        return separateCamelCase(value, '_');
+    }
+
+    static @NotNull String separateCamelCase(@NotNull String value, char separator) {
+        final var replacementStatement = "$1" + separator + "$2";
+
+        return value.replaceAll("([A-Z]+)([A-Z][a-z])", replacementStatement)
+                .replaceAll("([a-z])([A-Z])", replacementStatement)
                 .toLowerCase();
     }
 
