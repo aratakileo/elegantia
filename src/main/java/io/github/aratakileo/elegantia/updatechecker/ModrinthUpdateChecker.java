@@ -16,6 +16,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ModrinthUpdateChecker {
@@ -31,7 +32,6 @@ public class ModrinthUpdateChecker {
     private final static HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
     private final String modId, projectId, minecraftVersion;
-    private final Platform platform;
 
     private @Nullable Response lastResponse = null;
 
@@ -39,36 +39,32 @@ public class ModrinthUpdateChecker {
         this(modAndProjectId, modAndProjectId);
     }
 
-    public ModrinthUpdateChecker(@NotNull String modAndProjectId, @NotNull Platform platform) {
-        this(modAndProjectId, modAndProjectId, platform);
-    }
-
     public ModrinthUpdateChecker(@NotNull String modId, @NotNull String projectId) {
-        this(modId, projectId, Platform.getCurrent());
-    }
-
-    public ModrinthUpdateChecker(@NotNull String modId, @NotNull String projectId, @NotNull Platform platform) {
-        this(modId, projectId, Platform.getMinecraftVersion(), platform);
+        this(modId, projectId, Platform.getMinecraftVersion());
     }
 
     public ModrinthUpdateChecker(
             @NotNull String modId,
             @NotNull String projectId,
-            @NotNull String minecraftVersion,
-            @NotNull Platform platform
+            @NotNull String minecraftVersion
     ) {
         this.modId = modId;
         this.projectId = projectId;
         this.minecraftVersion = minecraftVersion;
-        this.platform = platform;
     }
 
     public @NotNull Response check() {
+        return check(null);
+    }
+
+    public @NotNull Response check(@Nullable Platform platform) {
         try {
-            if (!ModInfo.isModLoaded(modId)) throw new NoSuchModException("id=" + modId);
+            ModInfo.throwIfModIsNotLoaded(modId);
+
+            platform = Objects.requireNonNullElse(platform, ModInfo.getKernelPlatform(modId).orElseThrow());
 
             final var requestHeader = getRequestHeader();
-            final var request = HttpRequest.newBuilder(URI.create(getRequestUrl()))
+            final var request = HttpRequest.newBuilder(URI.create(getRequestUrl(platform)))
                     .setHeader("User-Agent", requestHeader)
                     .build();
 
@@ -77,7 +73,7 @@ public class ModrinthUpdateChecker {
                     modId,
                     projectId,
                     requestHeader,
-                    platform + " platform"
+                    "%s platform (minecraft v%s)".formatted(platform, minecraftVersion)
             );
 
             final var basicResponse = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
@@ -148,14 +144,14 @@ public class ModrinthUpdateChecker {
                 ? Optional.of(successfulResponse) : Optional.empty();
     }
 
-    private @NotNull String getRequestUrl() {
+    private @NotNull String getRequestUrl(@NotNull Platform platform) {
         return NOT_FORMATTED_REQUEST_URL.replace("{project_id}", projectId)
                 .replace("{minecraft_version}", minecraftVersion)
                 .replace("{platform}", platform.name().toLowerCase());
     }
 
     private @NotNull String getRequestHeader() {
-        final var baseRequestHeader = getVersionedSourceUrl(Elegantia.MODID).orElseThrow();
+        final var baseRequestHeader = getVersionedSourceUrl(ModInfo.get(Elegantia.MODID).orElseThrow()).orElseThrow();
 
         if (modId.equals(Elegantia.MODID))
             return baseRequestHeader;
@@ -168,8 +164,12 @@ public class ModrinthUpdateChecker {
         );
     }
 
-    private static @NotNull Optional<String> getVersionedSourceUrl(@NotNull String modId) {
-        return getVersionedSourceUrl(ModInfo.get(modId).orElseThrow());
+    public static @NotNull Response quickCheck(@NotNull String modAndProjectId) {
+        return new ModrinthUpdateChecker(modAndProjectId).check();
+    }
+
+    public static @NotNull Response quickCheck(@NotNull String modId, @NotNull String projectId) {
+        return new ModrinthUpdateChecker(modId, projectId).check();
     }
 
     private static @NotNull Optional<String> getVersionedSourceUrl(@NotNull ModInfo modInfo) {

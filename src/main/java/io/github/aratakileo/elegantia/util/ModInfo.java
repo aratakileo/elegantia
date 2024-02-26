@@ -51,6 +51,20 @@ public abstract class ModInfo {
         return getUrl("homepage");
     }
 
+    /**
+     * Returns the platform for which the mod was made (Fabric, Quilt, Forge, Neoforge).
+     * Does not distinguish between Forge and Neoforge. If the mod is written for Neoforge, it will return Forge.
+     */
+    public @NotNull Platform getKernelPlatform() {
+        if (findPath("fabric.mod.json").map(Files::exists).orElse(false))
+            return Platform.FABRIC;
+
+        if (findPath("quilt.mod.json").map(Files::exists).orElse(false))
+            return Platform.QUILT;
+
+        return Platform.FORGE;
+    }
+
     @SuppressWarnings("unchecked")
     public void setConfigScreenGetter(@NotNull Function<Screen, Screen> configScreenGetter) {
         if (!isModLoaded("modmenu")) return;
@@ -200,6 +214,14 @@ public abstract class ModInfo {
 
     public static @NotNull Optional<Environment> getEnvironment(@NotNull String modId) {
         return get(modId).map(ModInfo::getEnvironment);
+    }
+
+    /**
+     * Returns the platform for which the specified mod was made (Fabric, Quilt, Forge, Neoforge).
+     * Does not distinguish between Forge and Neoforge. If the mod is written for Neoforge, it will return Forge.
+     */
+    public static @NotNull Optional<Platform> getKernelPlatform(@NotNull String modId) {
+        return get(modId).map(ModInfo::getKernelPlatform);
     }
 
     public static void setConfigScreenGetter(

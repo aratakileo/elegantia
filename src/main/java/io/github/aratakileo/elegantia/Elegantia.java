@@ -1,5 +1,6 @@
 package io.github.aratakileo.elegantia;
 
+import io.github.aratakileo.elegantia.util.ModInfo;
 import io.github.aratakileo.elegantia.util.Platform;
 import net.fabricmc.api.ClientModInitializer;
 import org.slf4j.Logger;
@@ -13,6 +14,10 @@ public class Elegantia implements ClientModInitializer {
     public void onInitializeClient() {
         ElegantiaConfig.init(ElegantiaConfig.class, MODID);
 
-        LOGGER.info("Current platform: {}", Platform.getCurrent().name());
+        LOGGER.info(
+                "Elegantia kernel platform: {}, loading platform: {}",
+                ModInfo.getKernelPlatform(MODID).orElseThrow(),
+                Platform.getCurrent()
+        );
     }
 }
