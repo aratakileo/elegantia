@@ -1,5 +1,7 @@
 package io.github.aratakileo.elegantia.util;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,5 +21,23 @@ public enum Platform {
 
     public static @NotNull String getMinecraftVersion() {
         return SharedConstants.getCurrentVersion().getName();
+    }
+
+    public static @NotNull Environment getEnvironment() {
+        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT
+                ? Environment.CLIENT : Environment.SERVER;
+    }
+
+    public enum Environment {
+        CLIENT,
+        SERVER;
+
+        public boolean isClient() {
+            return this == CLIENT;
+        }
+
+        public boolean isServer() {
+            return  this == SERVER;
+        }
     }
 }

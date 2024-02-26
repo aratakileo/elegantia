@@ -3,16 +3,16 @@ package io.github.aratakileo.elegantia.util;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import io.github.aratakileo.elegantia.Elegantia;
+import io.github.aratakileo.elegantia.exception.NoSuchModException;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.Person;
 import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.function.Function;
 
 public abstract class ModInfo {
@@ -24,6 +24,16 @@ public abstract class ModInfo {
     public abstract @NotNull Collection<String> getContributors();
     public abstract @NotNull Optional<Map<String, String>> getUrls();
     public abstract @NotNull Environment getEnvironment();
+    public abstract @NotNull List<Path> getRootPaths();
+
+    public @NotNull Optional<Path> findPath(@NotNull String relativePath) {
+        for (final var rootPath : getRootPaths()) {
+            final var path = rootPath.resolve(relativePath.replace("/", rootPath.getFileSystem().getSeparator()));
+            if (Files.exists(path)) return Optional.of(path);
+        }
+
+        return Optional.empty();
+    }
 
     public @NotNull Optional<String> getUrl(@NotNull String key) {
         return getUrls().map(map -> map.get(key));
@@ -79,13 +89,14 @@ public abstract class ModInfo {
     }
 
     public static @NotNull Optional<ModInfo> get(@NotNull String modId) {
-        final var modMetadata = FabricLoader.getInstance()
+        final var modContainer = FabricLoader.getInstance()
                 .getModContainer(modId)
-                .map(ModContainer::getMetadata)
                 .orElse(null);
 
-        if (Objects.isNull(modMetadata))
+        if (Objects.isNull(modContainer))
             return Optional.empty();
+
+        final var modMetadata = modContainer.getMetadata();
 
         return Optional.of(new ModInfo() {
             @Override
@@ -131,6 +142,11 @@ public abstract class ModInfo {
                     case UNIVERSAL -> Environment.BOTH;
                 };
             }
+
+            @Override
+            public @NotNull List<Path> getRootPaths() {
+                return modContainer.getRootPaths();
+            }
         });
     }
 
@@ -156,6 +172,14 @@ public abstract class ModInfo {
 
     public static @NotNull Optional<Map<String, String>> getUrls(@NotNull String modId) {
         return get(modId).flatMap(ModInfo::getUrls);
+    }
+
+    public static @NotNull Optional<List<Path>> getRootPaths(@NotNull String modId) {
+        return get(modId).map(ModInfo::getRootPaths);
+    }
+
+    public static @NotNull Optional<Path> findPath(@NotNull String modId, @NotNull String relativePath) {
+        return get(modId).flatMap(modInfo -> modInfo.findPath(relativePath));
     }
 
     public static @NotNull Optional<String> getUrl(@NotNull String modId, @NotNull String key) {
@@ -198,6 +222,10 @@ public abstract class ModInfo {
 
     public static boolean isModLoaded(@NotNull String modId) {
         return FabricLoader.getInstance().isModLoaded(modId);
+    }
+
+    public static void throwIfModIsNotLoaded(@NotNull String modId) {
+        if (!isModLoaded(modId)) throw new NoSuchModException("id=" + modId);
     }
 
     public enum Environment {
