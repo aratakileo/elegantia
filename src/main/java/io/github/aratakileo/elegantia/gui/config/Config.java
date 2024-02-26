@@ -2,7 +2,6 @@ package io.github.aratakileo.elegantia.gui.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.github.aratakileo.elegantia.exception.NoSuchModException;
 import io.github.aratakileo.elegantia.gui.screen.ConfigScreen;
 import io.github.aratakileo.elegantia.util.Classes;
 import io.github.aratakileo.elegantia.util.LateInitValue;
@@ -131,6 +130,10 @@ public abstract class Config {
         setValuesByDefault(getClass());
     }
 
+    public void setValuesByDefault(boolean onlyConfigEntryFields) {
+        setValuesByDefault(getClass(), onlyConfigEntryFields);
+    }
+
     public void save() {
         save(this, Objects.requireNonNull(getConfigFile(this.getClass())));
     }
@@ -236,7 +239,7 @@ public abstract class Config {
             return null;
         }
 
-        if (!ModInfo.isModLoaded(modId)) throw new NoSuchModException("id=" + modId);
+        ModInfo.throwIfModIsNotLoaded(modId);
 
         final var configInstance = Optional.ofNullable(load(
                 configClass,
@@ -389,7 +392,8 @@ public abstract class Config {
 
         CONFIG_INSTANCES.put(configClass, configInstance);
 
-        ModInfo.setConfigScreenGetter(modId, parent -> ConfigScreen.of(configClass, parent));
+        if (!configInstance.entries.isEmpty())
+            ModInfo.setConfigScreenGetter(modId, parent -> ConfigScreen.of(configClass, parent));
 
         return configInstance;
     }
@@ -402,6 +406,10 @@ public abstract class Config {
     }
 
     public static void setValuesByDefault(@NotNull Class<? extends Config> configClass) {
+        setValuesByDefault(configClass, false);
+    }
+
+    public static void setValuesByDefault(@NotNull Class<? extends Config> configClass, boolean onlyConfigEntryFields) {
         if (!CONFIG_INSTANCES.containsKey(configClass)) return;
 
         final var newInstance = newInstance(configClass);
@@ -415,7 +423,10 @@ public abstract class Config {
 
         try {
             for (final var field : currentInstance.getClass().getDeclaredFields()) {
-                if (Modifier.isTransient(field.getModifiers())) continue;
+                if (
+                        Modifier.isTransient(field.getModifiers())
+                                || onlyConfigEntryFields && !field.isAnnotationPresent(ConfigEntry.class)
+                ) continue;
 
                 field.setAccessible(true);
                 field.set(currentInstance, field.get(newInstance));
