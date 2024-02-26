@@ -27,5 +27,6 @@
   },
   "mixins": [
     "elegantia.mixins.json"
-  ]
+  ],
+  "accessWidener": "elegantia.accesswidener"
 }

@@ -4,10 +4,12 @@
   "package": "io.github.aratakileo.elegantia.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BuiltinPackSourceMixin",
     "ReloadableResourceManagerMixin"
   ],
   "client": [
-    "GuiMixin"
+    "GuiMixin",
+    "OptionsMixin"
   ],
   "injectors": {
     "defaultRequire": 1
