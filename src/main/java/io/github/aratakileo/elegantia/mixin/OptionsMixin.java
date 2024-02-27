@@ -23,38 +23,19 @@ public class OptionsMixin {
     @Shadow
     public List<String> resourcePacks;
 
-    @Shadow
-    private static List<String> readPackList(String content) {
-        throw new IllegalStateException("Injection failed.");
-    }
-
-    @Shadow
-    @Final
-    static Gson GSON;
-
-    @Unique
-    private List<String> elegantia$defaultEnabledResourcePacks = new ArrayList<>();
-
-    @Inject(method = "processOptions", at = @At("HEAD"))
-    private void processOption(Options.FieldAccess fieldAccess, CallbackInfo ci) {
-        elegantia$defaultEnabledResourcePacks = fieldAccess.process(
-                "elegantia$defaultEnabledResourcePacks",
-                elegantia$defaultEnabledResourcePacks,
-                OptionsMixin::readPackList,
-                GSON::toJson
-        );
-    }
-
     @Inject(method = "loadSelectedResourcePacks", at = @At("HEAD"))
     private void loadSelectedResourcePacks(PackRepository repository, CallbackInfo ci) {
+        final var elegantiaConfig = ElegantiaConfig.getInstance();
 
-        elegantia$defaultEnabledResourcePacks.removeIf(name -> Objects.isNull(repository.getPack(name)));
+        elegantiaConfig.defaultEnabledResourcePacks.removeIf(name -> Objects.isNull(repository.getPack(name)));
 
         for (final var name: ResourcePacksProvider.getDefaultEnabledResourcePackNames()) {
-            if (elegantia$defaultEnabledResourcePacks.contains(name)) continue;
+            if (elegantiaConfig.defaultEnabledResourcePacks.contains(name)) continue;
 
             resourcePacks.add(name);
-            elegantia$defaultEnabledResourcePacks.add(name);
+            elegantiaConfig.defaultEnabledResourcePacks.add(name);
         }
+
+        elegantiaConfig.save();
     }
 }

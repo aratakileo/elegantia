@@ -4,10 +4,14 @@ import io.github.aratakileo.elegantia.gui.config.Config;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ElegantiaConfig extends Config {
     public static @Nullable ElegantiaConfig instance;
+
+    public List<String> defaultEnabledResourcePacks = new ArrayList<>();
 
     public static @NotNull ElegantiaConfig getInstance() {
         if (Objects.isNull(instance))

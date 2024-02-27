@@ -12,7 +12,7 @@ public class Elegantia implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ElegantiaConfig.init(ElegantiaConfig.class, MODID);
+        ElegantiaConfig.instance = ElegantiaConfig.init(ElegantiaConfig.class, MODID);
 
         LOGGER.info(
                 "Elegantia kernel platform: {}, loading platform: {}",
