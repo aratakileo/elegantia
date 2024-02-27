@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    modImplementation "maven.modrinth:elegantia:0.0.1-alpha+fabric-1.20.4"
+    modImplementation "maven.modrinth:elegantia:0.0.1-beta+fabric-1.20.4"
 }
 ```
 </details>
@@ -35,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    modImplementation("maven.modrinth", "elegantia", "0.0.1-alpha+fabric-1.20.4")
+    modImplementation("maven.modrinth", "elegantia", "0.0.1-beta+fabric-1.20.4")
 }
 ```
 </details>
