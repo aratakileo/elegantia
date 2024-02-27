@@ -2,7 +2,7 @@ package io.github.aratakileo.elegantia.gui.widget;
 
 import io.github.aratakileo.elegantia.graphics.drawable.Drawable;
 import io.github.aratakileo.elegantia.graphics.drawable.InteractableDrawable;
-import io.github.aratakileo.elegantia.gui.TooltipPositioner;
+import io.github.aratakileo.elegantia.gui.tooltip.TooltipPositioner;
 import io.github.aratakileo.elegantia.math.Rect2i;
 import io.github.aratakileo.elegantia.math.Vector2iInterface;
 import io.github.aratakileo.elegantia.math.Vector2ic;
