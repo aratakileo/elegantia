@@ -12,6 +12,8 @@ public enum Platform {
     NEOFORGE;
 
     public static @NotNull Platform getCurrent() {
+        if (ModInfo.isModLoaded("neoforge")) return NEOFORGE;
+
         if (ModInfo.isModLoaded("forge")) return ModInfo.getName("forge").map(
                 name -> name.equalsIgnoreCase("neoforge") ? NEOFORGE : FORGE
         ).orElseThrow();

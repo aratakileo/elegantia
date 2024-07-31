@@ -18,6 +18,11 @@ import java.util.function.Function;
 
 public abstract class ModInfo {
     public abstract @NotNull String getId();
+
+    public @NotNull Namespace getNamespace() {
+        return Namespace.of(getId());
+    }
+
     public abstract @NotNull String getVersion();
     public abstract @NotNull String getName();
     public abstract @NotNull String getDescription();
@@ -54,7 +59,8 @@ public abstract class ModInfo {
 
     /**
      * Returns the platform for which the mod was made (Fabric, Quilt, Forge, Neoforge).
-     * Does not distinguish between Forge and Neoforge. If the mod is written for Neoforge, it will return Forge.
+     * In some cases does not distinguish good between Forge and Neoforge.
+     * If the mod is written for Neoforge, it might return Forge.
      */
     public @NotNull Platform getKernelPlatform() {
         if (findPath("fabric.mod.json").map(Files::exists).orElse(false))
@@ -62,6 +68,9 @@ public abstract class ModInfo {
 
         if (findPath("quilt.mod.json").map(Files::exists).orElse(false))
             return Platform.QUILT;
+
+        if (findPath("META-INF/neoforge.mods.toml").map(Files::exists).orElse(false))
+            return Platform.NEOFORGE;
 
         return Platform.FORGE;
     }
@@ -278,16 +287,18 @@ public abstract class ModInfo {
     }
 
     /**
-     * Returns the platform for which the specified mod was made (Fabric, Quilt, Forge, Neoforge).
-     * Does not distinguish between Forge and Neoforge. If the mod is written for Neoforge, it will return Forge.
+     * Returns the platform for which the mod was made (Fabric, Quilt, Forge, Neoforge).
+     * In some cases does not distinguish good between Forge and Neoforge.
+     * If the mod is written for Neoforge, it might return Forge.
      */
     public static @NotNull Optional<Platform> getKernelPlatform(@NotNull Namespace namespace) {
-        return getKernelPlatform(namespace.get());
+        return get(namespace.get()).map(ModInfo::getKernelPlatform);
     }
 
     /**
-     * Returns the platform for which the specified mod was made (Fabric, Quilt, Forge, Neoforge).
-     * Does not distinguish between Forge and Neoforge. If the mod is written for Neoforge, it will return Forge.
+     * Returns the platform for which the mod was made (Fabric, Quilt, Forge, Neoforge).
+     * In some cases does not distinguish good between Forge and Neoforge.
+     * If the mod is written for Neoforge, it might return Forge.
      */
     public static @NotNull Optional<Platform> getKernelPlatform(@NotNull String modId) {
         return get(modId).map(ModInfo::getKernelPlatform);
