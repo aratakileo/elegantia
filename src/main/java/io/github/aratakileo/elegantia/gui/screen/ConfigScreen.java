@@ -30,7 +30,7 @@ public class ConfigScreen extends AbstractScreen {
             @Nullable Screen parent
     ) {
         super(Component.translatable(
-                "elegantia.gui.config.title", ModInfo.getName(configInstance.getModId()).orElse("Unknown")),
+                "elegantia.gui.config.title", ModInfo.getName(configInstance.getNamespace()).orElse("Unknown")),
                 parent
         );
         this.configInstance = configInstance;
@@ -74,7 +74,7 @@ public class ConfigScreen extends AbstractScreen {
                             .build(),
                     message
             );
-            entryButton.setTooltip(entryInfo.getDescriptionComponent(configInstance.getModId()));
+            entryButton.setTooltip(entryInfo.getDescriptionComponent(configInstance.getNamespace()));
 
             addConfigFieldWidget(entryButton, triggeredBy);
 
@@ -144,14 +144,14 @@ public class ConfigScreen extends AbstractScreen {
     protected @NotNull Component getEntryMessage(@NotNull EntryInfo entryInfo) {
         if (entryInfo.getType().isBoolean()) return getBooleanEntryMessage(entryInfo);
 
-        return Component.literal(entryInfo.getTitle(configInstance.getModId()));
+        return Component.literal(entryInfo.getTitle(configInstance.getNamespace()));
     }
 
     protected @NotNull Component getBooleanEntryMessage(@NotNull EntryInfo entryInfo) {
         final var state = configInstance.getBooleanFieldValue(Objects.requireNonNull(entryInfo.getName()));
 
         return Component.literal("%s: §l%s%s".formatted(
-                entryInfo.getTitle(configInstance.getModId()),
+                entryInfo.getTitle(configInstance.getNamespace()),
                 (state ? "§2" : "§c"),
                 Language.getInstance().getOrDefault("elegantia.gui.state." + (state ? "enabled" : "disabled"))
         ));

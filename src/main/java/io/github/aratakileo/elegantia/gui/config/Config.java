@@ -3,10 +3,7 @@ package io.github.aratakileo.elegantia.gui.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.aratakileo.elegantia.gui.screen.ConfigScreen;
-import io.github.aratakileo.elegantia.util.Classes;
-import io.github.aratakileo.elegantia.util.LateInitValue;
-import io.github.aratakileo.elegantia.util.ModInfo;
-import io.github.aratakileo.elegantia.util.Strings;
+import io.github.aratakileo.elegantia.util.*;
 import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +32,7 @@ public abstract class Config {
 
     private final static ConcurrentHashMap<Class<? extends Config>, Config> CONFIG_INSTANCES = new ConcurrentHashMap<>();
 
-    protected final transient @NotNull LateInitValue<String> modId = new LateInitValue<>();
+    protected final transient @NotNull LateInit<Namespace> namespaceLateInit = new LateInit<>();
     protected final transient @NotNull List<EntryInfo> entries = new ArrayList<>();
     protected final transient @NotNull HashMap<String, String> triggerFields = new HashMap<>();
 
@@ -146,9 +143,9 @@ public abstract class Config {
         return ConfigScreen.of(getClass(), parent);
     }
 
-    public @NotNull String getModId() {
-        if (modId.isInited())
-            return modId.get().orElseThrow();
+    public @NotNull Namespace getNamespace() {
+        if (namespaceLateInit.isInited())
+            return namespaceLateInit.getOrThrow();
 
         throw new IllegalInitException(getClass().getName());
     }
@@ -211,18 +208,18 @@ public abstract class Config {
         if (!CONFIG_INSTANCES.containsKey(configClass))
             return null;
 
-        return getConfigFile(CONFIG_INSTANCES.get(configClass).getModId());
+        return getConfigFile(CONFIG_INSTANCES.get(configClass).getNamespace());
     }
 
     /**
      * @return Theoretically possible config file for the specified mod id
      */
-    private static @NotNull File getConfigFile(@NotNull String modId) {
-        return new File("config/" + modId + ".json");
+    private static @NotNull File getConfigFile(@NotNull Namespace namespace) {
+        return new File("config/" + namespace.get() + ".json");
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public static <T extends Config> @Nullable T init(@NotNull Class<T> configClass, @NotNull String modId) {
+    public static <T extends Config> @Nullable T init(@NotNull Class<T> configClass, @NotNull Namespace namespace) {
         final var configClassModifiers = configClass.getModifiers();
 
         if (Modifier.isAbstract(configClassModifiers))
@@ -239,21 +236,21 @@ public abstract class Config {
             return null;
         }
 
-        ModInfo.throwIfModIsNotLoaded(modId);
+        ModInfo.throwIfModIsNotLoaded(namespace);
 
         final var configInstance = Optional.ofNullable(load(
                 configClass,
-                getConfigFile(modId)
+                getConfigFile(namespace)
         )).orElse(newInstance(configClass));
 
-        if (Objects.isNull(configInstance)) {
+        if (configInstance == null) {
             LOGGER.warn("Failed to init config `{}`", configClass.getName());
             return null;
         }
 
         final var entryFields = new ArrayList<Field>();
 
-        configInstance.modId.set(modId);
+        configInstance.namespaceLateInit.set(namespace);
 
         for (final var field: configClass.getDeclaredFields()) {
             final var isTrigger = field.isAnnotationPresent(Trigger.class);
@@ -393,7 +390,7 @@ public abstract class Config {
         CONFIG_INSTANCES.put(configClass, configInstance);
 
         if (!configInstance.entries.isEmpty())
-            ModInfo.setConfigScreenGetter(modId, parent -> ConfigScreen.of(configClass, parent));
+            ModInfo.setConfigScreenGetter(namespace, parent -> ConfigScreen.of(configClass, parent));
 
         return configInstance;
     }

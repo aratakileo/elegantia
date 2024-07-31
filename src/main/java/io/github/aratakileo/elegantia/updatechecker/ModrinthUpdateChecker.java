@@ -4,6 +4,7 @@ import com.google.gson.JsonParser;
 import io.github.aratakileo.elegantia.Elegantia;
 import io.github.aratakileo.elegantia.exception.NoSuchModException;
 import io.github.aratakileo.elegantia.util.ModInfo;
+import io.github.aratakileo.elegantia.util.Namespace;
 import io.github.aratakileo.elegantia.util.Platform;
 import io.github.aratakileo.elegantia.util.Versions;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,24 @@ public class ModrinthUpdateChecker {
     private final String modId, projectId, minecraftVersion;
 
     private @Nullable Response lastResponse = null;
+
+    public ModrinthUpdateChecker(@NotNull Namespace modAndProjectNamespace) {
+        this(modAndProjectNamespace.get(), modAndProjectNamespace.get());
+    }
+
+    public ModrinthUpdateChecker(@NotNull Namespace namespace, @NotNull String projectId) {
+        this(namespace.get(), projectId, Platform.getMinecraftVersion());
+    }
+
+    public ModrinthUpdateChecker(
+            @NotNull Namespace namespace,
+            @NotNull String projectId,
+            @NotNull String minecraftVersion
+    ) {
+        this.modId = namespace.get();
+        this.projectId = projectId;
+        this.minecraftVersion = minecraftVersion;
+    }
 
     public ModrinthUpdateChecker(@NotNull String modAndProjectId) {
         this(modAndProjectId, modAndProjectId);
@@ -151,9 +170,9 @@ public class ModrinthUpdateChecker {
     }
 
     private @NotNull String getRequestHeader() {
-        final var baseRequestHeader = getVersionedSourceUrl(ModInfo.get(Elegantia.MODID).orElseThrow()).orElseThrow();
+        final var baseRequestHeader = getVersionedSourceUrl(ModInfo.get(Namespace.ELEGANTIA).orElseThrow()).orElseThrow();
 
-        if (modId.equals(Elegantia.MODID))
+        if (Namespace.ELEGANTIA.equals(modId))
             return baseRequestHeader;
 
         final var modInfo = ModInfo.get(modId).orElseThrow();
@@ -162,6 +181,14 @@ public class ModrinthUpdateChecker {
                 baseRequestHeader,
                 getVersionedSourceUrl(modInfo).orElse("`%s` (mod id: %s)".formatted(modInfo.getName(), modId))
         );
+    }
+
+    public static @NotNull Response quickCheck(@NotNull Namespace modAndProjectNamespace) {
+        return new ModrinthUpdateChecker(modAndProjectNamespace).check();
+    }
+
+    public static @NotNull Response quickCheck(@NotNull Namespace namespace, @NotNull String projectId) {
+        return new ModrinthUpdateChecker(namespace, projectId).check();
     }
 
     public static @NotNull Response quickCheck(@NotNull String modAndProjectId) {

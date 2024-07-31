@@ -1,5 +1,6 @@
 package io.github.aratakileo.elegantia.gui.config;
 
+import io.github.aratakileo.elegantia.util.Namespace;
 import io.github.aratakileo.elegantia.util.Strings;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -58,24 +59,24 @@ public class EntryInfo {
         return name;
     }
 
-    private @NotNull String getTranslationKey(@NotNull String modId, @NotNull String postfix) {
-        return "%s.config.entry.%s.%s".formatted(modId, Strings.doesNotMeetCondition(
+    private @NotNull String getTranslationKey(@NotNull Namespace namespace, @NotNull String postfix) {
+        return "%s.config.entry.%s.%s".formatted(namespace.get(), Strings.doesNotMeetCondition(
                 Objects.requireNonNullElse(translationKey, ""),
                 String::isBlank,
                 Strings.camelToSnake(Objects.requireNonNullElse(name, ""))
         ), postfix);
     }
 
-    public @NotNull Component getDescriptionComponent(@NotNull String modId) {
+    public @NotNull Component getDescriptionComponent(@NotNull Namespace namespace) {
         return Component.literal(Strings.requireReturnNotAsArgument(
-                getTranslationKey(modId, "description"),
+                getTranslationKey(namespace, "description"),
                 Language.getInstance()::getOrDefault,
                 ""
         ));
     }
 
-    public @NotNull String getTitle(@NotNull String modId) {
-        final var fullTranslationKey = getTranslationKey(modId, "title");
+    public @NotNull String getTitle(@NotNull Namespace namespace) {
+        final var fullTranslationKey = getTranslationKey(namespace, "title");
 
         return Objects.isNull(name) ? fullTranslationKey : Strings.requireReturnNotAsArgument(
                 fullTranslationKey,

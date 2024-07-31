@@ -6,20 +6,24 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class LateInitValue<T> {
+public class LateInit<T> {
     private @Nullable T value = null;
 
     public boolean isInited() {
-        return Objects.nonNull(value);
+        return value != null;
     }
 
     public void set(@NotNull T value) {
-        if (Objects.nonNull(this.value)) return;
+        if (this.value != null) return;
 
         this.value = value;
     }
 
     public @NotNull Optional<T> get() {
         return Optional.ofNullable(value);
+    }
+
+    public @NotNull T getOrThrow() {
+        return Objects.requireNonNull(value);
     }
 }
