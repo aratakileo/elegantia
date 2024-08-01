@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.gui.config;
+package io.github.aratakileo.elegantia.util.config;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

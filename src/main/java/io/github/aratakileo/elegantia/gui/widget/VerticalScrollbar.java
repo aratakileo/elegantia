@@ -24,7 +24,7 @@ public class VerticalScrollbar extends AbstractWidget {
         super(bounds);
 
         this.padding = padding;
-        this.thumbRect = new Rect2i(0, 0, bounds.getWidth() - padding * 2, 0);
+        this.thumbRect = Rect2i.startPosition(bounds.width - padding * 2, 0);
 
         setMaxProgress(maxProgress, segmentSize);
     }
@@ -64,25 +64,25 @@ public class VerticalScrollbar extends AbstractWidget {
                 Math.max(8, getHeight() - padding * 2 - maxProgress / segmentSize)
         ));
 
-        setThumbY(padding + thumbRect.getY());
+        setThumbY(padding + thumbRect.y);
     }
 
     public void setProgress(int progress) {
         this.progress = Math.min(maxProgress, Math.max(progress, 0));
         this.thumbRect.setY((int) (
-                (getHeight() - thumbRect.getHeight() - padding * 2)
+                (getHeight() - thumbRect.height - padding * 2)
                         * ((double) this.progress / (double) this.maxProgress)
         ));
     }
 
     protected void setScrollProgressByThumbY(int localY) {
-        final var maxThumbTop = getHeight() - padding * 2 - thumbRect.getHeight();
+        final var maxThumbTop = getHeight() - padding * 2 - thumbRect.height;
         setThumbY(localY, maxThumbTop);
-        progress = (int) (maxProgress * (double)thumbRect.getY() / (double)(maxThumbTop));
+        progress = (int) (maxProgress * (double)thumbRect.y / (double)(maxThumbTop));
     }
 
     protected void setThumbY(int localY) {
-        final var maxThumbTop = getHeight() - padding * 2 - thumbRect.getHeight();
+        final var maxThumbTop = getHeight() - padding * 2 - thumbRect.height;
         setThumbY(localY, maxThumbTop);
     }
 
@@ -91,7 +91,7 @@ public class VerticalScrollbar extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
         RectDrawer.with(guiGraphics, bounds)
                 .draw(0xaa222222)
                 .drawStroke(0xaa000000, padding);
@@ -104,7 +104,7 @@ public class VerticalScrollbar extends AbstractWidget {
     @Override
     public boolean onMouseClick(double mouseX, double mouseY) {
         if (getRenderableThumbRect().contains(mouseX, mouseY)) {
-            scrollingThumbTopToTouchOffset = (int) (mouseY - getRenderableThumbRect().getY());
+            scrollingThumbTopToTouchOffset = (int) (mouseY - getRenderableThumbRect().y);
             return true;
         }
 

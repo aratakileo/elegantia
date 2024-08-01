@@ -24,8 +24,8 @@ public class GuiGraphicsUtil {
         final var textWidth = font.width(text);
         final var y = (bounds.getTop() + bounds.getBottom() - 9) / 2 + 1;
 
-        if (textWidth > bounds.getWidth()) {
-            final var widthDifference = textWidth - bounds.getWidth();
+        if (textWidth > bounds.width) {
+            final var widthDifference = textWidth - bounds.width;
             final var seconds = (double) Util.getMillis() / 1000.0;
 
             enableScissor(guiGraphics, bounds);

@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.gui.config;
+package io.github.aratakileo.elegantia.util.config;
 
 import io.github.aratakileo.elegantia.util.type.Namespace;
 import io.github.aratakileo.elegantia.util.Strings;

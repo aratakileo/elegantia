@@ -1,5 +1,6 @@
 package io.github.aratakileo.elegantia.gui;
 
+import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
 import io.github.aratakileo.elegantia.util.math.Rect2i;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -7,8 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-public class WidgetBoundsBuilder {
+public class WidgetBuilder {
     public static final int GRAVITY_LEFT = 0,
             GRAVITY_TOP = 0,
             GRAVITY_RIGHT = 1,
@@ -23,17 +26,17 @@ public class WidgetBoundsBuilder {
     private int gravity = GRAVITY_LEFT | GRAVITY_TOP;
     private @Nullable Rect2i initialBounds, parentBounds;
 
-    public WidgetBoundsBuilder(int contentSize) {
+    public WidgetBuilder(int contentSize) {
         this.contentWidth = contentSize;
         this.contentHeight = contentSize;
     }
 
-    public WidgetBoundsBuilder(int contentWidth, int contentHeight) {
+    public WidgetBuilder(int contentWidth, int contentHeight) {
         this.contentWidth = contentWidth;
         this.contentHeight = contentHeight;
     }
 
-    public @NotNull WidgetBoundsBuilder setPadding(int padding) {
+    public @NotNull WidgetBuilder setPadding(int padding) {
         paddingLeft = padding;
         paddingTop = padding;
         paddingRight = padding;
@@ -42,7 +45,7 @@ public class WidgetBoundsBuilder {
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setPadding(
+    public @NotNull WidgetBuilder setPadding(
             int paddingLeft,
             int paddingTop,
             int paddingRight,
@@ -56,27 +59,27 @@ public class WidgetBoundsBuilder {
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setPaddingLeft(int paddingLeft) {
+    public @NotNull WidgetBuilder setPaddingLeft(int paddingLeft) {
         this.paddingLeft = paddingLeft;
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setPaddingTop(int paddingTop) {
+    public @NotNull WidgetBuilder setPaddingTop(int paddingTop) {
         this.paddingTop = paddingTop;
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setPaddingRight(int paddingRight) {
+    public @NotNull WidgetBuilder setPaddingRight(int paddingRight) {
         this.paddingRight = paddingRight;
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setPaddingBottom(int paddingBottom) {
+    public @NotNull WidgetBuilder setPaddingBottom(int paddingBottom) {
         this.paddingBottom = paddingBottom;
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setMargin(int margin) {
+    public @NotNull WidgetBuilder setMargin(int margin) {
         marginLeft = margin;
         marginTop = margin;
         marginRight = margin;
@@ -84,7 +87,7 @@ public class WidgetBoundsBuilder {
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
+    public @NotNull WidgetBuilder setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
         this.marginLeft = marginLeft;
         this.marginTop = marginTop;
         this.marginRight = marginRight;
@@ -92,64 +95,63 @@ public class WidgetBoundsBuilder {
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setMarginLeft(int marginLeft) {
+    public @NotNull WidgetBuilder setMarginLeft(int marginLeft) {
         this.marginLeft = marginLeft;
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setMarginTop(int marginTop) {
+    public @NotNull WidgetBuilder setMarginTop(int marginTop) {
         this.marginTop = marginTop;
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setMarginRight(int marginRight) {
+    public @NotNull WidgetBuilder setMarginRight(int marginRight) {
         this.marginRight = marginRight;
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setMarginBottom(int marginBottom) {
+    public @NotNull WidgetBuilder setMarginBottom(int marginBottom) {
         this.marginBottom = marginBottom;
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setGravity(int gravity) {
+    public @NotNull WidgetBuilder setGravity(int gravity) {
         this.gravity = gravity;
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setInitialBounds(@Nullable Rect2i initialBounds) {
+    public @NotNull WidgetBuilder setInitialBounds(@Nullable Rect2i initialBounds) {
         this.initialBounds = initialBounds;
         return this;
     }
 
-    public @NotNull WidgetBoundsBuilder setParentBounds(@Nullable Rect2i parentBounds) {
+    public @NotNull WidgetBuilder setParentBounds(@Nullable Rect2i parentBounds) {
         this.parentBounds = parentBounds;
         return this;
     }
 
-    public @NotNull Rect2i build() {
+    public @NotNull Rect2i buildBounds() {
         final var minecraftWindow = Minecraft.getInstance().getWindow();
-        final var canvasBounds = Objects.nonNull(parentBounds) ? parentBounds : new Rect2i(
-                0,
-                0,
+        final var canvasBounds = Objects.nonNull(parentBounds) ? parentBounds : Rect2i.startPosition(
                 minecraftWindow.getGuiScaledWidth(),
                 minecraftWindow.getGuiScaledHeight()
         );
 
-        final var newBounds = Objects.isNull(initialBounds) ? new Rect2i(0, 0, 0) : initialBounds.copy();
+        final var newBounds = Objects.isNull(initialBounds) ? Rect2i.empty() : initialBounds.copy();
 
         newBounds.setWidth(paddingLeft + contentWidth + paddingRight);
         newBounds.setHeight(paddingTop + contentHeight + paddingBottom);
 
         if (Objects.isNull(initialBounds)) {
-            if ((gravity & GRAVITY_RIGHT) >= 1) newBounds.setRight(canvasBounds.getRight() - marginRight);
+            if ((gravity & GRAVITY_RIGHT) >= 1)
+                newBounds.setRight(canvasBounds.getRight() - marginRight);
             else if ((gravity & GRAVITY_CENTER_HORIZONTAL) >= 1)
-                newBounds.setIpLeft((canvasBounds.getWidth() - newBounds.getWidth()) / 2).moveIpX(canvasBounds.getX());
+                newBounds.setLeft((canvasBounds.width - newBounds.width) / 2).moveX(canvasBounds.x);
             else newBounds.setLeft(canvasBounds.getLeft() + marginLeft);
 
             if ((gravity & GRAVITY_BOTTOM) >= 1) newBounds.setBottom(canvasBounds.getBottom() - marginBottom);
             else if ((gravity & GRAVITY_CENTER_VERTICAL) >= 1)
-                newBounds.setIpTop((canvasBounds.getHeight() - newBounds.getHeight()) / 2).moveIpY(canvasBounds.getY());
+                newBounds.setTop((canvasBounds.height - newBounds.height) / 2).moveY(canvasBounds.y);
             else newBounds.setTop(canvasBounds.getTop() + marginTop);
 
             return newBounds;
@@ -157,60 +159,74 @@ public class WidgetBoundsBuilder {
 
         if ((gravity & GRAVITY_RIGHT) >= 1)
             newBounds.setLeft(Math.min(
-                    newBounds.getLeft() - (newBounds.getWidth() - initialBounds.getWidth()),
+                    newBounds.getLeft() - (newBounds.width - initialBounds.width),
                     canvasBounds.getRight() - marginRight)
             );
         else if ((gravity & GRAVITY_CENTER_HORIZONTAL) >= 1)
-            newBounds.moveIpX((initialBounds.getWidth() - newBounds.getWidth()) / 2);
+            newBounds.moveX((initialBounds.width - newBounds.width) / 2);
         else newBounds.setLeft(Math.max(newBounds.getLeft(), canvasBounds.getLeft() + marginLeft));
 
         if ((gravity & GRAVITY_BOTTOM) >= 1)
             newBounds.setTop(Math.min(
-                    newBounds.getTop() - (newBounds.getHeight() - initialBounds.getHeight()),
+                    newBounds.getTop() - (newBounds.height - initialBounds.height),
                     canvasBounds.getBottom() - marginBottom
             ));
         else if ((gravity & GRAVITY_CENTER_VERTICAL) >= 1)
-            newBounds.moveIpY((newBounds.getHeight() - initialBounds.getHeight()) / 2);
+            newBounds.moveY((newBounds.height - initialBounds.height) / 2);
         else newBounds.setTop(Math.max(newBounds.getTop(), canvasBounds.getTop() + marginTop));
 
         return newBounds;
     }
 
-    public static @NotNull WidgetBoundsBuilder of(@NotNull WidgetBoundsBuilder widgetBoundsBuilder) {
-        return of(
-                widgetBoundsBuilder.build(),
-                widgetBoundsBuilder.paddingLeft,
-                widgetBoundsBuilder.paddingTop,
-                widgetBoundsBuilder.paddingRight,
-                widgetBoundsBuilder.paddingBottom
-        ).setMargin(
-                widgetBoundsBuilder.marginLeft,
-                widgetBoundsBuilder.marginTop,
-                widgetBoundsBuilder.marginRight,
-                widgetBoundsBuilder.marginBottom
-        ).setGravity(widgetBoundsBuilder.gravity).setParentBounds(widgetBoundsBuilder.parentBounds);
+    public <T> @NotNull T buildWidget(@NotNull Function<Rect2i, T> initializer) {
+        return initializer.apply(buildBounds());
     }
 
-    public static @NotNull WidgetBoundsBuilder of(@NotNull Rect2i initialBounds, int padding) {
+    public <T> @NotNull T buildWidget(@NotNull Component message, @NotNull BiFunction<Rect2i, Component, T> initializer) {
+        return initializer.apply(buildBounds(), message);
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public <T extends AbstractWidget> @NotNull T applyBounds(T widget) {
+        widget.setBounds(buildBounds());
+        return widget;
+    }
+
+    public static @NotNull WidgetBuilder of(@NotNull WidgetBuilder widgetBuilder) {
+        return of(
+                widgetBuilder.buildBounds(),
+                widgetBuilder.paddingLeft,
+                widgetBuilder.paddingTop,
+                widgetBuilder.paddingRight,
+                widgetBuilder.paddingBottom
+        ).setMargin(
+                widgetBuilder.marginLeft,
+                widgetBuilder.marginTop,
+                widgetBuilder.marginRight,
+                widgetBuilder.marginBottom
+        ).setGravity(widgetBuilder.gravity).setParentBounds(widgetBuilder.parentBounds);
+    }
+
+    public static @NotNull WidgetBuilder of(@NotNull Rect2i initialBounds, int padding) {
         return of(initialBounds, padding, padding, padding, padding);
     }
 
-    public static @NotNull WidgetBoundsBuilder of(
+    public static @NotNull WidgetBuilder of(
             @NotNull Rect2i initialBounds,
             int paddingLeft,
             int paddingTop,
             int paddingRight,
             int paddingBottom
     ) {
-        return new WidgetBoundsBuilder(
-                initialBounds.getWidth() - paddingLeft - paddingRight,
-                initialBounds.getHeight() - paddingTop - paddingBottom
+        return new WidgetBuilder(
+                initialBounds.width - paddingLeft - paddingRight,
+                initialBounds.height - paddingTop - paddingBottom
         ).setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
     }
 
-    public static @NotNull WidgetBoundsBuilder ofMessageContent(@NotNull Component message) {
+    public static @NotNull WidgetBuilder about(@NotNull Component message) {
         final var font = Minecraft.getInstance().font;
 
-        return new WidgetBoundsBuilder(font.width(message), font.lineHeight);
+        return new WidgetBuilder(font.width(message), font.lineHeight);
     }
 }

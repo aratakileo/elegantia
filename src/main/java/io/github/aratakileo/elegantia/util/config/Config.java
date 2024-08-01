@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.gui.config;
+package io.github.aratakileo.elegantia.util.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

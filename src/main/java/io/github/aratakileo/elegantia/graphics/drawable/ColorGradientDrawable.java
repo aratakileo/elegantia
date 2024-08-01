@@ -3,9 +3,10 @@ package io.github.aratakileo.elegantia.graphics.drawable;
 import io.github.aratakileo.elegantia.graphics.RectDrawer;
 import org.jetbrains.annotations.NotNull;
 
-public class ColorGradientDrawable extends Drawable {
+public class ColorGradientDrawable implements Drawable {
     private int colorStart, colorEnd;
     private @NotNull RectDrawer.GradientDirection gradientDirection;
+    protected int strokeColor = 0x0, strokeThickness = 0;
 
     public ColorGradientDrawable(
             int colorStart,
@@ -17,20 +18,41 @@ public class ColorGradientDrawable extends Drawable {
         this.gradientDirection = gradientDirection;
     }
 
-    public void setColorStart(int colorStart) {
+    public @NotNull ColorGradientDrawable setColors(int colorStart, int colorEnd) {
         this.colorStart = colorStart;
-    }
-
-    public void setColorEnd(int colorEnd) {
         this.colorEnd = colorEnd;
+
+        return this;
     }
 
-    public void setGradientDirection(@NotNull RectDrawer.GradientDirection gradientDirection) {
+    public @NotNull ColorGradientDrawable setColorStart(int colorStart) {
+        this.colorStart = colorStart;
+        return this;
+    }
+
+    public @NotNull ColorGradientDrawable setColorEnd(int colorEnd) {
+        this.colorEnd = colorEnd;
+        return this;
+    }
+
+    public @NotNull ColorGradientDrawable setGradientDirection(@NotNull RectDrawer.GradientDirection gradientDirection) {
         this.gradientDirection = gradientDirection;
+        return this;
+    }
+
+    public @NotNull ColorGradientDrawable setStrokeColor(int strokeColor) {
+        this.strokeColor = strokeColor;
+        return this;
+    }
+
+    public @NotNull ColorGradientDrawable setStrokeThickness(int strokeThickness) {
+        this.strokeThickness = strokeThickness;
+        return this;
     }
 
     @Override
-    protected void render(@NotNull RectDrawer rectDrawer, float dt) {
+    public void render(@NotNull RectDrawer rectDrawer, float dt) {
         rectDrawer.drawGradient(colorStart, colorEnd, gradientDirection);
+        rectDrawer.drawStroke(strokeColor, strokeThickness);
     }
 }

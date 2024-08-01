@@ -27,7 +27,7 @@ public class RectDrawer {
 
     public @NotNull RectDrawer draw(int color) {
         if (color != 0x0) {
-            guiGraphics.fill(bounds.getX(), bounds.getY(), bounds.getRight(), bounds.getBottom(), color);
+            guiGraphics.fill(bounds.getLeft(), bounds.getTop(), bounds.getRight(), bounds.getBottom(), color);
             return this;
         }
 
@@ -69,19 +69,19 @@ public class RectDrawer {
     public @NotNull RectDrawer drawStroke(int color, int thickness) {
         if (color == 0x0 || thickness == 0) return this;
 
-        guiGraphics.fill(bounds.getX(), bounds.getY(), bounds.getRight(), bounds.getY() + thickness, color);
-        guiGraphics.fill(bounds.getX(), bounds.getBottom() - thickness, bounds.getRight(), bounds.getBottom(), color);
+        guiGraphics.fill(bounds.getLeft(), bounds.getTop(), bounds.getRight(), bounds.getTop() + thickness, color);
+        guiGraphics.fill(bounds.getLeft(), bounds.getBottom() - thickness, bounds.getRight(), bounds.getBottom(), color);
 
         guiGraphics.fill(
-                bounds.getX(),
-                bounds.getY() + thickness,
-                bounds.getX() + thickness,
+                bounds.getLeft(),
+                bounds.getTop() + thickness,
+                bounds.getLeft() + thickness,
                 bounds.getBottom() - thickness,
                 color
         );
         guiGraphics.fill(
                 bounds.getRight() - thickness,
-                bounds.getY() + thickness,
+                bounds.getTop() + thickness,
                 bounds.getRight(),
                 bounds.getBottom() - thickness,
                 color
@@ -95,14 +95,14 @@ public class RectDrawer {
         RenderSystem.enableBlend();
         guiGraphics.blit(
                 texture,
-                bounds.getX(),
-                bounds.getY(),
+                bounds.getLeft(),
+                bounds.getTop(),
                 0f,
                 0f,
-                bounds.getWidth(),
-                bounds.getHeight(),
-                bounds.getWidth(),
-                bounds.getHeight()
+                bounds.width,
+                bounds.height,
+                bounds.width,
+                bounds.height
         );
         RenderSystem.disableBlend();
 
@@ -128,10 +128,10 @@ public class RectDrawer {
             int textureWidth,
             int textureHeight
     ) {
-        int renderWidth = bounds.getWidth(),
-                renderHeight = bounds.getHeight(),
-                renderX = bounds.getX(),
-                renderY = bounds.getY();
+        int renderWidth = bounds.width,
+                renderHeight = bounds.height,
+                renderX = bounds.x,
+                renderY = bounds.y;
 
         if (textureWidth < textureHeight) {
             final var oldRenderWidth = renderWidth;
@@ -164,10 +164,10 @@ public class RectDrawer {
     @Override
     public String toString() {
         return "RectDrawer{%s, %s, %s, %s}".formatted(
-                bounds.getX(),
-                bounds.getY(),
-                bounds.getWidth(),
-                bounds.getHeight()
+                bounds.x,
+                bounds.y,
+                bounds.width,
+                bounds.height
         );
     }
 
@@ -176,7 +176,7 @@ public class RectDrawer {
     }
 
     public static RectDrawer with(@NotNull GuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int size) {
-        return new RectDrawer(guiGraphics, new Rect2i(pos, size));
+        return new RectDrawer(guiGraphics, Rect2i.of(pos, size));
     }
 
     public static RectDrawer with(
@@ -185,11 +185,11 @@ public class RectDrawer {
             int width,
             int height
     ) {
-        return new RectDrawer(guiGraphics, new Rect2i(pos, width, height));
+        return new RectDrawer(guiGraphics, Rect2i.of(pos, width, height));
     }
 
     public static RectDrawer with(@NotNull GuiGraphics guiGraphics, int x, int y, int size) {
-        return new RectDrawer(guiGraphics, new Rect2i(x, y, size));
+        return new RectDrawer(guiGraphics, Rect2i.of(x, y, size));
     }
 
     public static RectDrawer with(@NotNull GuiGraphics guiGraphics, int x, int y, int width, int height) {

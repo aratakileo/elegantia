@@ -132,8 +132,8 @@ public abstract class CompositeWidget extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        super.renderWidget(guiGraphics, mouseX, mouseY, dt);
+    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+        super.renderBackground(guiGraphics, mouseX, mouseY, dt);
 
         for (final var unknownWidget: compositeParts)
             ((Renderable) unknownWidget).render(guiGraphics, mouseX, mouseY, dt);

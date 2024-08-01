@@ -22,14 +22,14 @@ class FocusedTooltipPositioner implements TooltipPositioner {
             int height
     ) {
         final var vector2i = new Vector2i();
-        vector2i.x = bounds.getX() + 3;
-        vector2i.y = bounds.getY() + bounds.getHeight() + 3 + 1;
+        vector2i.x = bounds.x + 3;
+        vector2i.y = bounds.y + bounds.height + 3 + 1;
         if (vector2i.y + height + 3 > screenHeight) {
-            vector2i.y = bounds.getY() - height - 3 - 1;
+            vector2i.y = bounds.y - height - 3 - 1;
         }
 
         if (vector2i.x + width > screenWidth) {
-            vector2i.x = Math.max(bounds.getX() + bounds.getWidth() - width - 3, 4);
+            vector2i.x = Math.max(bounds.x + bounds.width - width - 3, 4);
         }
 
         return vector2i;

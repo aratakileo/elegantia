@@ -1,5 +1,6 @@
 package io.github.aratakileo.elegantia.gui.widget;
 
+import io.github.aratakileo.elegantia.graphics.RectDrawer;
 import io.github.aratakileo.elegantia.graphics.drawable.Drawable;
 import io.github.aratakileo.elegantia.graphics.drawable.InteractableDrawable;
 import io.github.aratakileo.elegantia.gui.tooltip.TooltipPositioner;
@@ -21,7 +22,6 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public abstract class AbstractWidget implements Renderable, GuiEventListener, NarratableEntry {
@@ -66,7 +66,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     public int getWidth() {
-        return bounds.getWidth();
+        return bounds.width;
     }
 
     public void setWidth(int width) {
@@ -74,7 +74,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     public int getHeight() {
-        return bounds.getHeight();
+        return bounds.height;
     }
 
     public void setHeight(int height) {
@@ -82,11 +82,11 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     public int getX() {
-        return bounds.getX();
+        return bounds.x;
     }
 
     public int getY() {
-        return bounds.getY();
+        return bounds.y;
     }
 
     public void setY(int y) {
@@ -144,13 +144,14 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
         wasHovered = isHovered;
         isHovered = bounds.contains(mouseX, mouseY);
 
-        renderWidget(guiGraphics, mouseX, mouseY, dt);
+        renderBackground(guiGraphics, mouseX, mouseY, dt);
+        renderForeground(guiGraphics, mouseX, mouseY, dt);
 
         if (
-                Objects.nonNull(tooltip)
+                tooltip != null
                         && isVisible
                         && (isFocused() | isHovered)
-                        && Objects.nonNull(Minecraft.getInstance().screen)
+                        && Minecraft.getInstance().screen != null
         )
             Minecraft.getInstance().screen.setTooltipForNextRenderPass(
                     tooltip,
@@ -159,19 +160,29 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
             );
     }
 
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        if (Objects.isNull(backgroundDrawable)) return;
+    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+        if (backgroundDrawable == null) return;
+
+        final var rectDrawer = RectDrawer.with(guiGraphics, bounds.copy());
 
         if (backgroundDrawable instanceof InteractableDrawable interactableDrawable)
-            interactableDrawable.setState(isHovered || isFocused, wasHoveredBeforeRelease, isEnabled);
-
-        backgroundDrawable.render(guiGraphics, bounds, dt);
+            interactableDrawable.renderInteraction(
+                    rectDrawer,
+                    new InteractableDrawable.InteractionState(
+                            isHovered,
+                            isFocused,
+                            wasHoveredBeforeRelease,
+                            isEnabled
+                    ),
+                    dt
+            );
+        else backgroundDrawable.render(rectDrawer, dt);
     }
+
+    public void renderForeground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {}
 
     @Override
-    public void mouseMoved(double mouseX, double mouseY) {
-
-    }
+    public void mouseMoved(double mouseX, double mouseY) {}
 
     @Override
     public final boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -296,10 +307,10 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     public void setBounds(@NotNull Rect2i bounds) {
-        setX(bounds.getX());
-        setY(bounds.getY());
-        setWidth(bounds.getWidth());
-        setHeight(bounds.getHeight());
+        setX(bounds.x);
+        setY(bounds.y);
+        setWidth(bounds.width);
+        setHeight(bounds.height);
     }
 
     public @NotNull Rect2i getBounds() {
@@ -320,7 +331,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
     @Override
     public void updateNarration(NarrationElementOutput narrationElementOutput) {
-        if (Objects.nonNull(tooltip))
+        if (tooltip != null)
             tooltip.updateNarration(narrationElementOutput);
     }
 
@@ -334,7 +345,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     public void setMessage(@Nullable Component message) {
-        this.message = Objects.isNull(message) ? Component.empty() : message;
+        this.message = message == null ? Component.empty() : message;
     }
 
     public @NotNull Component getMessage() {

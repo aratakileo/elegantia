@@ -35,16 +35,16 @@ class WidgetTooltipPositioner implements TooltipPositioner {
         vector2i.y += MAX_OVERLAP_WITH_WIDGET;
 
         int o = height + MAX_OVERLAP_WITH_WIDGET * 2;
-        int p = bounds.getY()
-                + bounds.getHeight()
+        int p = bounds.y
+                + bounds.height
                 + MAX_OVERLAP_WITH_WIDGET
-                + getOffset(0, 0, bounds.getHeight());
+                + getOffset(0, 0, bounds.height);
 
         int q = screenHeight - MAX_DISTANCE_TO_WIDGET;
 
-        if (p + o <= q) vector2i.y += getOffset(vector2i.y, bounds.getY(), bounds.getHeight());
+        if (p + o <= q) vector2i.y += getOffset(vector2i.y, bounds.y, bounds.height);
         else
-            vector2i.y -= o + getOffset(vector2i.y, bounds.getY() + bounds.getHeight(), bounds.getHeight());
+            vector2i.y -= o + getOffset(vector2i.y, bounds.y + bounds.height, bounds.height);
 
         return vector2i;
     }

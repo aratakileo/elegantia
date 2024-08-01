@@ -3,19 +3,31 @@ package io.github.aratakileo.elegantia.graphics.drawable;
 import io.github.aratakileo.elegantia.graphics.RectDrawer;
 import org.jetbrains.annotations.NotNull;
 
-public class ColorDrawable extends Drawable {
-    private int color;
+public class ColorDrawable implements Drawable {
+    private int color, strokeColor = 0x0, strokeThickness = 0;
 
     public ColorDrawable(int color) {
         this.color = color;
     }
 
-    public void setColor(int color) {
+    public @NotNull ColorDrawable setColor(int color) {
         this.color = color;
+        return this;
+    }
+
+    public @NotNull ColorDrawable setStrokeColor(int strokeColor) {
+        this.strokeColor = strokeColor;
+        return this;
+    }
+
+    public @NotNull ColorDrawable setStrokeThickness(int strokeThickness) {
+        this.strokeThickness = strokeThickness;
+        return this;
     }
 
     @Override
-    protected void render(@NotNull RectDrawer rectDrawer, float dt) {
+    public void render(@NotNull RectDrawer rectDrawer, float dt) {
         rectDrawer.draw(color);
+        rectDrawer.drawStroke(strokeColor, strokeThickness);
     }
 }

@@ -1,12 +1,12 @@
 package io.github.aratakileo.elegantia.gui.screen;
 
-import io.github.aratakileo.elegantia.gui.config.Config;
-import io.github.aratakileo.elegantia.gui.config.EntryInfo;
+import io.github.aratakileo.elegantia.util.config.Config;
+import io.github.aratakileo.elegantia.util.config.EntryInfo;
 import io.github.aratakileo.elegantia.gui.widget.AbstractButton;
 import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
 import io.github.aratakileo.elegantia.gui.widget.Button;
 import io.github.aratakileo.elegantia.util.ModInfo;
-import io.github.aratakileo.elegantia.gui.WidgetBoundsBuilder;
+import io.github.aratakileo.elegantia.gui.WidgetBuilder;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -67,13 +67,11 @@ public class ConfigScreen extends AbstractScreen {
             final var message = getEntryMessage(entryInfo);
             final var triggeredBy = entryInfo.getTriggeredBy();
 
-            final var entryButton = new Button(
-                    WidgetBoundsBuilder.ofMessageContent(message)
-                            .setGravity(WidgetBoundsBuilder.GRAVITY_CENTER_HORIZONTAL)
-                            .setPadding(5)
-                            .build(),
-                    message
-            );
+            final var entryButton = WidgetBuilder.about(message)
+                    .setGravity(WidgetBuilder.GRAVITY_CENTER_HORIZONTAL)
+                    .setPadding(5)
+                    .buildWidget(message, Button::new);
+
             entryButton.setTooltip(entryInfo.getDescriptionComponent(configInstance.getNamespace()));
 
             addConfigFieldWidget(entryButton, triggeredBy);
@@ -89,6 +87,7 @@ public class ConfigScreen extends AbstractScreen {
 
                     return true;
                 }));
+
                 return;
             }
 
@@ -123,14 +122,12 @@ public class ConfigScreen extends AbstractScreen {
 
         final var quitButtonMessage = Component.translatable("elegantia.gui.config.button.save_and_quit");
 
-        final var quitButton = new Button(
-                WidgetBoundsBuilder.ofMessageContent(quitButtonMessage)
-                        .setGravity(WidgetBoundsBuilder.GRAVITY_CENTER_HORIZONTAL | WidgetBoundsBuilder.GRAVITY_BOTTOM)
-                        .setPadding(5)
-                        .setMarginBottom(10)
-                        .build(),
-                quitButtonMessage
-        );
+        final var quitButton = WidgetBuilder.about(quitButtonMessage)
+                .setGravity(WidgetBuilder.GRAVITY_CENTER_HORIZONTAL | WidgetBuilder.GRAVITY_BOTTOM)
+                .setPadding(5)
+                .setMarginBottom(10)
+                .buildWidget(quitButtonMessage, Button::new);
+
         quitButton.setOnClickListener((btn, byUser) -> {
             configInstance.save();
             onClose();
@@ -159,13 +156,12 @@ public class ConfigScreen extends AbstractScreen {
 
     protected void updateBooleanButtonState(@NotNull AbstractButton button, @NotNull EntryInfo entryInfo) {
         button.setMessage(getBooleanEntryMessage(entryInfo));
-        button.setBounds(
-                WidgetBoundsBuilder.ofMessageContent(button.getMessage())
-                        .setGravity(WidgetBoundsBuilder.GRAVITY_CENTER_HORIZONTAL)
-                        .setPadding(5)
-                        .setInitialBounds(button.getBounds())
-                        .build()
-        );
+
+        WidgetBuilder.about(button.getMessage())
+                .setGravity(WidgetBuilder.GRAVITY_CENTER_HORIZONTAL)
+                .setPadding(5)
+                .setInitialBounds(button.getBounds())
+                .applyBounds(button);
     }
 
     public static @Nullable ConfigScreen of(@NotNull Class<? extends Config> configClass) {

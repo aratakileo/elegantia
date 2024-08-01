@@ -5,230 +5,170 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2fc;
 
-public class Rect2i extends net.minecraft.client.renderer.Rect2i {
-    public Rect2i(int @NotNull [] rect) {
-        super(rect[0], rect[1], rect[2], rect[3]);
-    }
-
-    public Rect2i(@NotNull Vector2iInterface position, int size) {
-        this(position, size, size);
-    }
-
-    public Rect2i(@NotNull Vector2iInterface position, int width, int height) {
-        super(position.x(), position.y(), width, height);
-    }
-
-    public Rect2i(int x, int y, int size) {
-        super(x, y, size, size);
-    }
-
+public class Rect2i {
+    public int x, y, width, height;
+    
     public Rect2i(int x, int y, int width, int height) {
-        super(x, y, width, height);
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     }
 
-    public boolean isExist() {
-        return getWidth() > 0 && getHeight() > 0;
+    public boolean isEmpty() {
+        return width > 0 && height > 0;
     }
 
     public int get(int index) {
         return switch (index) {
-            case 0 -> getX();
-            case 1 -> getY();
-            case 2 -> getWidth();
-            case 3 -> getHeight();
+            case 0 -> x;
+            case 1 -> y;
+            case 2 -> width;
+            case 3 -> height;
             default -> throw new IllegalArgumentException();
         };
     }
 
     public @NotNull Rect2i set(int index, int value) {
         return switch (index) {
-            case 0 -> setIpX(value);
-            case 1 -> setIpY(value);
-            case 2 -> setIpWidth(value);
-            case 3 -> setIpHeight(value);
+            case 0 -> setX(value);
+            case 1 -> setY(value);
+            case 2 -> setWidth(value);
+            case 3 -> setHeight(value);
             default -> throw new IllegalArgumentException();
         };
     }
 
-    @Override
-    public void setX(int x) {
-        super.setX(x);
-    }
-
-    public @NotNull Rect2i setIpX(int x) {
-        setX(x);
+    public @NotNull Rect2i setX(int x) {
+        this.x = x;
         return this;
     }
 
-    @Override
-    public void setY(int y) {
-        super.setY(y);
-    }
-
-    public @NotNull Rect2i setIpY(int y) {
-        setY(y);
+    public @NotNull Rect2i setY(int y) {
+        this.y = y;
         return this;
     }
 
     public @NotNull Vector2ic getPosition() {
-        return new Vector2ic(getX(), getY());
+        return new Vector2ic(x, y);
     }
 
-    public void setPosition(@NotNull Vector2iInterface position) {
-        super.setPosition(position.x(), position.y());
-    }
-
-    @Override
-    public void setPosition(int x, int y) {
-        super.setPosition(x, y);
-    }
-
-    public @NotNull Rect2i setIpPosition(@NotNull Vector2iInterface position) {
-        setPosition(position);
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i setPosition(@NotNull Vector2iInterface position) {
+        x = position.x();
+        y = position.y();
         return this;
     }
 
-    public @NotNull Rect2i setIpPosition(int x, int y) {
-        setPosition(x, y);
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
         return this;
     }
 
     public int getLeft() {
-        return getX();
+        return x;
     }
 
-    public void setLeft(int left) {
-        setX(left);
-    }
-
-    public @NotNull Rect2i setIpLeft(int left) {
-        setX(left);
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i setLeft(int left) {
+        x = left;
         return this;
     }
 
     public int getRight() {
-        return getX() + getWidth();
+        return x + width;
     }
 
-    public void setRight(int right) {
-        setX(right - getWidth());
-    }
-
-    public @NotNull Rect2i setIpRight(int right) {
-        setRight(right);
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i setRight(int right) {
+        x = right - width;
         return this;
     }
 
     public int getTop() {
-        return getY();
+        return y;
     }
 
-    public void setTop(int top) {
-        setY(top);
-    }
-
-    public @NotNull Rect2i setIpTop(int top) {
-        setY(top);
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i setTop(int top) {
+        y = top;
         return this;
     }
 
     public int getBottom() {
-        return getY() + getHeight();
+        return y + height;
     }
 
-    public void setBottom(int bottom) {
-        setY(bottom - getHeight());
-    }
-
-    public @NotNull Rect2i setIpBottom(int bottom) {
-        setBottom(bottom);
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i setBottom(int bottom) {
+        y = bottom - height;
         return this;
     }
 
     public @NotNull Vector2ic getLeftTop() {
-        return new Vector2ic(getX(), getY());
+        return new Vector2ic(x, y);
     }
 
-    public void setLeftTop(@NotNull Vector2iInterface leftTop) {
-        setPosition(leftTop);
-    }
+    public @NotNull Rect2i setLeftTop(@NotNull Vector2iInterface leftTop) {
+        x = leftTop.x();
+        y = leftTop.y();
 
-    public void setLeftTop(int left, int top) {
-        setPosition(left, top);
-    }
-
-    public @NotNull Rect2i setIpLeftTop(@NotNull Vector2iInterface leftTop) {
-        setPosition(leftTop);
         return this;
     }
 
-    public @NotNull Rect2i setIpLeftTop(int left, int top) {
-        setPosition(left, top);
+    public @NotNull Rect2i setLeftTop(int left, int top) {
+        x = left;
+        y = top;
+        
         return this;
     }
 
     public @NotNull Vector2ic getRightBottom() {
-        return new Vector2ic(getRight(), getBottom());
-    }
-
-    public void setRightBottom(@NotNull Vector2iInterface rightBottom) {
-        setRight(rightBottom.x());
-        setBottom(rightBottom.y());
-    }
-
-    public void setRightBottom(int right, int bottom) {
-        setRight(right);
-        setBottom(bottom);
+        return new Vector2ic(x + width, y + height);
     }
 
     public @NotNull Rect2i setIpRightBottom(@NotNull Vector2iInterface rightBottom) {
-        setRightBottom(rightBottom);
+        x = rightBottom.x() - width;
+        y = rightBottom.y() - height;
+        
         return this;
     }
 
     public @NotNull Rect2i setIpRightBottom(int right, int bottom) {
-        setRightBottom(right, bottom);
+        x = right - width;
+        y = bottom - height;
+        
         return this;
     }
 
-    @Override
-    public void setWidth(int width) {
-        super.setWidth(width);
-    }
-
-    public @NotNull Rect2i setIpWidth(int width) {
-        setWidth(width);
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i setWidth(int width) {
+        this.width = width;
         return this;
     }
 
-    @Override
-    public void setHeight(int height) {
-        super.setHeight(height);
-    }
-
-    public @NotNull Rect2i setIpHeight(int height) {
-        setHeight(height);
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i setHeight(int height) {
+        this.height = height;
         return this;
     }
 
-    public void setSize(int width, int height) {
-        setWidth(width);
-        setHeight(height);
-    }
-
-    public @NotNull Rect2i setIpSize(int width, int height) {
-        setSize(width, height);
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i setSize(int width, int height) {
+        this.width = width;
+        this.height = height;
 
         return this;
     }
 
     public boolean contains(@NotNull Vector2iInterface position) {
-        return super.contains(position.x(), position.y());
+        return contains(position.x(), position.y());
     }
-
-    @Override
+    
     public boolean contains(int x, int y) {
-        return super.contains(x, y);
+        return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height;
     }
 
     public boolean contains(@NotNull Vector2fc position) {
@@ -247,146 +187,139 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
         return contains((int) Math.ceil(x), (int) Math.ceil(y));
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull Rect2i moveX(int x) {
-        return copy().moveIpX(x);
-    }
-
-    public @NotNull Rect2i moveIpX(int x) {
-        setX(getX() + x);
+        this.x += x;
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull Rect2i moveY(int y) {
-        return copy().moveIpY(y);
-    }
-
-    public @NotNull Rect2i moveIpY(int y) {
-        setY(getY() + y);
+        this.y += y;
         return this;
     }
 
     public @NotNull Rect2i move(@NotNull Vector2iInterface position) {
-        return copy().moveIp(position);
-    }
-
-    public @NotNull Rect2i move(int x, int y) {
-        return copy().moveIp(x, y);
-    }
-
-    public @NotNull Rect2i moveIp(@NotNull Vector2iInterface position) {
-        setX(getX() + position.x());
-        setY(getY() + position.y());
+        x += position.x();
+        y += position.y();
 
         return this;
     }
 
-    public @NotNull Rect2i moveIp(int x, int y) {
-        setX(getX() + x);
-        setY(getY() + y);
+    public @NotNull Rect2i move(int x, int y) {
+        this.x += x;
+        this.y += y;
 
         return this;
     }
 
     public @NotNull Rect2i cutLeft(int length) {
-        return copy().cutIpLeft(length);
+        return moveHorizontal(length, 0);
     }
 
     public @NotNull Rect2i moveHorizontal(int left, int right) {
-        return copy().moveIpHorizontal(left, right);
-    }
+        x += left;
+        width = width - left + right;
 
-    public @NotNull Rect2i cutIpLeft(int length) {
-        return moveIpHorizontal(length, 0);
-    }
-
-    public @NotNull Rect2i moveIpHorizontal(int left, int right) {
-        moveIpX(left);
-        setWidth(getWidth() - left + right);
-
-        if (getWidth() < 0) {
-            moveIpX(getWidth());
-            setWidth(-getWidth());
+        if (width < 0) {
+            x += width;
+            width = -width;
         }
 
         return this;
     }
 
     public @NotNull Rect2i cutTop(int length) {
-        return copy().cutIpTop(length);
+        return moveVertical(length, 0);
     }
 
     public @NotNull Rect2i moveVertical(int top, int bottom) {
-        return copy().moveIpVertical(top, bottom);
-    }
+        y += top;
+        height = height - top + bottom;
 
-    public @NotNull Rect2i cutIpTop(int length) {
-        return moveIpVertical(length, 0);
-    }
-
-    public @NotNull Rect2i moveIpVertical(int top, int bottom) {
-        moveIpY(top);
-        setHeight(getHeight() - top + bottom);
-
-        if (getHeight() < 0) {
-            moveIpY(getHeight());
-            setHeight(-getHeight());
+        if (height < 0) {
+            y += height;
+            height = -height;
         }
 
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull Rect2i moveBounds(int left, int top, int right, int bottom) {
-        return copy().moveIpBounds(left, top, right, bottom);
+        return moveHorizontal(left, right).moveVertical(top, bottom);
     }
 
-    public @NotNull Rect2i moveIpBounds(int left, int top, int right, int bottom) {
-        moveIpHorizontal(left, right);
-        moveIpVertical(top, bottom);
+    public @NotNull Rect2i expandHorizontal(int horizontal) {
+        width += horizontal;
+        return this;
+    }
+
+    public @NotNull Rect2i expandVertical(int vertical) {
+        height += vertical;
+        return this;
+    }
+
+    public @NotNull Rect2i expand(int horizontal, int vertical) {
+        width += horizontal;
+        height += vertical;
 
         return this;
     }
 
-    public @NotNull Rect2i expandHorizontal(int horizontal) {
-        return copy().setIpWidth(getWidth() + horizontal);
-    }
-
-    public @NotNull Rect2i expandVertical(int vertical) {
-        return copy().setIpHeight(getHeight() + vertical);
-    }
-
-    public @NotNull Rect2i expand(int horizontal, int vertical) {
-        return copy().setIpSize(getWidth() + horizontal, getHeight() + vertical);
-    }
-
     public @NotNull Rect2i mul(int value) {
-        return new Rect2i(getX() * value, getY() * value, getWidth() * value, getHeight() * value);
+        return new Rect2i(x * value, y * value, width * value, height * value);
     }
 
     public @NotNull Rect2i mul(double value) {
         return new Rect2i(
-                (int) (getX() * value),
-                (int) (getY() * value),
-                (int) (getWidth() * value),
-                (int) (getHeight() * value)
+                (int) (x * value),
+                (int) (y * value),
+                (int) (width * value),
+                (int) (height * value)
         );
     }
 
     public @NotNull Rect2i mul(float value) {
         return new Rect2i(
-                (int) (getX() * value),
-                (int) (getY() * value),
-                (int) (getWidth() * value),
-                (int) (getHeight() * value)
+                (int) (x * value),
+                (int) (y * value),
+                (int) (width * value),
+                (int) (height * value)
         );
     }
 
     @Override
     public @NotNull String toString() {
-        return "Rect2i{%d, %d, %d, %d}".formatted(getX(), getY(), getWidth(), getHeight());
+        return "Rect2i{%d, %d, %d, %d}".formatted(x, y, width, height);
     }
 
     public @NotNull Rect2i copy() {
-        return new Rect2i(getX(), getY(), getWidth(), getHeight());
+        return new Rect2i(x, y, width, height);
+    }
+    
+    public @NotNull net.minecraft.client.renderer.Rect2i toNativeRect2i() {
+        return new net.minecraft.client.renderer.Rect2i(x, y, width, height);
+    }
+    
+    public int @NotNull[] toArray() {
+        return new int[]{ x, y, width, height };
+    }
+
+    public static @NotNull Rect2i of(int @NotNull [] rect) {
+        return new Rect2i(rect[0], rect[1], rect[2], rect[3]);
+    }
+
+    public static @NotNull Rect2i of(@NotNull Vector2iInterface position, int size) {
+        return new Rect2i(position.x(), position.y(), size, size);
+    }
+
+    public static @NotNull Rect2i of(@NotNull Vector2iInterface position, int width, int height) {
+        return new Rect2i(position.x(), position.y(), width, height);
+    }
+
+    public static @NotNull Rect2i of(int x, int y, int size) {
+        return new Rect2i(x, y, size, size);
     }
 
     public static @NotNull Rect2i of(@NotNull LayoutElement layoutElement) {
@@ -409,5 +342,13 @@ public class Rect2i extends net.minecraft.client.renderer.Rect2i {
                 screenRectangle.width(),
                 screenRectangle.height()
         );
+    }
+
+    public static @NotNull Rect2i empty() {
+        return new Rect2i(0, 0, 0, 0);
+    }
+
+    public static @NotNull Rect2i startPosition(int width, int height) {
+        return new Rect2i(0, 0, width, height);
     }
 }
