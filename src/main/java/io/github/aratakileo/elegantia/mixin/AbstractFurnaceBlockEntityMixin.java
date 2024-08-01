@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.mixin;
 
-import io.github.aratakileo.elegantia.util.RegistriesUtil;
+import io.github.aratakileo.elegantia.util.FuelController;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,6 +14,6 @@ import java.util.Map;
 public class AbstractFurnaceBlockEntityMixin {
     @Inject(at = @At("RETURN"), method = "getFuel")
     private static void fuelTimeMapHook(CallbackInfoReturnable<Map<Item, Integer>> info) {
-        RegistriesUtil.applyFuels(info.getReturnValue());
+        FuelController.applyFuels(info.getReturnValue());
     }
 }

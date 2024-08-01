@@ -3,8 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-apply from: 'util.gradle'
-
+version = project.mod_version
 group = project.maven_group
 
 repositories {
@@ -14,6 +13,10 @@ repositories {
             includeGroup 'com.terraformersmc'
         }
     }
+}
+
+fabricApi {
+    configureDataGeneration()
 }
 
 ext.mod = { String localOverrideKey, Object dep ->
@@ -31,9 +34,9 @@ ext.includeMod = { String localOverrideKey, Object dep ->
 }
 
 dependencies {
+    // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
-
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     includeMod "fabric-api", fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
@@ -45,15 +48,15 @@ dependencies {
 }
 
 processResources {
-    final var replaceProperties = [
-            'version': project.version
-    ]
-
-    inputs.properties replaceProperties
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "loader_version", project.loader_version
     filteringCharset "UTF-8"
 
     filesMatching("fabric.mod.json") {
-        expand replaceProperties
+        expand "version": project.version,
+                "minecraft_version": project.minecraft_version,
+                "loader_version": project.loader_version
     }
 }
 

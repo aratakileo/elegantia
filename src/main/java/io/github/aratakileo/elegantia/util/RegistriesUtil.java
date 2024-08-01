@@ -1,8 +1,5 @@
 package io.github.aratakileo.elegantia.util;
 
-import io.github.aratakileo.elegantia.Elegantia;
-import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -20,20 +17,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.Map;
 
 public final class RegistriesUtil {
-    private static final Object2IntMap<ItemLike> ITEM_COOK_TIMES = new Object2IntLinkedOpenHashMap<>();
-    private static final Object2IntMap<TagKey<Item>> TAG_COOK_TIMES = new Object2IntLinkedOpenHashMap<>();
-
     private RegistriesUtil() {}
 
     public static <T> @NotNull HashSet<T> getElementsFromTag(
@@ -140,43 +131,5 @@ public final class RegistriesUtil {
                 resourceLocation,
                 RecipeSerializer.register(resourceLocation.getPath(), serializer)
         );
-    }
-
-    private static boolean checkCookTime(@NotNull String item, int cookTime) {
-        if (cookTime > 32767)
-            Elegantia.LOGGER.warn("Tried to register an overly high cookTime: {} > 32767! ({})", cookTime, item);
-
-        if (cookTime <= 0) {
-            Elegantia.LOGGER.error("Could not be registered an overly low cookTime: {} <= 0! ({})", cookTime, item);
-            return false;
-        }
-
-        return true;
-    }
-
-    public static <T extends ItemLike> @NotNull T registerAsFuel(@NotNull T item, int cookTime) {
-        if (!checkCookTime(item.toString(), cookTime)) return item;
-
-        ITEM_COOK_TIMES.put(item, cookTime);
-        AbstractFurnaceBlockEntity.invalidateCache();
-
-        return item;
-    }
-
-    public static @NotNull TagKey<Item> registerAsFuel(@NotNull TagKey<Item> tag, int cookTime) {
-        if (!checkCookTime(tag.location().toString(), cookTime)) return tag;
-
-        TAG_COOK_TIMES.put(tag, cookTime);
-        AbstractFurnaceBlockEntity.invalidateCache();
-
-        return tag;
-    }
-
-    public static void applyFuels(@NotNull Map<Item, Integer> cookTimes) {
-        for (final var tagEntry: TAG_COOK_TIMES.object2IntEntrySet())
-            AbstractFurnaceBlockEntity.add(cookTimes, tagEntry.getKey(), tagEntry.getIntValue());
-
-        for (final var itemEntry: ITEM_COOK_TIMES.object2IntEntrySet())
-            AbstractFurnaceBlockEntity.add(cookTimes, itemEntry.getKey(), itemEntry.getIntValue());
     }
 }
