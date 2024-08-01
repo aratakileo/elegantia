@@ -3,9 +3,9 @@ package io.github.aratakileo.elegantia.gui.widget;
 import io.github.aratakileo.elegantia.graphics.drawable.Drawable;
 import io.github.aratakileo.elegantia.graphics.drawable.InteractableDrawable;
 import io.github.aratakileo.elegantia.gui.tooltip.TooltipPositioner;
-import io.github.aratakileo.elegantia.math.Rect2i;
-import io.github.aratakileo.elegantia.math.Vector2iInterface;
-import io.github.aratakileo.elegantia.math.Vector2ic;
+import io.github.aratakileo.elegantia.util.math.Rect2i;
+import io.github.aratakileo.elegantia.util.math.Vector2iInterface;
+import io.github.aratakileo.elegantia.util.math.Vector2ic;
 import io.github.aratakileo.elegantia.util.Mouse;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
@@ -237,12 +237,6 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
     public boolean onMouseDrag(double mouseX, double mouseY, double deltaX, double deltaY) {
         return false;
-    }
-
-// 1.20-1.20.1 only
-    @Override
-    public final boolean mouseScrolled(double mouseX, double mouseY, double verticalAmount) {
-        return mouseScrolled(mouseX, mouseY, 0, verticalAmount);
     }
 
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {

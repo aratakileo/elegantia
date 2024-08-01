@@ -30,9 +30,9 @@ public class ConfigScreen extends AbstractScreen {
             @Nullable Screen parent
     ) {
         super(Component.translatable(
-                "elegantia.gui.config.title", ModInfo.getName(configInstance.getNamespace()).orElse("Unknown")),
-                parent
-        );
+                "elegantia.gui.config.title",
+                configInstance.getNamespace().getMod().map(ModInfo::getName).orElse("Unknown")
+        ), parent);
         this.configInstance = configInstance;
     }
 

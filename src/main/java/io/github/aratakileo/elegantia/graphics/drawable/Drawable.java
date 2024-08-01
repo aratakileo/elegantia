@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.graphics.drawable;
 
-import io.github.aratakileo.elegantia.math.Rect2i;
+import io.github.aratakileo.elegantia.util.math.Rect2i;
 import io.github.aratakileo.elegantia.graphics.RectDrawer;
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;

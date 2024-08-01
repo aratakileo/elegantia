@@ -3,7 +3,7 @@
   "id": "elegantia",
   "version": "${version}",
   "name": "Elegantia",
-  "description": "GUI library for Minecraft and more",
+  "description": "Arataki's mods library",
   "authors": [
     "Arataki Leo"
   ],
@@ -14,7 +14,7 @@
   },
   "license": "LGPL-3.0",
   "icon": "assets/elegantia/icon.png",
-  "environment": "client",
+  "environment": "*",
   "custom": {
     "modmenu": {
       "badges": [
@@ -27,5 +27,6 @@
   },
   "mixins": [
     "elegantia.mixins.json"
-  ]
+  ],
+  "accessWidener": "elegantia.accesswidener"
 }

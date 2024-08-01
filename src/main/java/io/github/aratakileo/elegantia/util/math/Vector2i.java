@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.math;
+package io.github.aratakileo.elegantia.util.math;
 
 import org.jetbrains.annotations.NotNull;
 

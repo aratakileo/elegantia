@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.aratakileo.elegantia.gui.screen.ConfigScreen;
 import io.github.aratakileo.elegantia.util.*;
+import io.github.aratakileo.elegantia.util.type.LateInit;
+import io.github.aratakileo.elegantia.util.type.Namespace;
 import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -236,7 +238,7 @@ public abstract class Config {
             return null;
         }
 
-        ModInfo.throwIfModIsNotLoaded(namespace);
+        ModInfo.getOrThrow(namespace);
 
         final var configInstance = Optional.ofNullable(load(
                 configClass,

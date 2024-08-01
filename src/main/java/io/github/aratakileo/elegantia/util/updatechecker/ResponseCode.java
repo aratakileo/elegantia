@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.updatechecker;
+package io.github.aratakileo.elegantia.util.updatechecker;
 
 public enum ResponseCode {
     FAILED,

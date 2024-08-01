@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.5-SNAPSHOT'
+    id 'fabric-loom' version '1.6-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -16,11 +16,31 @@ repositories {
     }
 }
 
+ext.mod = { String localOverrideKey, Object dep ->
+    File file = file("../.${localOverrideKey}-local");
+    if (file.exists()) {
+        dependencies.implementation(dep)
+    } else {
+        dependencies.modImplementation(dep)
+    }
+}
+
+ext.includeMod = { String localOverrideKey, Object dep ->
+    mod(localOverrideKey, dep)
+    dependencies.include(dep)
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
 
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    includeMod "fabric-api", fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
+    includeMod "fabric-api", fabricApi.module("fabric-screen-api-v1", project.fabric_version)
+    includeMod "fabric-api", fabricApi.module("fabric-key-binding-api-v1", project.fabric_version)
+    includeMod "fabric-api", fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
+
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
@@ -82,4 +102,8 @@ publishing {
         // The repositories here will be used for publishing your artifact, not for
         // retrieving dependencies.
     }
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/elegantia.accesswidener")
 }

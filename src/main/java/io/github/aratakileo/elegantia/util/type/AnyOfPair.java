@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.util;
+package io.github.aratakileo.elegantia.util.type;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,16 +16,16 @@ public class AnyOfPair<Left, Right> {
     }
 
     public boolean isLeft() {
-        return Objects.nonNull(leftValue);
+        return leftValue != null;
     }
 
     public boolean isRight() {
-        return Objects.nonNull(rightValue);
+        return rightValue != null;
     }
 
     public <T> boolean is(@NotNull Class<? extends T> type) {
-        return Objects.nonNull(leftValue) && leftValue.getClass() == type
-                || Objects.nonNull(rightValue) && rightValue.getClass() == type;
+        return leftValue != null && leftValue.getClass() == type
+                || rightValue != null && rightValue.getClass() == type;
     }
 
     public <T> void ifIs(@NotNull Class<? extends T> type, @NotNull Consumer<@NotNull T> consumer) {
@@ -33,13 +33,13 @@ public class AnyOfPair<Left, Right> {
 
         final var value = get(type);
 
-        if (Objects.nonNull(value)) consumer.accept(value);
+        if (value != null) consumer.accept(value);
     }
 
     @SuppressWarnings("unchecked")
     public <T> @Nullable T get(@NotNull Class<? extends T> type) {
-        if (Objects.nonNull(leftValue) && leftValue.getClass() == type) return (T) leftValue;
-        if (Objects.nonNull(rightValue) && rightValue.getClass() == type) return (T) rightValue;
+        if (leftValue != null && leftValue.getClass() == type) return (T) leftValue;
+        if (rightValue != null && rightValue.getClass() == type) return (T) rightValue;
 
         return null;
     }

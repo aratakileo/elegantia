@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.gui.config;
 
-import io.github.aratakileo.elegantia.util.Namespace;
+import io.github.aratakileo.elegantia.util.type.Namespace;
 import io.github.aratakileo.elegantia.util.Strings;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;

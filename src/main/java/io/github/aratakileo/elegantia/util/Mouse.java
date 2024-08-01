@@ -1,16 +1,14 @@
 package io.github.aratakileo.elegantia.util;
 
 import com.mojang.blaze3d.platform.Window;
-import io.github.aratakileo.elegantia.math.Vector2dc;
+import io.github.aratakileo.elegantia.util.math.Vector2dc;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class Mouse {
-    private Mouse() {}
-
+public interface Mouse {
     private static @NotNull MouseHandler getMouseHandler() {
         return Minecraft.getInstance().mouseHandler;
     }
@@ -19,35 +17,35 @@ public class Mouse {
         return Minecraft.getInstance().getWindow();
     }
 
-    public static double getX() {
+    static double getX() {
         return getMouseHandler().xpos()
                 * (double) getWindow().getGuiScaledWidth()
                 / (double) getWindow().getScreenWidth();
     }
 
-    public static double getY() {
+    static double getY() {
         return getMouseHandler().ypos()
                 * (double) getWindow().getGuiScaledHeight()
                 / (double) getWindow().getScreenHeight();
     }
 
-    public static @NotNull Vector2dc getPosition() {
+    static @NotNull Vector2dc getPosition() {
         return new Vector2dc(getX(), getY());
     }
 
-    public boolean isLeftPressed() {
+    static boolean isLeftPressed() {
         return getMouseHandler().isLeftPressed();
     }
 
-    public boolean isRightPressed() {
+    static boolean isRightPressed() {
         return getMouseHandler().isRightPressed();
     }
 
-    public boolean isMiddlePressed() {
+    static boolean isMiddlePressed() {
         return getMouseHandler().isMiddlePressed();
     }
 
-    public @NotNull Optional<Button> getPressedButton() {
+    static @NotNull Optional<Button> getPressedButton() {
         if (getMouseHandler().isLeftPressed())
             return Optional.of(Button.LEFT);
 
@@ -60,7 +58,7 @@ public class Mouse {
         return Optional.empty();
     }
 
-    public enum Button {
+    enum Button {
         LEFT,
         RIGHT,
         MIDDLE;

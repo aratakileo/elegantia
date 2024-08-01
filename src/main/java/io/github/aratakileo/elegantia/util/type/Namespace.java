@@ -1,5 +1,6 @@
-package io.github.aratakileo.elegantia.util;
+package io.github.aratakileo.elegantia.util.type;
 
+import io.github.aratakileo.elegantia.util.ModInfo;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -25,12 +26,16 @@ public class Namespace {
         return LoggerFactory.getLogger(namespace);
     }
 
-    public @NotNull Optional<ModInfo> getModInfo() {
+    public @NotNull Optional<ModInfo> getMod() {
         return ModInfo.get(this);
     }
 
+    public @NotNull ModInfo getModOrThrow() {
+        return ModInfo.getOrThrow(this);
+    }
+
     public @NotNull ResourceLocation getLocation(@NotNull String path) {
-        return new ResourceLocation(namespace, path);
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
     }
 
     public boolean equals(@NotNull Namespace namespace) {

@@ -32,18 +32,8 @@ public abstract class AbstractScreen extends Screen {
         renderContent(guiGraphics, mouseX, mouseY, dt);
     }
 
-// 1.20-1.20.1 only
-    @Override
-    @Deprecated(since = "0.0.1-beta", forRemoval = true)
-    public final void renderBackground(GuiGraphics guiGraphics) {
-        throw new RuntimeException("The use of this variant of the method is prohibited!");
-    }
-
     public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-// 1.20-1.20.1
-        super.renderBackground(guiGraphics);
-// 1.20.2-1.20.4
-//        super.renderBackground(guiGraphics, mouseX, mouseY, dt);
+        super.renderBackground(guiGraphics, mouseX, mouseY, dt);
     }
 
     public void renderContent(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {

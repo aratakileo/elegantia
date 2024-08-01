@@ -1,12 +1,14 @@
 package io.github.aratakileo.elegantia.graphics;
 
 import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
-import io.github.aratakileo.elegantia.math.Rect2i;
+import io.github.aratakileo.elegantia.util.math.Rect2i;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
@@ -155,7 +157,15 @@ public class GuiGraphicsUtil {
         guiGraphics.disableScissor();
     }
 
+    public static void playSound(@NotNull SoundEvent sound, float volume) {
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound, volume));
+    }
+
+    public static void playSound(@NotNull Holder<SoundEvent> sound, float volume) {
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound.value(), volume));
+    }
+
     public static void playClickSound() {
-        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        playSound(SoundEvents.UI_BUTTON_CLICK, 1.0F);
     }
 }

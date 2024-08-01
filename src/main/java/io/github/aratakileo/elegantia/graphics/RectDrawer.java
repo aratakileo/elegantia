@@ -2,8 +2,8 @@ package io.github.aratakileo.elegantia.graphics;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.aratakileo.elegantia.math.Rect2i;
-import io.github.aratakileo.elegantia.math.Vector2iInterface;
+import io.github.aratakileo.elegantia.util.math.Rect2i;
+import io.github.aratakileo.elegantia.util.math.Vector2iInterface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
@@ -34,63 +34,38 @@ public class RectDrawer {
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull RectDrawer drawGradient(int colorStart, int colorEnd, @NotNull GradientDirection direction) {
         if (colorStart == 0x0 || colorEnd == 0x0) return this;
 
-        final var buffer = new RectVertexConsumer(
-                bounds,
-                guiGraphics.bufferSource().getBuffer(RenderType.gui()),
-                guiGraphics.pose().last().pose()
-        );
+        return switch (direction) {
+            case HORIZONTAL -> drawGradient(colorStart, colorStart, colorEnd, colorEnd);
+            case VERTICAL -> drawGradient(colorStart, colorEnd, colorEnd, colorStart);
+            case DIAGONAL -> drawGradient(colorEnd, colorStart, colorEnd, colorStart);
+            case CORNER_LEFT_TOP -> drawGradient(colorStart, colorEnd, colorEnd, colorEnd);
+            case CORNER_LEFT_BOTTOM -> drawGradient(colorEnd, colorStart, colorEnd, colorEnd);
+            case CORNER_RIGHT_BOTTOM -> drawGradient(colorEnd, colorEnd, colorStart, colorEnd);
+            case CORNER_RIGHT_TOP -> drawGradient(colorEnd, colorEnd, colorEnd, colorStart);
+        };
+    }
 
-        switch (direction) {
-            case HORIZONTAL -> {
-                buffer.coloredVertex(0, colorStart);
-                buffer.coloredVertex(1, colorStart);
-                buffer.coloredVertex(2, colorEnd);
-                buffer.coloredVertex(3, colorEnd);
-            }
-            case VERTICAL -> {
-                buffer.coloredVertex(0, colorStart);
-                buffer.coloredVertex(1, colorEnd);
-                buffer.coloredVertex(2, colorEnd);
-                buffer.coloredVertex(3, colorStart);
-            }
-            case DIAGONAL -> {
-                buffer.coloredVertex(0, colorEnd);
-                buffer.coloredVertex(1, colorStart);
-                buffer.coloredVertex(2, colorEnd);
-                buffer.coloredVertex(3, colorStart);
-            }
-            case CORNER_LEFT_TOP -> {
-                buffer.coloredVertex(0, colorStart);
-                buffer.coloredVertex(1, colorEnd);
-                buffer.coloredVertex(2, colorEnd);
-                buffer.coloredVertex(3, colorEnd);
-            }
-            case CORNER_LEFT_BOTTOM -> {
-                buffer.coloredVertex(0, colorEnd);
-                buffer.coloredVertex(1, colorStart);
-                buffer.coloredVertex(2, colorEnd);
-                buffer.coloredVertex(3, colorEnd);
-            }
-            case CORNER_RIGHT_BOTTOM -> {
-                buffer.coloredVertex(0, colorEnd);
-                buffer.coloredVertex(1, colorEnd);
-                buffer.coloredVertex(2, colorStart);
-                buffer.coloredVertex(3, colorEnd);
-            }
-            case CORNER_RIGHT_TOP -> {
-                buffer.coloredVertex(0, colorEnd);
-                buffer.coloredVertex(1, colorEnd);
-                buffer.coloredVertex(2, colorEnd);
-                buffer.coloredVertex(3, colorStart);
-            }
-        }
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull RectDrawer drawGradient(int topLeftColor, int bottomLeftColor, int bottomRightColor, int topRightColor) {
+        if (topLeftColor == 0x0 || bottomLeftColor == 0x0 || bottomRightColor == 0x0 || topRightColor == 0x0)
+            return this;
+
+        final var lastPose = guiGraphics.pose().last();
+
+        guiGraphics.bufferSource().getBuffer(RenderType.gui())
+                .addVertex(lastPose, bounds.getLeft(), bounds.getTop(), 0).setColor(topLeftColor)
+                .addVertex(lastPose, bounds.getLeft(), bounds.getBottom(), 0).setColor(bottomLeftColor)
+                .addVertex(lastPose, bounds.getRight(), bounds.getBottom(), 0).setColor(bottomRightColor)
+                .addVertex(lastPose, bounds.getRight(), bounds.getTop(), 0).setColor(topRightColor);
 
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull RectDrawer drawStroke(int color, int thickness) {
         if (color == 0x0 || thickness == 0) return this;
 
@@ -115,6 +90,7 @@ public class RectDrawer {
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull RectDrawer renderTexture(@NotNull ResourceLocation texture) {
         RenderSystem.enableBlend();
         guiGraphics.blit(
@@ -133,6 +109,7 @@ public class RectDrawer {
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull RectDrawer renderFittedCenterTexture(@NotNull ResourceLocation texture) {
         try {
             final var nativeImage = NativeImage.read(
@@ -145,6 +122,7 @@ public class RectDrawer {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull RectDrawer renderFittedCenterTexture(
             @NotNull ResourceLocation texture,
             int textureWidth,

@@ -6,7 +6,7 @@ import java.lang.module.ModuleDescriptor.Version;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class Versions {
+public final class Versions {
     private Versions() {}
 
     private final static Pattern ONLY_NUMBER_PATTERN = Pattern.compile(

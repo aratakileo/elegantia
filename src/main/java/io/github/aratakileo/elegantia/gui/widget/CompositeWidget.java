@@ -2,7 +2,7 @@ package io.github.aratakileo.elegantia.gui.widget;
 
 import io.github.aratakileo.elegantia.Elegantia;
 import io.github.aratakileo.elegantia.util.Classes;
-import io.github.aratakileo.elegantia.math.Rect2i;
+import io.github.aratakileo.elegantia.util.math.Rect2i;
 import io.github.aratakileo.elegantia.util.Mouse;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -179,10 +179,7 @@ public abstract class CompositeWidget extends AbstractWidget {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         for (final var unknownWidget: compositeParts)
-// 1.20-1.20.1
-            if (((GuiEventListener) unknownWidget).mouseScrolled(mouseX, mouseY, verticalAmount))
-// 1.20.2-1.20.4
-//            if (((GuiEventListener) unknownWidget).mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount))
+            if (((GuiEventListener) unknownWidget).mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount))
                 return true;
 
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);

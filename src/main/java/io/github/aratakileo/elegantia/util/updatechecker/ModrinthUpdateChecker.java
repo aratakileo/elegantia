@@ -1,11 +1,10 @@
-package io.github.aratakileo.elegantia.updatechecker;
+package io.github.aratakileo.elegantia.util.updatechecker;
 
 import com.google.gson.JsonParser;
-import io.github.aratakileo.elegantia.Elegantia;
 import io.github.aratakileo.elegantia.exception.NoSuchModException;
 import io.github.aratakileo.elegantia.util.ModInfo;
-import io.github.aratakileo.elegantia.util.Namespace;
-import io.github.aratakileo.elegantia.util.Platform;
+import io.github.aratakileo.elegantia.util.type.Namespace;
+import io.github.aratakileo.elegantia.util.type.Platform;
 import io.github.aratakileo.elegantia.util.Versions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,10 +76,10 @@ public class ModrinthUpdateChecker {
     }
 
     public @NotNull Response check(@Nullable Platform platform) {
-        try {
-            ModInfo.throwIfModIsNotLoaded(modId);
+        final var mod = ModInfo.getOrThrow(modId);
 
-            platform = Objects.requireNonNullElse(platform, ModInfo.getKernelPlatform(modId).orElseThrow());
+        try {
+            platform = Objects.requireNonNullElse(platform, mod.getKernelPlatform());
 
             final var requestHeader = getRequestHeader();
             final var request = HttpRequest.newBuilder(URI.create(getRequestUrl(platform)))
@@ -116,7 +115,7 @@ public class ModrinthUpdateChecker {
             final var versionInfo = versionsMetadata.get(0).getAsJsonObject();
             final var modrinthProjectVersion = versionInfo.get("version_number").getAsString();
             final var versionId = versionInfo.get("id").getAsString();
-            final var modVersion = ModInfo.getVersion(modId).orElseThrow();
+            final var modVersion = mod.getVersion();
             final var isNewVersionAvailable = Versions.isGreaterThan(
                     Versions.getVersionKernel(modVersion).orElseThrow(
                             () -> new InvalidVersionFormatException("`%s` of mod with id `%s`".formatted(
@@ -145,7 +144,7 @@ public class ModrinthUpdateChecker {
             LOGGER.error("Failed to check updates for mod with id `%s` (modrinth project id: %s) v%s".formatted(
                     modId,
                     projectId,
-                    ModInfo.getVersion(modId).orElse("-unknown")
+                    ModInfo.get(modId).map(ModInfo::getVersion).orElse("-unknown")
             ), e);
 
             lastResponse = Response.of(ResponseCode.FAILED);

@@ -4,13 +4,14 @@ import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import io.github.aratakileo.elegantia.Elegantia;
 import io.github.aratakileo.elegantia.exception.NoSuchModException;
-import net.fabricmc.api.EnvType;
+import io.github.aratakileo.elegantia.util.type.Namespace;
+import io.github.aratakileo.elegantia.util.type.Platform;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.Person;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -39,6 +40,10 @@ public abstract class ModInfo {
         }
 
         return Optional.empty();
+    }
+
+    public @NotNull FileSystem getFileSystem() {
+        return getRootPaths().get(0).getFileSystem();
     }
 
     public @NotNull Optional<String> getUrl(@NotNull String key) {
@@ -100,10 +105,8 @@ public abstract class ModInfo {
             final var field = ModMenu.class.getDeclaredField("configScreenFactories");
             field.setAccessible(true);
 
-            final var configScreenFactories = (Map<String, ConfigScreenFactory<?>>) field.get(null);
+            final var configScreenFactories = (HashMap<String, ConfigScreenFactory<?>>) field.get(null);
             configScreenFactories.put(getId(), configScreenGetter::apply);
-
-            field.set(null, configScreenFactories);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             Elegantia.LOGGER.error(
                     "Something went wrong while trying to set config screen getter for mod id `" + getId() + '`',
@@ -178,130 +181,12 @@ public abstract class ModInfo {
         });
     }
 
-    public static @NotNull Optional<String> getVersion(@NotNull Namespace namespace) {
-        return getVersion(namespace.get());
+    public static @NotNull ModInfo getOrThrow(@NotNull Namespace namespace) {
+        return get(namespace).orElseThrow(() -> new NoSuchModException("id=" + namespace.get()));
     }
 
-    public static @NotNull Optional<String> getVersion(@NotNull String modId) {
-        return get(modId).map(ModInfo::getVersion);
-    }
-
-    public static @NotNull Optional<String> getName(@NotNull Namespace namespace) {
-        return getName(namespace.get());
-    }
-
-    public static @NotNull Optional<String> getName(@NotNull String modId) {
-        return get(modId).map(ModInfo::getName);
-    }
-
-    public static @NotNull Optional<String> getDescription(@NotNull Namespace namespace) {
-        return getDescription(namespace.get());
-    }
-
-    public static @NotNull Optional<String> getDescription(@NotNull String modId) {
-        return get(modId).map(ModInfo::getDescription);
-    }
-
-    public static @NotNull Optional<Collection<String>> getAuthors(@NotNull Namespace namespace) {
-        return getAuthors(namespace.get());
-    }
-
-    public static @NotNull Optional<Collection<String>> getAuthors(@NotNull String modId) {
-        return get(modId).map(ModInfo::getAuthors);
-    }
-
-    public static @NotNull Optional<Collection<String>> getContributors(@NotNull Namespace namespace) {
-        return getContributors(namespace.get());
-    }
-
-    public static @NotNull Optional<Collection<String>> getContributors(@NotNull String modId) {
-        return get(modId).map(ModInfo::getContributors);
-    }
-
-    public static @NotNull Optional<Map<String, String>> getUrls(@NotNull Namespace namespace) {
-        return getUrls(namespace.get());
-    }
-
-    public static @NotNull Optional<Map<String, String>> getUrls(@NotNull String modId) {
-        return get(modId).flatMap(ModInfo::getUrls);
-    }
-
-    public static @NotNull Optional<List<Path>> getRootPaths(@NotNull Namespace namespace) {
-        return getRootPaths(namespace.get());
-    }
-
-    public static @NotNull Optional<List<Path>> getRootPaths(@NotNull String modId) {
-        return get(modId).map(ModInfo::getRootPaths);
-    }
-
-    public static @NotNull Optional<Path> findPath(@NotNull ResourceLocation location) {
-        return findPath(location.getNamespace(), location.getPath());
-    }
-
-    public static @NotNull Optional<Path> findPath(@NotNull Namespace namespace, @NotNull String relativePath) {
-        return findPath(namespace.get(), relativePath);
-    }
-
-    public static @NotNull Optional<Path> findPath(@NotNull String modId, @NotNull String relativePath) {
-        return get(modId).flatMap(modInfo -> modInfo.findPath(relativePath));
-    }
-
-    public static @NotNull Optional<String> getUrl(@NotNull Namespace namespace, @NotNull String key) {
-        return getUrl(namespace.get(), key);
-    }
-
-    public static @NotNull Optional<String> getUrl(@NotNull String modId, @NotNull String key) {
-        return get(modId).flatMap(modInfo -> modInfo.getUrl(key));
-    }
-
-    public static @NotNull Optional<String> getSourcesUrl(@NotNull Namespace namespace) {
-        return getSourcesUrl(namespace.get());
-    }
-
-    public static @NotNull Optional<String> getSourcesUrl(@NotNull String modId) {
-        return get(modId).flatMap(ModInfo::getSourcesUrl);
-    }
-
-    public static @NotNull Optional<String> getIssuesUrl(@NotNull Namespace namespace) {
-        return getIssuesUrl(namespace.get());
-    }
-
-    public static @NotNull Optional<String> getIssuesUrl(@NotNull String modId) {
-        return get(modId).flatMap(ModInfo::getIssuesUrl);
-    }
-
-    public static @NotNull Optional<String> getHomepageUrl(@NotNull Namespace namespace) {
-        return getHomepageUrl(namespace.get());
-    }
-
-    public static @NotNull Optional<String> getHomepageUrl(@NotNull String modId) {
-        return get(modId).flatMap(ModInfo::getHomepageUrl);
-    }
-
-    public static @NotNull Optional<Environment> getEnvironment(@NotNull Namespace namespace) {
-        return getEnvironment(namespace.get());
-    }
-
-    public static @NotNull Optional<Environment> getEnvironment(@NotNull String modId) {
-        return get(modId).map(ModInfo::getEnvironment);
-    }
-
-    /**
-     * Returns the platform for which the mod was made (Fabric, Quilt, Forge, Neoforge).
-     * In some cases does not distinguish good between Forge and Neoforge.
-     * If the mod is written for Neoforge, it might return Forge.
-     */
-    public static @NotNull Optional<Platform> getKernelPlatform(@NotNull Namespace namespace) {
-        return get(namespace.get()).map(ModInfo::getKernelPlatform);
-    }
-
-    /**
-     * Returns the platform for which the mod was made (Fabric, Quilt, Forge, Neoforge).
-     * In some cases does not distinguish good between Forge and Neoforge.
-     * If the mod is written for Neoforge, it might return Forge.
-     */
-    public static @NotNull Optional<Platform> getKernelPlatform(@NotNull String modId) {
-        return get(modId).map(ModInfo::getKernelPlatform);
+    public static @NotNull ModInfo getOrThrow(@NotNull String modId) {
+        return get(modId).orElseThrow(() -> new NoSuchModException("id=" + modId));
     }
 
     public static void setConfigScreenGetter(
@@ -335,14 +220,6 @@ public abstract class ModInfo {
 
     public static boolean isModLoaded(@NotNull String modId) {
         return FabricLoader.getInstance().isModLoaded(modId);
-    }
-
-    public static void throwIfModIsNotLoaded(@NotNull Namespace namespace) {
-        if (!isModLoaded(namespace)) throw new NoSuchModException("namespace=" + namespace.get());
-    }
-
-    public static void throwIfModIsNotLoaded(@NotNull String modId) {
-        if (!isModLoaded(modId)) throw new NoSuchModException("id=" + modId);
     }
 
     public enum Environment {

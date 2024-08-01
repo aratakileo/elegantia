@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.util;
+package io.github.aratakileo.elegantia.util.type;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
