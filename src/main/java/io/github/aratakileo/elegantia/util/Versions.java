@@ -20,6 +20,10 @@ public final class Versions {
         return matcher.find() ? Optional.of(matcher.group("kernel")) : Optional.empty();
     }
 
+    public static int compareTo(@NotNull String leftVersion, @NotNull String rightVersion) {
+        return Version.parse(rightVersion).compareTo(Version.parse(leftVersion));
+    }
+
     public static boolean isGreaterThan(@NotNull String leftVersion, @NotNull String rightVersion) {
         return Version.parse(rightVersion).compareTo(Version.parse(leftVersion)) >= 1;
     }

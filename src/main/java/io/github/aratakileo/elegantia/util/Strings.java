@@ -2,8 +2,10 @@ package io.github.aratakileo.elegantia.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
 public interface Strings {
@@ -75,5 +77,19 @@ public interface Strings {
         }
 
         return stringBuilder.append('"').toString();
+    }
+
+    static @NotNull String repr(String @NotNull[] array) {
+        final var builder = new StringBuilder("{");
+
+        for (var i = 0; i < array.length; i++)
+            builder.append(repr(array[i]))
+                    .append(i != array.length - 1 ? ", " : "");
+
+        return builder.append('}').toString();
+    }
+
+    static @NotNull String repr(int @NotNull[] array) {
+        return Arrays.toString(array);
     }
 }

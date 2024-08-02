@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.util;
 
 import com.mojang.blaze3d.platform.Window;
-import io.github.aratakileo.elegantia.util.math.Vector2dc;
+import io.github.aratakileo.elegantia.math.Vector2dc;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import org.jetbrains.annotations.NotNull;

@@ -1,12 +1,16 @@
 package io.github.aratakileo.elegantia.gui.screen;
 
-import io.github.aratakileo.elegantia.util.config.Config;
-import io.github.aratakileo.elegantia.util.config.EntryInfo;
+import io.github.aratakileo.elegantia.config.AbstractConfig;
+import io.github.aratakileo.elegantia.config.ConfigHandler;
+import io.github.aratakileo.elegantia.config.EntryInfo;
+import io.github.aratakileo.elegantia.graphics.GuiGraphicsUtil;
+import io.github.aratakileo.elegantia.gui.WidgetBuilder;
 import io.github.aratakileo.elegantia.gui.widget.AbstractButton;
 import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
 import io.github.aratakileo.elegantia.gui.widget.Button;
-import io.github.aratakileo.elegantia.util.ModInfo;
-import io.github.aratakileo.elegantia.gui.WidgetBuilder;
+import io.github.aratakileo.elegantia.core.ModInfo;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -16,24 +20,39 @@ import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
-public class ConfigScreen extends AbstractScreen {
-    private final List<Pair<AbstractWidget, String>> entryWidgets = new ArrayList<>();
-    private final Config configInstance;
-    private HashMap<String, List<String>> triggeredFieldEntries;
+public class ConfigScreen extends Screen {
+    private final @Nullable Screen parent;
+    private final ArrayList<Pair<AbstractWidget, String>> entryWidgets = new ArrayList<>();
+    private final AbstractConfig configInstance;
+    private HashMap<String, ArrayList<String>> triggeredFieldEntries;
     private HashMap<String, Button> entryFieldToButton;
 
     protected ConfigScreen(
-            @NotNull Config configInstance,
+            @NotNull AbstractConfig configInstance,
             @Nullable Screen parent
     ) {
         super(Component.translatable(
                 "elegantia.gui.config.title",
                 configInstance.getNamespace().getMod().map(ModInfo::getName).orElse("Unknown")
-        ), parent);
+        ));
         this.configInstance = configInstance;
+        this.parent = parent;
+    }
+
+    @Override
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+        renderForeground(guiGraphics, mouseX, mouseY, dt);
+    }
+
+    @Override
+    public void onClose() {
+        Minecraft.getInstance().setScreen(parent);
+    }
+
+    protected void renderForeground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+        GuiGraphicsUtil.drawCenteredText(guiGraphics, title, width / 2, 15, 0xffffff);
     }
 
     protected void addConfigFieldWidget(@NotNull Button button, @Nullable String triggeredBy) {
@@ -41,20 +60,20 @@ public class ConfigScreen extends AbstractScreen {
         addRenderableWidget(button);
     }
 
-    protected void applyWidgetsVisibility(@NotNull Config configInstance) {
-        var y = getContentY();
+    protected void applyWidgetsVisibility(@NotNull AbstractConfig configInstance) {
+        var contentY = 40;
 
         for (final var widgetEntry: entryWidgets) {
             final var triggeredBy = widgetEntry.getB();
-            final var shouldBeShown = Objects.isNull(triggeredBy) || configInstance.getTriggerValue(triggeredBy);
+            final var shouldBeShown = triggeredBy == null || configInstance.getTriggerValue(triggeredBy);
             final var widget = widgetEntry.getA();
 
             widget.isVisible = shouldBeShown;
 
             if (!shouldBeShown) continue;
 
-            widget.setY(y);
-            y += widget.getHeight() + 2;
+            widget.setY(contentY);
+            contentY += widget.getHeight() + 2;
         }
     }
 
@@ -110,7 +129,7 @@ public class ConfigScreen extends AbstractScreen {
 
             entryFieldToButton.put(entryName, entryButton);
 
-            if (Objects.nonNull(triggeredBy)) {
+            if (triggeredBy != null) {
                 if (!triggeredFieldEntries.containsKey(triggeredBy))
                     triggeredFieldEntries.put(triggeredBy, new ArrayList<>());
 
@@ -164,14 +183,14 @@ public class ConfigScreen extends AbstractScreen {
                 .applyBounds(button);
     }
 
-    public static @Nullable ConfigScreen of(@NotNull Class<? extends Config> configClass) {
-        return of(configClass, getCurrentScreen());
+    public static @Nullable ConfigScreen of(@NotNull Class<? extends AbstractConfig> configClass) {
+        return of(configClass, Minecraft.getInstance().screen);
     }
 
-    public static @Nullable ConfigScreen of(@NotNull Class<? extends Config> configClass, @Nullable Screen parent) {
-        final var configInstance = Config.getInstance(configClass);
+    public static @Nullable ConfigScreen of(@NotNull Class<? extends AbstractConfig> configClass, @Nullable Screen parent) {
+        final var configInstance = ConfigHandler.getInstance(configClass);
 
-        if (Objects.isNull(configInstance)) return null;
+        if (configInstance == null) return null;
 
         return new ConfigScreen(configInstance, parent);
     }

@@ -1,12 +1,13 @@
 package io.github.aratakileo.elegantia.gui;
 
 import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
-import io.github.aratakileo.elegantia.util.math.Rect2i;
+import io.github.aratakileo.elegantia.math.Rect2i;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -20,20 +21,22 @@ public class WidgetBuilder {
             GRAVITY_CENTER_VERTICAL = 1 << 3,
             GRAVITY_CENTER = GRAVITY_CENTER_HORIZONTAL | GRAVITY_CENTER_VERTICAL;
 
-    private final int contentWidth, contentHeight;
+    private final Dimension contentSize;
     private int paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0;
     private int marginLeft = 0, marginTop = 0, marginRight = 0, marginBottom = 0;
     private int gravity = GRAVITY_LEFT | GRAVITY_TOP;
     private @Nullable Rect2i initialBounds, parentBounds;
 
     public WidgetBuilder(int contentSize) {
-        this.contentWidth = contentSize;
-        this.contentHeight = contentSize;
+        this.contentSize = new Dimension(contentSize, contentSize);
+    }
+
+    public WidgetBuilder(@NotNull Dimension contentSize) {
+        this.contentSize = contentSize;
     }
 
     public WidgetBuilder(int contentWidth, int contentHeight) {
-        this.contentWidth = contentWidth;
-        this.contentHeight = contentHeight;
+        contentSize = new Dimension(contentWidth, contentHeight);
     }
 
     public @NotNull WidgetBuilder setPadding(int padding) {
@@ -139,8 +142,10 @@ public class WidgetBuilder {
 
         final var newBounds = Objects.isNull(initialBounds) ? Rect2i.empty() : initialBounds.copy();
 
-        newBounds.setWidth(paddingLeft + contentWidth + paddingRight);
-        newBounds.setHeight(paddingTop + contentHeight + paddingBottom);
+        newBounds.setSize(
+                paddingLeft + contentSize.width + paddingRight,
+                paddingTop + contentSize.height + paddingBottom
+        );
 
         if (Objects.isNull(initialBounds)) {
             if ((gravity & GRAVITY_RIGHT) >= 1)

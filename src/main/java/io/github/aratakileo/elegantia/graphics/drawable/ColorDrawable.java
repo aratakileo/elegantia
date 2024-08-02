@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.graphics.drawable;
 
-import io.github.aratakileo.elegantia.graphics.RectDrawer;
+import io.github.aratakileo.elegantia.graphics.drawer.RectDrawer;
 import org.jetbrains.annotations.NotNull;
 
 public class ColorDrawable implements Drawable {
@@ -26,7 +26,7 @@ public class ColorDrawable implements Drawable {
     }
 
     @Override
-    public void render(@NotNull RectDrawer rectDrawer, float dt) {
+    public void render(@NotNull RectDrawer rectDrawer) {
         rectDrawer.draw(color);
         rectDrawer.drawStroke(strokeColor, strokeThickness);
     }

@@ -1,6 +1,7 @@
 package io.github.aratakileo.elegantia.util.type;
 
-import io.github.aratakileo.elegantia.util.ModInfo;
+import io.github.aratakileo.elegantia.core.Platform;
+import io.github.aratakileo.elegantia.core.ModInfo;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

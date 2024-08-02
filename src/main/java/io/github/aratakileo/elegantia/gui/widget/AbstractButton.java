@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.gui.widget;
 
 import io.github.aratakileo.elegantia.graphics.GuiGraphicsUtil;
-import io.github.aratakileo.elegantia.util.math.Rect2i;
+import io.github.aratakileo.elegantia.math.Rect2i;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

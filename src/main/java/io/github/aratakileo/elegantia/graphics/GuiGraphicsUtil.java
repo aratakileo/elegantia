@@ -1,7 +1,6 @@
 package io.github.aratakileo.elegantia.graphics;
 
-import io.github.aratakileo.elegantia.gui.widget.AbstractWidget;
-import io.github.aratakileo.elegantia.util.math.Rect2i;
+import io.github.aratakileo.elegantia.math.Rect2i;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,6 +13,15 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 public class GuiGraphicsUtil {
+    public static void renderTooltip(
+            @NotNull GuiGraphics guiGraphics,
+            @NotNull Component message,
+            int x,
+            int y
+    ) {
+        guiGraphics.renderTooltip(Minecraft.getInstance().font, message, x, y);
+    }
+
     public static void renderScrollingText(
             @NotNull GuiGraphics guiGraphics,
             @NotNull Component text,
@@ -42,37 +50,6 @@ public class GuiGraphicsUtil {
         } else {
             drawCenteredText(guiGraphics, text, (bounds.getLeft() + bounds.getRight()) / 2, y, color);
         }
-    }
-
-    public static void drawCenteredMessage(
-            @NotNull GuiGraphics guiGraphics,
-            @NotNull AbstractWidget widget,
-            int localX,
-            int localY,
-            int color
-    ) {
-        drawCenteredText(guiGraphics, widget.getMessage(), widget.getX() + localX, widget.getY() + localY, color);
-    }
-
-    public static void drawMessage(
-            @NotNull GuiGraphics guiGraphics,
-            @NotNull AbstractWidget widget,
-            int localX,
-            int localY,
-            int color
-    ) {
-        drawMessage(guiGraphics, widget, localX, localY, color, true);
-    }
-
-    public static void drawMessage(
-            @NotNull GuiGraphics guiGraphics,
-            @NotNull AbstractWidget widget,
-            int localX,
-            int localY,
-            int color,
-            boolean shadow
-    ) {
-        drawText(guiGraphics, widget.getMessage(), widget.getX() + localX, widget.getY() + localY, color, shadow);
     }
 
     public static void drawCenteredText(

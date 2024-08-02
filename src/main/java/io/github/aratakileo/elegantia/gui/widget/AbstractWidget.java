@@ -1,12 +1,12 @@
 package io.github.aratakileo.elegantia.gui.widget;
 
-import io.github.aratakileo.elegantia.graphics.RectDrawer;
+import io.github.aratakileo.elegantia.graphics.drawer.RectDrawer;
 import io.github.aratakileo.elegantia.graphics.drawable.Drawable;
 import io.github.aratakileo.elegantia.graphics.drawable.InteractableDrawable;
 import io.github.aratakileo.elegantia.gui.tooltip.TooltipPositioner;
-import io.github.aratakileo.elegantia.util.math.Rect2i;
-import io.github.aratakileo.elegantia.util.math.Vector2iInterface;
-import io.github.aratakileo.elegantia.util.math.Vector2ic;
+import io.github.aratakileo.elegantia.math.Rect2i;
+import io.github.aratakileo.elegantia.math.Vector2iInterface;
+import io.github.aratakileo.elegantia.math.Vector2ic;
 import io.github.aratakileo.elegantia.util.Mouse;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
@@ -137,7 +137,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     @Override
-    public final void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
         if (!isVisible) return;
 
         wasFocused = isFocused() && Minecraft.getInstance().getLastInputType().isKeyboard();
@@ -163,20 +163,16 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
         if (backgroundDrawable == null) return;
 
-        final var rectDrawer = RectDrawer.with(guiGraphics, bounds.copy());
+        final var rectDrawer = new RectDrawer(guiGraphics, bounds.copy());
 
         if (backgroundDrawable instanceof InteractableDrawable interactableDrawable)
-            interactableDrawable.renderInteraction(
-                    rectDrawer,
-                    new InteractableDrawable.InteractionState(
-                            isHovered,
-                            isFocused,
-                            wasHoveredBeforeRelease,
-                            isEnabled
-                    ),
-                    dt
-            );
-        else backgroundDrawable.render(rectDrawer, dt);
+            interactableDrawable.renderInteraction(rectDrawer, new InteractableDrawable.InteractionState(
+                    isHovered,
+                    isFocused,
+                    wasHoveredBeforeRelease,
+                    isEnabled
+            ));
+        else backgroundDrawable.render(rectDrawer);
     }
 
     public void renderForeground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {}

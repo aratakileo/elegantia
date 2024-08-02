@@ -1,18 +1,14 @@
 package io.github.aratakileo.elegantia.graphics.drawable;
 
-import io.github.aratakileo.elegantia.graphics.RectDrawer;
+import io.github.aratakileo.elegantia.graphics.drawer.RectDrawer;
 import org.jetbrains.annotations.NotNull;
 
 public interface InteractableDrawable extends Drawable {
-    void renderInteraction(
-            @NotNull RectDrawer rectDrawer,
-            @NotNull InteractionState interactionState,
-            float dt
-    );
+    void renderInteraction(@NotNull RectDrawer rectDrawer, @NotNull InteractionState interactionState);
 
     @Override
-    default void render(@NotNull RectDrawer rectDrawer, float dt) {
-        renderInteraction(rectDrawer, InteractionState.NO_INTERACTION, dt);
+    default void render(@NotNull RectDrawer rectDrawer) {
+        renderInteraction(rectDrawer, InteractionState.NO_INTERACTION);
     }
 
     record InteractionState(boolean hovered, boolean focused, boolean pressed, boolean enabled) {
