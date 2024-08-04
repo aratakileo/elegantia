@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.gui.screen;
 
 import io.github.aratakileo.elegantia.graphics.GuiGraphicsUtil;
-import io.github.aratakileo.elegantia.gui.slot.IconedSlot;
+import io.github.aratakileo.elegantia.gui.slot.ElegantedSlot;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -27,8 +27,8 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
         renderBackgroundContent(guiGraphics, mouseX, mouseY, dt);
 
         for (final var slot: menu.slots)
-            if (slot instanceof IconedSlot iconedSlot)
-                iconedSlot.renderIcon(guiGraphics);
+            if (slot instanceof ElegantedSlot elegantedSlot)
+                elegantedSlot.renderIcon(guiGraphics);
     }
 
     @Override

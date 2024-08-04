@@ -134,8 +134,16 @@ public class GuiGraphicsUtil {
         guiGraphics.disableScissor();
     }
 
+    public static void playSound(@NotNull SoundEvent sound) {
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound, 1f));
+    }
+
     public static void playSound(@NotNull SoundEvent sound, float volume) {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound, volume));
+    }
+
+    public static void playSound(@NotNull Holder<SoundEvent> sound) {
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound.value(), 1f));
     }
 
     public static void playSound(@NotNull Holder<SoundEvent> sound, float volume) {
@@ -143,6 +151,6 @@ public class GuiGraphicsUtil {
     }
 
     public static void playClickSound() {
-        playSound(SoundEvents.UI_BUTTON_CLICK, 1.0F);
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1f));
     }
 }
