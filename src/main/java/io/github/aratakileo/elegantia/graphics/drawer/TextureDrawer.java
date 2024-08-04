@@ -12,11 +12,9 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-public class TextureDrawer {
+public class TextureDrawer extends AbstractDrawer<TextureDrawer> {
     public final ResourceLocation texture;
     public final Dimension textureSize;
-    public final Rect2i bounds;
-    public final GuiGraphics guiGraphics;
 
     public Vector2fInterface uv = Vector2fc.ZERO;
     public boolean enabledBlend = false;
@@ -27,10 +25,14 @@ public class TextureDrawer {
             @NotNull Rect2i bounds,
             @NotNull GuiGraphics guiGraphics
     ) {
+        super(guiGraphics, bounds);
         this.texture = texture;
         this.textureSize = textureSize;
-        this.bounds = bounds;
-        this.guiGraphics = guiGraphics;
+    }
+
+    @Override
+    public @NotNull TextureDrawer withNewBounds(@NotNull Rect2i bounds) {
+        return new TextureDrawer(texture, textureSize, bounds, guiGraphics);
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -97,7 +99,7 @@ public class TextureDrawer {
         return this;
     }
 
-    public @NotNull RectDrawer rect() {
+    public @NotNull RectDrawer asRectDrawer() {
         return new RectDrawer(guiGraphics, bounds);
     }
 

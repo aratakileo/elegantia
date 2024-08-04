@@ -8,13 +8,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-public class RectDrawer {
-    public final GuiGraphics guiGraphics;
-    public final Rect2i bounds;
-
+public class RectDrawer extends AbstractDrawer<RectDrawer> {
     public RectDrawer(@NotNull GuiGraphics guiGraphics, @NotNull Rect2i bounds) {
-        this.guiGraphics = guiGraphics;
-        this.bounds = bounds;
+        super(guiGraphics, bounds);
+    }
+
+    @Override
+    public @NotNull RectDrawer withNewBounds(@NotNull Rect2i bounds) {
+        return new RectDrawer(guiGraphics, bounds);
     }
 
     public @NotNull RectDrawer draw(int color) {
@@ -82,12 +83,24 @@ public class RectDrawer {
         return this;
     }
 
-    public @NotNull TextureDrawer texture(@NotNull ResourceLocation texture, @NotNull Dimension textureSize) {
+    public @NotNull TextureDrawer asTextureDrawer(@NotNull ResourceLocation texture) {
+        return new TextureDrawer(texture, TextureDrawer.getTextureSize(texture), bounds, guiGraphics);
+    }
+
+    public @NotNull TextureDrawer asTextureDrawer(@NotNull ResourceLocation texture, @NotNull Dimension textureSize) {
         return new TextureDrawer(texture, textureSize, bounds, guiGraphics);
     }
 
-    public @NotNull TextureDrawer texture(@NotNull ResourceLocation texture) {
-        return new TextureDrawer(texture, TextureDrawer.getTextureSize(texture), bounds, guiGraphics);
+    public @NotNull TextureDrawer asTextureDrawer(@NotNull ResourceLocation texture, @NotNull Rect2i newBounds) {
+        return new TextureDrawer(texture, TextureDrawer.getTextureSize(texture), newBounds, guiGraphics);
+    }
+
+    public @NotNull TextureDrawer asTextureDrawer(
+            @NotNull ResourceLocation texture,
+            @NotNull Dimension textureSize,
+            @NotNull Rect2i newBounds
+    ) {
+        return new TextureDrawer(texture, textureSize, newBounds, guiGraphics);
     }
 
     @Override

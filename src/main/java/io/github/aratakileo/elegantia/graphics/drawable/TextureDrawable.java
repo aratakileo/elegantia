@@ -10,24 +10,18 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 
 public class TextureDrawable implements Drawable {
-    private final ResourceLocation texture;
-    private final Dimension textureSize;
+    protected final ResourceLocation texture;
+    protected final Dimension textureSize;
 
-    public Vector2fInterface uv;
+    public Vector2fInterface uv = Vector2fc.ZERO;
     public boolean enabledBlend = false, fittedCenter = false;
-
-    public TextureDrawable(@NotNull ResourceLocation texture, @NotNull Dimension textureSize) {
-        this(texture, textureSize, Vector2fc.ZERO);
-    }
 
     public TextureDrawable(
             @NotNull ResourceLocation texture,
-            @NotNull Dimension textureSize,
-            @NotNull Vector2fInterface uv
+            @NotNull Dimension textureSize
     ) {
         this.texture = texture;
         this.textureSize = textureSize;
-        this.uv = uv;
     }
 
     public @NotNull TextureDrawable setUV(@NotNull Vector2fInterface uv) {
@@ -47,7 +41,7 @@ public class TextureDrawable implements Drawable {
 
     @Override
     public void render(@NotNull RectDrawer rectDrawer) {
-        final var textureDrawer =  rectDrawer.texture(texture, textureSize).setUV(uv).setEnabledBlend(enabledBlend);
+        final var textureDrawer =  rectDrawer.asTextureDrawer(texture, textureSize).setUV(uv).setEnabledBlend(enabledBlend);
 
         if (fittedCenter)
             textureDrawer.renderFittedCenter();
@@ -57,9 +51,5 @@ public class TextureDrawable implements Drawable {
 
     public static @NotNull TextureDrawable of(@NotNull ResourceLocation texture) {
         return new TextureDrawable(texture, TextureDrawer.getTextureSize(texture));
-    }
-
-    public static @NotNull TextureDrawable of(@NotNull ResourceLocation texture, @NotNull Vector2fInterface uv) {
-        return new TextureDrawable(texture, TextureDrawer.getTextureSize(texture), uv);
     }
 }
