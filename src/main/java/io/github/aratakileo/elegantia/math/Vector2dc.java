@@ -210,6 +210,10 @@ public class Vector2dc implements Vector2dInterface {
         return new Vector2dc(vector2iInterface.x(), vector2iInterface.y());
     }
 
+    public static @NotNull Vector2dc of(@NotNull Vector2dInterface vector2dInterface) {
+        return new Vector2dc(vector2dInterface.x(), vector2dInterface.y());
+    }
+
     public static @NotNull Vector2dc of(@NotNull org.joml.Vector2ic vector2ic) {
         return new Vector2dc(vector2ic.x(), vector2ic.y());
     }

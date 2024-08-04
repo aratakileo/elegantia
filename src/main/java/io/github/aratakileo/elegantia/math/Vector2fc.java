@@ -190,6 +190,10 @@ public class Vector2fc implements Vector2fInterface {
         return new Vector2fc(vector2iInterface.x(), vector2iInterface.y());
     }
 
+    public static @NotNull Vector2fc of(@NotNull Vector2fInterface vector2fInterface) {
+        return new Vector2fc(vector2fInterface.x(), vector2fInterface.y());
+    }
+
     public static @NotNull Vector2fc of(@NotNull org.joml.Vector2ic vector2ic) {
         return new Vector2fc(vector2ic.x(), vector2ic.y());
     }

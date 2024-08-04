@@ -221,6 +221,10 @@ public class Vector2f implements Vector2fInterface {
         return new Vector2f((float) vector2dInterface.x(), (float) vector2dInterface.y());
     }
 
+    public static @NotNull Vector2f of(@NotNull Vector2fInterface vector2fInterface) {
+        return new Vector2f(vector2fInterface.x(), vector2fInterface.y());
+    }
+
     public static @NotNull Vector2f of(@NotNull org.joml.Vector2ic vector2ic) {
         return new Vector2f(vector2ic.x(), vector2ic.y());
     }

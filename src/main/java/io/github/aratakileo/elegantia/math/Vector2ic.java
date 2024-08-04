@@ -131,6 +131,10 @@ public class Vector2ic implements Vector2iInterface {
         return "Vector2ic{%d, %d}".formatted(x, y);
     }
 
+    public static @NotNull Vector2ic of(@NotNull Vector2iInterface vector2iInterface) {
+        return new Vector2ic(vector2iInterface.x(), vector2iInterface.y());
+    }
+
     public static @NotNull Vector2ic of(@NotNull org.joml.Vector2ic vector2ic) {
         return new Vector2ic(vector2ic.x(), vector2ic.y());
     }
