@@ -17,4 +17,14 @@ public interface Classes {
     static @NotNull String getFieldOrMethodView(@NotNull Class<?> owner, @NotNull String fieldOrMethodName) {
         return owner.getName() + '#' + fieldOrMethodName;
     }
+
+    static boolean isFieldLike(@NotNull Field field, @NotNull Class<?> type) {
+        return type.isAssignableFrom(field.getType());
+    }
+
+    static boolean isArrayField(@NotNull Field field, @NotNull Class<?> arrayType) {
+        final var fieldType = field.getType();
+
+        return fieldType.isArray() && fieldType.getComponentType() == arrayType;
+    }
 }
