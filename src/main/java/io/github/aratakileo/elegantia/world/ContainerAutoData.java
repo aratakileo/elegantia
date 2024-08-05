@@ -16,14 +16,16 @@ public abstract class ContainerAutoData implements ContainerData {
 
     public ContainerAutoData() {
         for (final var field: getClass().getDeclaredFields()) {
+            if (!field.isAnnotationPresent(DataField.class))
+                return;
+
             if (hasUnsupportedType(field))
                 throw new RuntimeException("Compound data field `%s` has unsupported type `%s`".formatted(
                         Classes.getFieldView(field),
                         field.getType().getName()
                 ));
 
-            if (field.isAnnotationPresent(DataField.class))
-                fields.add(field);
+            fields.add(field);
         }
     }
 
@@ -31,9 +33,13 @@ public abstract class ContainerAutoData implements ContainerData {
     public int get(int index) {
         try {
             final var field = fields.get(index);
+            field.setAccessible(true);
 
             if (field.getType() == boolean.class)
                 return field.getBoolean(this) ? 1 : 0;
+
+            if (field.getType().isEnum())
+                return ((Enum<?>)field.get(this)).ordinal();
 
             return field.getInt(this);
         } catch (IllegalAccessException e) {
@@ -45,9 +51,12 @@ public abstract class ContainerAutoData implements ContainerData {
     public void set(int index, int value) {
         try {
             final var field = fields.get(index);
+            field.setAccessible(true);
 
             if (field.getType() == boolean.class)
                 field.setBoolean(this, value == 1);
+            else if (field.getType().isEnum())
+                field.set(this, field.getType().getEnumConstants()[value]);
             else field.setInt(this, value);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -59,8 +68,8 @@ public abstract class ContainerAutoData implements ContainerData {
         return fields.size();
     }
 
-    public static boolean hasUnsupportedType(@NotNull Field field) {
-        return field.getType() != boolean.class && field.getType() != int.class;
+    private static boolean hasUnsupportedType(@NotNull Field field) {
+        return field.getType() != boolean.class && field.getType() != int.class && !field.getType().isEnum();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
