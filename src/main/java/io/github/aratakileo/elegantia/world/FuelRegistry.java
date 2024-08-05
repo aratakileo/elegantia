@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public final class FuelController {
-    private FuelController() {}
+public final class FuelRegistry {
+    private FuelRegistry() {}
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FuelController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FuelRegistry.class);
     private static final Object2IntMap<ItemLike> ITEM_COOK_TIMES = new Object2IntLinkedOpenHashMap<>();
     private static final Object2IntMap<TagKey<Item>> TAG_COOK_TIMES = new Object2IntLinkedOpenHashMap<>();
 
