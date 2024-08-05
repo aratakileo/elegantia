@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public interface SlotController {
-    SlotController RESULT_SLOT = new Builder().prohibitPlacement().build();
+    SlotController RESULT = new Builder().prohibitPlacement().build();
 
     default int getMaxStackSize(@NotNull ItemStack insertable) {
         return insertable.getMaxStackSize();
