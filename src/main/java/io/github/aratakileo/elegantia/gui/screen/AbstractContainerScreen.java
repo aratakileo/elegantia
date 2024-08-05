@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.gui.screen;
 
 import io.github.aratakileo.elegantia.graphics.GuiGraphicsUtil;
-import io.github.aratakileo.elegantia.gui.slot.ElegantedSlot;
+import io.github.aratakileo.elegantia.world.slot.ElegantedSlot;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;

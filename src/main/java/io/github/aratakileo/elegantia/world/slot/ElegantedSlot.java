@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.gui.slot;
+package io.github.aratakileo.elegantia.world.slot;
 
 import io.github.aratakileo.elegantia.graphics.drawer.RectDrawer;
 import io.github.aratakileo.elegantia.graphics.drawable.TextureDrawable;

@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.gui.slot;
+package io.github.aratakileo.elegantia.world.slot;
 
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public interface SlotController {
+    SlotController RESULT_SLOT = new Builder().prohibitPlacement().build();
+
     default int getMaxStackSize(@NotNull ItemStack insertable) {
         return insertable.getMaxStackSize();
     }
@@ -76,6 +78,11 @@ public interface SlotController {
     class Builder extends AbstractBuilder<SlotController, Builder> {
         protected @Nullable MayPlace mayPlace = null;
         protected @Nullable SafeInsert safeInsert = null;
+
+        public @NotNull Builder prohibitPlacement() {
+            this.mayPlace = (slot, insertable) -> false;
+            return this;
+        }
 
         public @NotNull Builder setMayPlace(@Nullable MayPlace mayPlace) {
             this.mayPlace = mayPlace;

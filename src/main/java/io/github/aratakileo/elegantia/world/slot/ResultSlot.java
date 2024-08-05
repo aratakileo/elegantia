@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.gui.slot;
+package io.github.aratakileo.elegantia.world.slot;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
