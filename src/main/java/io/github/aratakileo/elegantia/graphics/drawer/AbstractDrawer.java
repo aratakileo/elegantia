@@ -4,7 +4,7 @@ import io.github.aratakileo.elegantia.math.Rect2i;
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractDrawer<D extends AbstractDrawer<?>> {
+public abstract class AbstractDrawer<D extends AbstractDrawer<D>> {
     public final GuiGraphics guiGraphics;
     public final Rect2i bounds;
 

@@ -51,7 +51,7 @@ public interface SlotController {
         return insertable;
     }
 
-    abstract class AbstractBuilder<S extends SlotController, B extends AbstractBuilder<S, ?>> {
+    abstract class AbstractBuilder<S extends SlotController, B extends AbstractBuilder<S, B>> {
         protected @Nullable GetMaxStackSize maxStackSizeGetter = null;
 
         @SuppressWarnings("unchecked")
