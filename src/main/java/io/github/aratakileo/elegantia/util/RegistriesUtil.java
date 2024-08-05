@@ -1,5 +1,6 @@
 package io.github.aratakileo.elegantia.util;
 
+import io.github.aratakileo.elegantia.core.Namespace;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -13,6 +14,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -93,7 +95,7 @@ public final class RegistriesUtil {
         );
     }
 
-    public static <T extends AbstractContainerMenu, S extends Screen & MenuAccess<T>> MenuType<T> createMenuType(
+    public static <T extends AbstractContainerMenu, S extends Screen & MenuAccess<T>> @NotNull MenuType<T> registerMenuType(
             @NotNull ResourceLocation resourceLocation,
             @NotNull MenuType.MenuSupplier<T> menuSupplier,
             @NotNull MenuScreens.ScreenConstructor<T, S> screenConstructor
@@ -109,7 +111,7 @@ public final class RegistriesUtil {
         return menuType;
     }
 
-    public static <T extends Recipe<?>> RecipeType<T> registerRecipeType(@NotNull ResourceLocation location) {
+    public static <T extends Recipe<?>> @NotNull RecipeType<T> registerRecipeType(@NotNull ResourceLocation location) {
         return Registry.register(
                 BuiltInRegistries.RECIPE_TYPE,
                 location,
@@ -122,7 +124,7 @@ public final class RegistriesUtil {
         );
     }
 
-    public static <T extends RecipeSerializer<S>, S extends Recipe<?>> T registerRecipeSerializer(
+    public static <T extends RecipeSerializer<S>, S extends Recipe<?>> @NotNull T registerRecipeSerializer(
             @NotNull ResourceLocation resourceLocation,
             @NotNull T serializer
     ) {
@@ -131,5 +133,29 @@ public final class RegistriesUtil {
                 resourceLocation,
                 RecipeSerializer.register(resourceLocation.getPath(), serializer)
         );
+    }
+
+    public static @NotNull ResourceKey<CreativeModeTab> registerItemGroupResource(
+            @NotNull CreativeModeTab itemGroup,
+            @NotNull Namespace namespace
+    ) {
+        return registerItemGroupResource(itemGroup, namespace.getLocation("item_group"));
+    }
+
+    public static @NotNull ResourceKey<CreativeModeTab> registerItemGroupResource(
+            @NotNull CreativeModeTab itemGroup,
+            @NotNull ResourceLocation location
+    ) {
+        final var groupKey = ResourceKey.create(BuiltInRegistries.CREATIVE_MODE_TAB.key(), location);
+
+        hasDisplayNameOrThrow(itemGroup, location);
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, groupKey, itemGroup);
+
+        return groupKey;
+    }
+
+    private static void hasDisplayNameOrThrow(@NotNull CreativeModeTab itemGroup, @NotNull ResourceLocation location) {
+        if (itemGroup.getDisplayName().getString().isBlank())
+            throw new IllegalStateException("No display name or empty display name set for %s".formatted(location));
     }
 }
