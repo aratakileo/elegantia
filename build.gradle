@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'fabric-loom' version '1.7-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -15,34 +15,12 @@ repositories {
     }
 }
 
-fabricApi {
-    configureDataGeneration()
-}
-
-ext.mod = { String localOverrideKey, Object dep ->
-    File file = file("../.${localOverrideKey}-local");
-    if (file.exists()) {
-        dependencies.implementation(dep)
-    } else {
-        dependencies.modImplementation(dep)
-    }
-}
-
-ext.includeMod = { String localOverrideKey, Object dep ->
-    mod(localOverrideKey, dep)
-    dependencies.include(dep)
-}
-
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    includeMod "fabric-api", fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
-    includeMod "fabric-api", fabricApi.module("fabric-screen-api-v1", project.fabric_version)
-    includeMod "fabric-api", fabricApi.module("fabric-key-binding-api-v1", project.fabric_version)
-    includeMod "fabric-api", fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
