@@ -1,13 +1,10 @@
 package io.github.aratakileo.elegantia.world;
 
+import io.github.aratakileo.elegantia.core.Ignore;
 import io.github.aratakileo.elegantia.util.Classes;
 import net.minecraft.world.inventory.ContainerData;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -16,8 +13,7 @@ public abstract class ContainerAutoData implements ContainerData {
 
     public ContainerAutoData() {
         for (final var field: getClass().getDeclaredFields()) {
-            if (!field.isAnnotationPresent(DataField.class))
-                return;
+            if (field.isAnnotationPresent(Ignore.class)) return;
 
             if (hasUnsupportedType(field))
                 throw new RuntimeException("Compound data field `%s` has unsupported type `%s`".formatted(
@@ -71,8 +67,4 @@ public abstract class ContainerAutoData implements ContainerData {
     private static boolean hasUnsupportedType(@NotNull Field field) {
         return field.getType() != boolean.class && field.getType() != int.class && !field.getType().isEnum();
     }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.FIELD)
-    public @interface DataField {}
 }
