@@ -2,18 +2,15 @@ package io.github.aratakileo.elegantia.graphics.drawable;
 
 import io.github.aratakileo.elegantia.graphics.drawer.RectDrawer;
 import io.github.aratakileo.elegantia.graphics.drawer.TextureDrawer;
-import io.github.aratakileo.elegantia.math.Vector2f;
-import io.github.aratakileo.elegantia.math.Vector2fInterface;
-import io.github.aratakileo.elegantia.math.Vector2fc;
+import io.github.aratakileo.elegantia.math.*;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.function.Supplier;
 
 public class TexturedProgressDrawable implements Drawable {
     protected final ResourceLocation texture;
-    protected final Dimension textureSize;
+    protected final Size2ic textureSize;
     protected final Direction direction;
     protected final Supplier<Float> progressGetter;
 
@@ -21,12 +18,12 @@ public class TexturedProgressDrawable implements Drawable {
 
     public TexturedProgressDrawable(
             @NotNull ResourceLocation texture,
-            @NotNull Dimension textureSize,
+            @NotNull Size2iInterface textureSize,
             @NotNull Direction direction,
             @NotNull Supplier<Float> progressGetter
     ) {
         this.texture = texture;
-        this.textureSize = textureSize;
+        this.textureSize = Size2ic.of(textureSize);
         this.direction = direction;
         this.progressGetter = progressGetter;
     }
@@ -36,36 +33,35 @@ public class TexturedProgressDrawable implements Drawable {
         return this;
     }
 
+    public @NotNull TexturedProgressDrawable setUV(float u, float v) {
+        this.uv = new Vector2fc(u, v);
+        return this;
+    }
+
     @Override
     public void render(@NotNull RectDrawer rectDrawer) {
-        final var newBounds = rectDrawer.bounds.copy().setSize(textureSize);
+        final var renderAreaSize = rectDrawer.bounds.getSize();
+        final var newBounds = rectDrawer.bounds.copy();
         final var newUV = Vector2f.of(uv);
-
-        final var progressedTextureSize = new Dimension(textureSize);
-        progressedTextureSize.width *= progressGetter.get();
-        progressedTextureSize.height *= progressGetter.get();
-
-        final var remainedTextureSize = new Dimension(
-                textureSize.width - progressedTextureSize.width,
-                textureSize.height - progressedTextureSize.height
-        );
+        final var renderAreaSizeScaledByProgress = renderAreaSize.scale(progressGetter.get());
+        final var remainedRenderAreaSize = renderAreaSize.sub(renderAreaSizeScaledByProgress);
 
         switch (direction) {
             case TOP -> {
-                newUV.y += remainedTextureSize.height;
-                newBounds.y -= remainedTextureSize.height;
-                newBounds.height = progressedTextureSize.height;
+                newUV.y += remainedRenderAreaSize.height;
+                newBounds.y += remainedRenderAreaSize.height;
+                newBounds.height = renderAreaSizeScaledByProgress.height;
             }
 
-            case BOTTOM -> newBounds.height = remainedTextureSize.height;
+            case BOTTOM -> newBounds.height = renderAreaSizeScaledByProgress.height;
 
             case LEFT -> {
-                newUV.x += remainedTextureSize.width;
-                newBounds.x -= remainedTextureSize.width;
-                newBounds.width = progressedTextureSize.width;
+                newUV.x += remainedRenderAreaSize.width;
+                newBounds.x += remainedRenderAreaSize.width;
+                newBounds.width = renderAreaSizeScaledByProgress.width;
             }
 
-            case RIGHT -> newBounds.width = remainedTextureSize.width;
+            case RIGHT -> newBounds.width = renderAreaSizeScaledByProgress.width;
         }
 
         rectDrawer.asTextureDrawer(texture, textureSize, newBounds)

@@ -53,13 +53,13 @@ public abstract class SimpleContainerMenu<T extends ContainerAutoData> extends A
     }
 
     protected void addPlayerInventorySlots(@NotNull Inventory inventory) {
-        for (int i = 0; i < 3; ++i)
-            for (int l = 0; l < 9; ++l)
-                addSlot(new Slot(inventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
+        for (var y = 0; y < 3; ++y)
+            for (var x = 0; x < 9; ++x)
+                addSlot(new Slot(inventory, x + y * 9 + 9, 8 + x * 18, 84 + y * 18));
     }
 
     protected void addPlayerHotbarSlots(@NotNull Inventory inventory) {
-        for (int i = 0; i < 9; ++i)
+        for (var i = 0; i < 9; ++i)
             addSlot(new Slot(inventory, i, 8 + i * 18, 142));
     }
 }

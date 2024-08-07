@@ -1,6 +1,7 @@
 package io.github.aratakileo.elegantia.util;
 
 import io.github.aratakileo.elegantia.core.Namespace;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -14,6 +15,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
@@ -25,6 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.function.Consumer;
 
 public final class RegistriesUtil {
     private RegistriesUtil() {}
@@ -78,12 +81,12 @@ public final class RegistriesUtil {
             boolean autoRegisterItem
     ) {
         if (autoRegisterItem)
-            Registry.register(BuiltInRegistries.ITEM, location, block.asItem());
+            Registry.register(BuiltInRegistries.ITEM, location, new BlockItem(block, new Item.Properties()));
 
         return Registry.register(BuiltInRegistries.BLOCK, location, block);
     }
 
-    public static  <T extends BlockEntity> @NotNull BlockEntityType<T> registerBlockEntityType(
+    public static <T extends BlockEntity> @NotNull BlockEntityType<T> registerBlockEntityType(
             @NotNull ResourceLocation resourceLocation,
             @NotNull Block block,
             @NotNull BlockEntityType.BlockEntitySupplier<T> constructor
@@ -152,6 +155,14 @@ public final class RegistriesUtil {
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, groupKey, itemGroup);
 
         return groupKey;
+    }
+
+    public static @NotNull ResourceKey<CreativeModeTab> registerItemGroupListener(
+            @NotNull ResourceKey<CreativeModeTab> itemGroupKey,
+            @NotNull Consumer<CreativeModeTab.Output> listener
+    ) {
+        ItemGroupEvents.modifyEntriesEvent(itemGroupKey).register(listener::accept);
+        return itemGroupKey;
     }
 
     private static void hasDisplayNameOrThrow(@NotNull CreativeModeTab itemGroup, @NotNull ResourceLocation location) {

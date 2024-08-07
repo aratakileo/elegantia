@@ -3,6 +3,7 @@ package io.github.aratakileo.elegantia.world;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.aratakileo.elegantia.util.Random;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -10,7 +11,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public final class ItemRandomRange {
-    private final RandomSource randomSource = RandomSource.create();
     private final Item item;
     private final int minCount, maxCount;
 
@@ -37,7 +36,7 @@ public final class ItemRandomRange {
     }
 
     public int getTotalCount() {
-        return minCount == maxCount ? minCount : randomSource.nextIntBetweenInclusive(minCount, maxCount);
+        return minCount == maxCount ? minCount : Random.getInt(minCount, maxCount);
     }
 
     public @NotNull Item getItem() {

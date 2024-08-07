@@ -183,7 +183,7 @@ public class Vector2fc implements Vector2fInterface {
 
     @Override
     public String toString() {
-        return "Vector2dc{%s, %s}".formatted(x, y);
+        return "Vector2fc{%s, %s}".formatted(x, y);
     }
 
     public static @NotNull Vector2fc of(@NotNull Vector2iInterface vector2iInterface) {

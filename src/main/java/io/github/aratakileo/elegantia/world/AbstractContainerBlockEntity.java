@@ -24,6 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.util.UUID;
 
 public abstract class AbstractContainerBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     protected final Block block;
@@ -81,12 +82,7 @@ public abstract class AbstractContainerBlockEntity extends BaseContainerBlockEnt
             @Nullable String prefix
     ) {
         field.setAccessible(true);
-
-        if (hasUnsupportedType(field))
-            throw new RuntimeException("Compound data field `%s` has unsupported type `%s`".formatted(
-                    Classes.getFieldView(field),
-                    field.getType().getName()
-            ));
+        hasSupportedTypeOrThrow(field);
 
         final var attributeName = getCompoundAttributeName(field, prefix);
 
@@ -105,6 +101,10 @@ public abstract class AbstractContainerBlockEntity extends BaseContainerBlockEnt
                 compoundTag.putDouble(attributeName, field.getDouble(instance));
             else if (field.getType() == String.class)
                 compoundTag.putString(attributeName, (String)field.get(instance));
+            else if (field.getType() == UUID.class)
+                compoundTag.putUUID(attributeName, (UUID)field.get(instance));
+            else if (field.getType().isEnum())
+                compoundTag.putInt(attributeName, ((Enum<?>)field.get(instance)).ordinal());
             else if (Classes.isArrayField(field, int.class))
                 compoundTag.putIntArray(attributeName, (int[])field.get(instance));
             else for (final var subfield: ((ContainerAutoData)field.get(instance)).fields)
@@ -133,12 +133,7 @@ public abstract class AbstractContainerBlockEntity extends BaseContainerBlockEnt
             @Nullable String prefix
     ) {
         field.setAccessible(true);
-
-        if (hasUnsupportedType(field))
-            throw new RuntimeException("Compound data field `%s` has unsupported type `%s`".formatted(
-                    Classes.getFieldView(field),
-                    field.getType().getName()
-            ));
+        hasSupportedTypeOrThrow(field);
 
         final var attributeName = getCompoundAttributeName(field, prefix);
 
@@ -157,6 +152,10 @@ public abstract class AbstractContainerBlockEntity extends BaseContainerBlockEnt
                 field.setDouble(instance, compoundTag.getDouble(attributeName));
             else if (field.getType() == String.class)
                 field.set(instance, compoundTag.getString(attributeName));
+            else if (field.getType() == UUID.class)
+                field.set(instance, compoundTag.getUUID(attributeName));
+            else if (field.getType().isEnum())
+                field.set(instance, field.getType().getEnumConstants()[compoundTag.getInt(attributeName)]);
             else if (Classes.isArrayField(field, int.class))
                 field.set(instance, compoundTag.getIntArray(attributeName));
             else for (final var subfield: ((ContainerAutoData)field.get(instance)).fields)
@@ -175,15 +174,23 @@ public abstract class AbstractContainerBlockEntity extends BaseContainerBlockEnt
         );
     }
 
-    private static boolean hasUnsupportedType(@NotNull Field field) {
-        return field.getType() != boolean.class
-                && field.getType() != short.class
-                && field.getType() != int.class
-                && field.getType() != long.class
-                && field.getType() != float.class
-                && field.getType() != double.class
-                && !Classes.isArrayField(field, int.class)
-                && !Classes.isFieldLike(field, ContainerAutoData.class);
+    private static void hasSupportedTypeOrThrow(@NotNull Field field) {
+        if (field.getType() == boolean.class
+                || field.getType() == short.class
+                || field.getType() == int.class
+                || field.getType() == long.class
+                || field.getType() == float.class
+                || field.getType() == double.class
+                || field.getType() == String.class
+                || field.getType() == UUID.class
+                || field.getType().isEnum()
+                || Classes.isArrayField(field, int.class)
+                || Classes.isFieldLike(field, ContainerAutoData.class)) return;
+
+        throw new RuntimeException("Compound data field `%s` has unsupported type `%s`".formatted(
+                Classes.getFieldView(field),
+                field.getType().getName()
+        ));
     }
 
     @Override

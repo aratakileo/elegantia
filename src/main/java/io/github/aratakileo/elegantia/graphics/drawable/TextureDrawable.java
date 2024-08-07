@@ -2,30 +2,35 @@ package io.github.aratakileo.elegantia.graphics.drawable;
 
 import io.github.aratakileo.elegantia.graphics.drawer.RectDrawer;
 import io.github.aratakileo.elegantia.graphics.drawer.TextureDrawer;
+import io.github.aratakileo.elegantia.math.Size2iInterface;
+import io.github.aratakileo.elegantia.math.Size2ic;
 import io.github.aratakileo.elegantia.math.Vector2fInterface;
 import io.github.aratakileo.elegantia.math.Vector2fc;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-
 public class TextureDrawable implements Drawable {
-    protected final ResourceLocation texture;
-    protected final Dimension textureSize;
+    public final ResourceLocation texture;
+    public final Size2ic textureSize;
 
     public Vector2fInterface uv = Vector2fc.ZERO;
     public boolean enabledBlend = false, fittedCenter = false;
 
     public TextureDrawable(
             @NotNull ResourceLocation texture,
-            @NotNull Dimension textureSize
+            @NotNull Size2iInterface textureSize
     ) {
         this.texture = texture;
-        this.textureSize = textureSize;
+        this.textureSize = Size2ic.of(textureSize);
     }
 
     public @NotNull TextureDrawable setUV(@NotNull Vector2fInterface uv) {
         this.uv = uv;
+        return this;
+    }
+
+    public @NotNull TextureDrawable setUV(float u, float v) {
+        this.uv = new Vector2fc(u, v);
         return this;
     }
 
@@ -41,7 +46,9 @@ public class TextureDrawable implements Drawable {
 
     @Override
     public void render(@NotNull RectDrawer rectDrawer) {
-        final var textureDrawer =  rectDrawer.asTextureDrawer(texture, textureSize).setUV(uv).setEnabledBlend(enabledBlend);
+        final var textureDrawer = rectDrawer.asTextureDrawer(texture, textureSize)
+                .setEnabledBlend(enabledBlend)
+                .setUV(uv);
 
         if (fittedCenter)
             textureDrawer.renderFittedCenter();

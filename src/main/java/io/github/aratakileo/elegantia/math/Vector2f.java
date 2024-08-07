@@ -210,7 +210,7 @@ public class Vector2f implements Vector2fInterface {
 
     @Override
     public String toString() {
-        return "Vector2d{%s, %s}".formatted(x, y);
+        return "Vector2f{%s, %s}".formatted(x, y);
     }
 
     public static @NotNull Vector2f of(@NotNull Vector2iInterface vector2iInterface) {

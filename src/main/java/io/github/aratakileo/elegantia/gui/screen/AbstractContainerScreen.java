@@ -1,17 +1,23 @@
 package io.github.aratakileo.elegantia.gui.screen;
 
 import io.github.aratakileo.elegantia.graphics.GuiGraphicsUtil;
+import io.github.aratakileo.elegantia.graphics.drawable.TextureDrawable;
+import io.github.aratakileo.elegantia.graphics.drawer.RectDrawer;
+import io.github.aratakileo.elegantia.math.Vector2ic;
 import io.github.aratakileo.elegantia.world.slot.ElegantedSlot;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
 public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> extends net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<T> {
     private final static ArrayList<Component> tooltipsForRender = new ArrayList<>();
+
+    public @Nullable TextureDrawable backgroundPanel;
 
     public AbstractContainerScreen(
             @NotNull T abstractContainerMenu,
@@ -24,14 +30,23 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
     @Override
     public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
         super.renderBackground(guiGraphics, mouseX, mouseY, dt);
+
+        if (backgroundPanel != null)
+            backgroundPanel.render(RectDrawer.of(guiGraphics, getPanelPos(), imageWidth, imageHeight));
+
         renderBackgroundContent(guiGraphics, mouseX, mouseY, dt);
 
         for (final var slot: menu.slots)
             if (slot instanceof ElegantedSlot elegantedSlot)
-                elegantedSlot.renderIcon(guiGraphics);
+                elegantedSlot.getIconForRender().ifPresent(icon -> icon.render(RectDrawer.ofSquare(
+                        guiGraphics,
+                        getPanelPos().add(elegantedSlot.getPos()),
+                        16
+                )));
     }
 
     @Override
+    @Deprecated
     protected final void renderBg(@NotNull GuiGraphics guiGraphics, float dt, int mouseX, int mouseY) {}
 
     public abstract void renderBackgroundContent(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt);
@@ -53,5 +68,9 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
 
     public void showTooltip(@NotNull Component message) {
         tooltipsForRender.add(message);
+    }
+
+    public @NotNull Vector2ic getPanelPos() {
+        return new Vector2ic((width - imageWidth) / 2, (height - imageHeight) / 2);
     }
 }

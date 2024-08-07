@@ -19,7 +19,7 @@ public final class FuelRegistry {
     private static final Object2IntMap<ItemLike> ITEM_COOK_TIMES = new Object2IntLinkedOpenHashMap<>();
     private static final Object2IntMap<TagKey<Item>> TAG_COOK_TIMES = new Object2IntLinkedOpenHashMap<>();
 
-    private static boolean canNotAddFuel(@NotNull String item, int cookTime) {
+    private static boolean canNotAdd(@NotNull String item, int cookTime) {
         if (cookTime > 32767)
             LOGGER.warn("Tried to register an overly high cookTime: {} > 32767! ({})", cookTime, item);
 
@@ -31,8 +31,8 @@ public final class FuelRegistry {
         return false;
     }
 
-    public static <T extends ItemLike> @NotNull T registerAsFuel(@NotNull T item, int cookTime) {
-        if (canNotAddFuel(item.toString(), cookTime)) return item;
+    public static <T extends ItemLike> @NotNull T add(@NotNull T item, int cookTime) {
+        if (canNotAdd(item.toString(), cookTime)) return item;
 
         ITEM_COOK_TIMES.put(item, cookTime);
         AbstractFurnaceBlockEntity.invalidateCache();
@@ -40,8 +40,8 @@ public final class FuelRegistry {
         return item;
     }
 
-    public static @NotNull TagKey<Item> registerAsFuel(@NotNull TagKey<Item> tag, int cookTime) {
-        if (canNotAddFuel(tag.location().toString(), cookTime)) return tag;
+    public static @NotNull TagKey<Item> add(@NotNull TagKey<Item> tag, int cookTime) {
+        if (canNotAdd(tag.location().toString(), cookTime)) return tag;
 
         TAG_COOK_TIMES.put(tag, cookTime);
         AbstractFurnaceBlockEntity.invalidateCache();

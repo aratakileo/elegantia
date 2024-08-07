@@ -6,8 +6,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-
 public class RectDrawer extends AbstractDrawer<RectDrawer> {
     public RectDrawer(@NotNull GuiGraphics guiGraphics, @NotNull Rect2i bounds) {
         super(guiGraphics, bounds);
@@ -87,7 +85,7 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
         return new TextureDrawer(texture, TextureDrawer.getTextureSize(texture), bounds, guiGraphics);
     }
 
-    public @NotNull TextureDrawer asTextureDrawer(@NotNull ResourceLocation texture, @NotNull Dimension textureSize) {
+    public @NotNull TextureDrawer asTextureDrawer(@NotNull ResourceLocation texture, @NotNull Size2iInterface textureSize) {
         return new TextureDrawer(texture, textureSize, bounds, guiGraphics);
     }
 
@@ -97,7 +95,7 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
 
     public @NotNull TextureDrawer asTextureDrawer(
             @NotNull ResourceLocation texture,
-            @NotNull Dimension textureSize,
+            @NotNull Size2iInterface textureSize,
             @NotNull Rect2i newBounds
     ) {
         return new TextureDrawer(texture, textureSize, newBounds, guiGraphics);
@@ -113,14 +111,10 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
         );
     }
 
-    public static RectDrawer of(@NotNull GuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int size) {
-        return new RectDrawer(guiGraphics, Rect2i.of(pos, size));
-    }
-
     public static RectDrawer of(
             @NotNull GuiGraphics guiGraphics,
             @NotNull Vector2iInterface pos,
-            @NotNull Dimension size
+            @NotNull Size2iInterface size
     ) {
         return new RectDrawer(guiGraphics, Rect2i.of(pos, size));
     }
@@ -134,16 +128,20 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
         return new RectDrawer(guiGraphics, Rect2i.of(pos, width, height));
     }
 
-    public static RectDrawer of(@NotNull GuiGraphics guiGraphics, int x, int y, int size) {
-        return new RectDrawer(guiGraphics, Rect2i.of(x, y, size));
-    }
-
-    public static RectDrawer of(@NotNull GuiGraphics guiGraphics, int x, int y, @NotNull Dimension size) {
+    public static RectDrawer of(@NotNull GuiGraphics guiGraphics, int x, int y, @NotNull Size2iInterface size) {
         return new RectDrawer(guiGraphics, Rect2i.of(x, y, size));
     }
 
     public static RectDrawer of(@NotNull GuiGraphics guiGraphics, int x, int y, int width, int height) {
         return new RectDrawer(guiGraphics, new Rect2i(x, y, width, height));
+    }
+
+    public static RectDrawer ofSquare(@NotNull GuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int size) {
+        return new RectDrawer(guiGraphics, Rect2i.ofSquare(pos, size));
+    }
+
+    public static RectDrawer ofSquare(@NotNull GuiGraphics guiGraphics, int x, int y, int size) {
+        return new RectDrawer(guiGraphics, Rect2i.ofSquare(x, y, size));
     }
 
     public enum GradientDirection {

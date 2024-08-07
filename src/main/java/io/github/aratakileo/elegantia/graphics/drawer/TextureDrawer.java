@@ -1,33 +1,29 @@
 package io.github.aratakileo.elegantia.graphics.drawer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.aratakileo.elegantia.math.Rect2i;
-import io.github.aratakileo.elegantia.math.Vector2fInterface;
-import io.github.aratakileo.elegantia.math.Vector2fc;
+import io.github.aratakileo.elegantia.math.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
-
 public class TextureDrawer extends AbstractDrawer<TextureDrawer> {
     public final ResourceLocation texture;
-    public final Dimension textureSize;
+    public final Size2ic textureSize;
 
     public Vector2fInterface uv = Vector2fc.ZERO;
     public boolean enabledBlend = false;
 
     public TextureDrawer(
             @NotNull ResourceLocation texture,
-            @NotNull Dimension textureSize,
+            @NotNull Size2iInterface textureSize,
             @NotNull Rect2i bounds,
             @NotNull GuiGraphics guiGraphics
     ) {
         super(guiGraphics, bounds);
         this.texture = texture;
-        this.textureSize = textureSize;
+        this.textureSize = Size2ic.of(textureSize);
     }
 
     @Override
@@ -114,16 +110,17 @@ public class TextureDrawer extends AbstractDrawer<TextureDrawer> {
         );
     }
 
-    public static @NotNull Dimension getTextureSize(@NotNull ResourceLocation texture) {
-        final var textureBinding = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+    public static @NotNull Size2ic getTextureSize(@NotNull ResourceLocation texture) {
+        if (!RenderSystem.isOnRenderThread())
+            throw new IllegalStateException(
+                    TextureDrawer.class.getName() + "#getTextureSize called outside the render thread"
+            );
 
-        Minecraft.getInstance().getTextureManager().bindForSetup(texture);
+        Minecraft.getInstance().getTextureManager().getTexture(texture).bind();
 
         final var width = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
         final var height = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
 
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureBinding);
-
-        return new Dimension(width, height);
+        return new Size2ic(width, height);
     }
 }

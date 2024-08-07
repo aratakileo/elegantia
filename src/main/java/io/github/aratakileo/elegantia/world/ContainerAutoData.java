@@ -15,12 +15,7 @@ public abstract class ContainerAutoData implements ContainerData {
         for (final var field: getClass().getDeclaredFields()) {
             if (field.isAnnotationPresent(Ignore.class)) return;
 
-            if (hasUnsupportedType(field))
-                throw new RuntimeException("Compound data field `%s` has unsupported type `%s`".formatted(
-                        Classes.getFieldView(field),
-                        field.getType().getName()
-                ));
-
+            hasSupportedTypeOrThrow(field);
             fields.add(field);
         }
     }
@@ -64,7 +59,13 @@ public abstract class ContainerAutoData implements ContainerData {
         return fields.size();
     }
 
-    private static boolean hasUnsupportedType(@NotNull Field field) {
-        return field.getType() != boolean.class && field.getType() != int.class && !field.getType().isEnum();
+    private static void hasSupportedTypeOrThrow(@NotNull Field field) {
+        if (field.getType() == boolean.class || field.getType() == int.class || field.getType().isEnum())
+            return;
+
+        throw new RuntimeException("Data field `%s` has unsupported type `%s`".formatted(
+                Classes.getFieldView(field),
+                field.getType().getName()
+        ));
     }
 }

@@ -5,8 +5,6 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2fc;
 
-import java.awt.*;
-
 public class Rect2i {
     public int x, y, width, height;
     
@@ -157,8 +155,8 @@ public class Rect2i {
         return this;
     }
 
-    public @NotNull Dimension getSize() {
-        return new Dimension(width, height);
+    public @NotNull Size2ic getSize() {
+        return new Size2ic(width, height);
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -170,9 +168,9 @@ public class Rect2i {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public @NotNull Rect2i setSize(@NotNull Dimension size) {
-        width = size.width;
-        height = size.height;
+    public @NotNull Rect2i setSize(@NotNull Size2iInterface size) {
+        width = size.width();
+        height = size.height();
 
         return this;
     }
@@ -332,24 +330,16 @@ public class Rect2i {
         return new Rect2i(rect[0], rect[1], rect[2], rect[3]);
     }
 
-    public static @NotNull Rect2i of(@NotNull Vector2iInterface position, int size) {
-        return new Rect2i(position.x(), position.y(), size, size);
+    public static @NotNull Rect2i of(@NotNull Vector2iInterface position, @NotNull Size2iInterface size) {
+        return new Rect2i(position.x(), position.y(), size.width(), size.height());
     }
 
-    public static @NotNull Rect2i of(@NotNull Vector2iInterface position, @NotNull Dimension size) {
-        return new Rect2i(position.x(), position.y(), size.width, size.height);
-    }
-
-    public static @NotNull Rect2i of(int x, int y, @NotNull Dimension size) {
-        return new Rect2i(x, y, size.width, size.height);
+    public static @NotNull Rect2i of(int x, int y, @NotNull Size2iInterface size) {
+        return new Rect2i(x, y, size.width(), size.height());
     }
 
     public static @NotNull Rect2i of(@NotNull Vector2iInterface position, int width, int height) {
         return new Rect2i(position.x(), position.y(), width, height);
-    }
-
-    public static @NotNull Rect2i of(int x, int y, int size) {
-        return new Rect2i(x, y, size, size);
     }
 
     public static @NotNull Rect2i of(@NotNull LayoutElement layoutElement) {
@@ -364,7 +354,7 @@ public class Rect2i {
     public static @NotNull Rect2i of(@NotNull net.minecraft.client.renderer.Rect2i rect2i) {
         return new Rect2i(rect2i.getX(), rect2i.getY(), rect2i.getWidth(), rect2i.getHeight());
     }
-    
+
     public static @NotNull Rect2i of(@NotNull ScreenRectangle screenRectangle) {
         return new Rect2i(
                 screenRectangle.left(),
@@ -372,6 +362,14 @@ public class Rect2i {
                 screenRectangle.width(),
                 screenRectangle.height()
         );
+    }
+
+    public static @NotNull Rect2i ofSquare(@NotNull Vector2iInterface position, int size) {
+        return new Rect2i(position.x(), position.y(), size, size);
+    }
+
+    public static @NotNull Rect2i ofSquare(int x, int y, int size) {
+        return new Rect2i(x, y, size, size);
     }
 
     public static @NotNull Rect2i empty() {

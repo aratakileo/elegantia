@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface SlotController {
     SlotController RESULT = new Builder().prohibitPlacement().build();
@@ -31,7 +32,7 @@ public interface SlotController {
             int insertableCount,
             @NotNull Consumer<ItemStack> slotSetter
     ) {
-        if (insertable.isEmpty() || mayPlace(slot, insertable))
+        if (insertable.isEmpty() || !mayPlace(slot, insertable))
             return insertable;
 
         insertableCount = Math.min(
@@ -51,6 +52,14 @@ public interface SlotController {
         }
 
         return insertable;
+    }
+
+    static @NotNull SlotController filtered(@NotNull Function<ItemStack, Boolean> filter) {
+        return new Builder().setMayPlace(filter).build();
+    }
+
+    static @NotNull SlotController filtered(@NotNull SlotController.Builder.MayPlace filter) {
+        return new Builder().setMayPlace(filter).build();
     }
 
     abstract class AbstractBuilder<S extends SlotController, B extends AbstractBuilder<S, B>> {
@@ -81,6 +90,11 @@ public interface SlotController {
 
         public @NotNull Builder prohibitPlacement() {
             this.mayPlace = (slot, insertable) -> false;
+            return this;
+        }
+
+        public @NotNull Builder setMayPlace(@NotNull Function<ItemStack, Boolean> mayPlace) {
+            this.mayPlace = (slot, insertable) -> mayPlace.apply(insertable);
             return this;
         }
 
