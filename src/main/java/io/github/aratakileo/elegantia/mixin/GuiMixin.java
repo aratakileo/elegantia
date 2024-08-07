@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.mixin;
 
-import io.github.aratakileo.elegantia.event.HudRenderListener;
+import io.github.aratakileo.elegantia.client.event.HudRenderListener;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;

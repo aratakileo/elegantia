@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.mixin;
 
-import io.github.aratakileo.elegantia.util.type.ResourcePacksProvider;
+import io.github.aratakileo.elegantia.server.ResourcePacksProvider;
 import net.minecraft.client.resources.ClientPackSource;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.BuiltInPackSource;

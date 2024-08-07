@@ -1,9 +1,9 @@
 package io.github.aratakileo.elegantia.world.slot;
 
-import io.github.aratakileo.elegantia.graphics.drawable.TextureDrawable;
-import io.github.aratakileo.elegantia.graphics.drawer.TextureDrawer;
-import io.github.aratakileo.elegantia.math.Vector2iInterface;
-import io.github.aratakileo.elegantia.math.Vector2ic;
+import io.github.aratakileo.elegantia.client.graphics.drawable.TextureDrawable;
+import io.github.aratakileo.elegantia.client.graphics.drawer.TextureDrawer;
+import io.github.aratakileo.elegantia.core.math.Vector2iInterface;
+import io.github.aratakileo.elegantia.core.math.Vector2ic;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;

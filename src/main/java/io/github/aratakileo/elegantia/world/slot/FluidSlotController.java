@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.world.slot;
 
-import io.github.aratakileo.elegantia.graphics.GuiGraphicsUtil;
+import io.github.aratakileo.elegantia.client.graphics.GuiGraphicsUtil;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;

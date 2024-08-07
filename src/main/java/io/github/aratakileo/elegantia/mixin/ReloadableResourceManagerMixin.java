@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.mixin;
 
-import io.github.aratakileo.elegantia.event.ResourceReloadListener;
+import io.github.aratakileo.elegantia.server.ResourceReloadListener;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;

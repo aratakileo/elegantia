@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.mixin;
 
-import io.github.aratakileo.elegantia.world.ObjectRenderTypes;
+import io.github.aratakileo.elegantia.client.ObjectRenderTypes;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Block;

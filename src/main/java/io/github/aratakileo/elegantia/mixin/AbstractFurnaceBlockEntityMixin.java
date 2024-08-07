@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.mixin;
 
-import io.github.aratakileo.elegantia.world.FuelRegistry;
+import io.github.aratakileo.elegantia.world.item.FuelRegistry;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;

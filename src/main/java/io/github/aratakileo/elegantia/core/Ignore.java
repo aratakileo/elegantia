@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.core;
 
-import io.github.aratakileo.elegantia.config.AbstractConfig;
-import io.github.aratakileo.elegantia.world.ContainerAutoData;
+import io.github.aratakileo.elegantia.client.config.AbstractConfig;
+import io.github.aratakileo.elegantia.world.container.ContainerAutoData;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
