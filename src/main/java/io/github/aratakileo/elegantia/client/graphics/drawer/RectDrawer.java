@@ -16,9 +16,13 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
         return new RectDrawer(guiGraphics, bounds);
     }
 
-    public @NotNull RectDrawer draw(int color) {
-        if (color != 0x0) {
-            guiGraphics.fill(bounds.getLeft(), bounds.getTop(), bounds.getRight(), bounds.getBottom(), color);
+    public @NotNull RectDrawer drawRgb(int rgbColor) {
+        return draw(rgbColor | 0xff000000);
+    }
+
+    public @NotNull RectDrawer draw(int argbColor) {
+        if (argbColor != 0x0) {
+            guiGraphics.fill(bounds.getLeft(), bounds.getTop(), bounds.getRight(), bounds.getBottom(), argbColor);
             return this;
         }
 
@@ -26,56 +30,102 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public @NotNull RectDrawer drawGradient(int colorStart, int colorEnd, @NotNull GradientDirection direction) {
-        if (colorStart == 0x0 || colorEnd == 0x0) return this;
+    public @NotNull RectDrawer drawRgbGradient(int rgbColorStart, int rgbColorEnd, @NotNull GradientDirection direction) {
+        return drawGradient(rgbColorStart | 0xff000000, rgbColorEnd | 0xff000000, direction);
+    }
+
+    public @NotNull RectDrawer drawGradient(
+            int argbColorStart,
+            int argbColorEnd,
+            @NotNull GradientDirection direction
+    ) {
+        if (argbColorStart == 0x0 || argbColorEnd == 0x0) return this;
 
         return switch (direction) {
-            case HORIZONTAL -> drawGradient(colorStart, colorStart, colorEnd, colorEnd);
-            case VERTICAL -> drawGradient(colorStart, colorEnd, colorEnd, colorStart);
-            case DIAGONAL -> drawGradient(colorEnd, colorStart, colorEnd, colorStart);
-            case CORNER_LEFT_TOP -> drawGradient(colorStart, colorEnd, colorEnd, colorEnd);
-            case CORNER_LEFT_BOTTOM -> drawGradient(colorEnd, colorStart, colorEnd, colorEnd);
-            case CORNER_RIGHT_BOTTOM -> drawGradient(colorEnd, colorEnd, colorStart, colorEnd);
-            case CORNER_RIGHT_TOP -> drawGradient(colorEnd, colorEnd, colorEnd, colorStart);
+            case HORIZONTAL -> drawGradient(argbColorStart, argbColorStart, argbColorEnd, argbColorEnd);
+            case VERTICAL -> drawGradient(argbColorStart, argbColorEnd, argbColorEnd, argbColorStart);
+            case DIAGONAL -> drawGradient(argbColorEnd, argbColorStart, argbColorEnd, argbColorStart);
+            case CORNER_LEFT_TOP -> drawGradient(argbColorStart, argbColorEnd, argbColorEnd, argbColorEnd);
+            case CORNER_LEFT_BOTTOM -> drawGradient(argbColorEnd, argbColorStart, argbColorEnd, argbColorEnd);
+            case CORNER_RIGHT_BOTTOM -> drawGradient(argbColorEnd, argbColorEnd, argbColorStart, argbColorEnd);
+            case CORNER_RIGHT_TOP -> drawGradient(argbColorEnd, argbColorEnd, argbColorEnd, argbColorStart);
         };
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public @NotNull RectDrawer drawGradient(int topLeftColor, int bottomLeftColor, int bottomRightColor, int topRightColor) {
-        if (topLeftColor == 0x0 || bottomLeftColor == 0x0 || bottomRightColor == 0x0 || topRightColor == 0x0)
-            return this;
+    public @NotNull RectDrawer drawRgbGradient(
+            int rgbTopLeftColor,
+            int rgbBottomLeftColor,
+            int rgbBottomRightColor,
+            int rgbTopRightColor
+    ) {
+        return drawGradient(
+                rgbTopLeftColor | 0xff000000,
+                rgbBottomLeftColor | 0xff000000,
+                rgbBottomRightColor | 0xff000000,
+                rgbTopRightColor | 0xff000000
+        );
+    }
+
+    public @NotNull RectDrawer drawGradient(
+            int argbTopLeftColor,
+            int argbBottomLeftColor,
+            int argbBottomRightColor,
+            int argbTopRightColor
+    ) {
+        if (
+                argbTopLeftColor == 0x0
+                        || argbBottomLeftColor == 0x0
+                        || argbBottomRightColor == 0x0
+                        || argbTopRightColor == 0x0
+        ) return this;
 
         final var lastPose = guiGraphics.pose().last();
 
         guiGraphics.bufferSource().getBuffer(RenderType.gui())
-                .addVertex(lastPose, bounds.getLeft(), bounds.getTop(), 0).setColor(topLeftColor)
-                .addVertex(lastPose, bounds.getLeft(), bounds.getBottom(), 0).setColor(bottomLeftColor)
-                .addVertex(lastPose, bounds.getRight(), bounds.getBottom(), 0).setColor(bottomRightColor)
-                .addVertex(lastPose, bounds.getRight(), bounds.getTop(), 0).setColor(topRightColor);
+                .addVertex(lastPose, bounds.getLeft(), bounds.getTop(), 0).setColor(argbTopLeftColor)
+                .addVertex(lastPose, bounds.getLeft(), bounds.getBottom(), 0).setColor(argbBottomLeftColor)
+                .addVertex(lastPose, bounds.getRight(), bounds.getBottom(), 0).setColor(argbBottomRightColor)
+                .addVertex(lastPose, bounds.getRight(), bounds.getTop(), 0).setColor(argbTopRightColor);
 
         return this;
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public @NotNull RectDrawer drawStroke(int color, int thickness) {
-        if (color == 0x0 || thickness == 0) return this;
+    public @NotNull RectDrawer drawRgbStroke(int rgbColor, int thickness) {
+        return drawStroke(rgbColor | 0xff000000, thickness);
+    }
 
-        guiGraphics.fill(bounds.getLeft(), bounds.getTop(), bounds.getRight(), bounds.getTop() + thickness, color);
-        guiGraphics.fill(bounds.getLeft(), bounds.getBottom() - thickness, bounds.getRight(), bounds.getBottom(), color);
+    public @NotNull RectDrawer drawStroke(int argbColor, int thickness) {
+        if (argbColor == 0x0 || thickness == 0) return this;
 
+        guiGraphics.fill(
+                bounds.getLeft(),
+                bounds.getTop(),
+                bounds.getRight(),
+                bounds.getTop() + thickness,
+                argbColor
+        );
+        guiGraphics.fill(
+                bounds.getLeft(),
+                bounds.getBottom() - thickness,
+                bounds.getRight(),
+                bounds.getBottom(),
+                argbColor
+        );
         guiGraphics.fill(
                 bounds.getLeft(),
                 bounds.getTop() + thickness,
                 bounds.getLeft() + thickness,
                 bounds.getBottom() - thickness,
-                color
+                argbColor
         );
         guiGraphics.fill(
                 bounds.getRight() - thickness,
                 bounds.getTop() + thickness,
                 bounds.getRight(),
                 bounds.getBottom() - thickness,
-                color
+                argbColor
         );
 
         return this;
@@ -89,16 +139,16 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
         return new TextureDrawer(texture, textureSize, bounds, guiGraphics);
     }
 
-    public @NotNull TextureDrawer asTextureDrawer(@NotNull ResourceLocation texture, @NotNull Rect2i newBounds) {
-        return new TextureDrawer(texture, TextureDrawer.getTextureSize(texture), newBounds, guiGraphics);
+    public @NotNull TextureDrawer textureDrawer(@NotNull ResourceLocation texture, @NotNull Rect2i bounds) {
+        return new TextureDrawer(texture, TextureDrawer.getTextureSize(texture), bounds, guiGraphics);
     }
 
-    public @NotNull TextureDrawer asTextureDrawer(
+    public @NotNull TextureDrawer textureDrawer(
             @NotNull ResourceLocation texture,
             @NotNull Size2iInterface textureSize,
-            @NotNull Rect2i newBounds
+            @NotNull Rect2i bounds
     ) {
-        return new TextureDrawer(texture, textureSize, newBounds, guiGraphics);
+        return new TextureDrawer(texture, textureSize, bounds, guiGraphics);
     }
 
     @Override

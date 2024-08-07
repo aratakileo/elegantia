@@ -18,20 +18,37 @@ public class ColorGradientDrawable implements Drawable {
         this.gradientDirection = gradientDirection;
     }
 
-    public @NotNull ColorGradientDrawable setColors(int colorStart, int colorEnd) {
-        this.colorStart = colorStart;
-        this.colorEnd = colorEnd;
+    public @NotNull ColorGradientDrawable setRgbColors(int rgbColorStart, int rgbColorEnd) {
+        this.colorStart = rgbColorStart | 0xff000000;
+        this.colorEnd = rgbColorEnd | 0xff000000;
 
         return this;
     }
 
-    public @NotNull ColorGradientDrawable setColorStart(int colorStart) {
-        this.colorStart = colorStart;
+    public @NotNull ColorGradientDrawable setRgbColorStart(int rgbColorStart) {
+        this.colorStart = rgbColorStart | 0xff000000;
         return this;
     }
 
-    public @NotNull ColorGradientDrawable setColorEnd(int colorEnd) {
-        this.colorEnd = colorEnd;
+    public @NotNull ColorGradientDrawable setRgbColorEnd(int rgbColorEnd) {
+        this.colorEnd = rgbColorEnd | 0xff000000;
+        return this;
+    }
+
+    public @NotNull ColorGradientDrawable setColors(int argbColorStart, int argbColorEnd) {
+        this.colorStart = argbColorStart;
+        this.colorEnd = argbColorEnd;
+
+        return this;
+    }
+
+    public @NotNull ColorGradientDrawable setColorStart(int argbColorStart) {
+        this.colorStart = argbColorStart;
+        return this;
+    }
+
+    public @NotNull ColorGradientDrawable setColorEnd(int argbColorEnd) {
+        this.colorEnd = argbColorEnd;
         return this;
     }
 
@@ -40,8 +57,13 @@ public class ColorGradientDrawable implements Drawable {
         return this;
     }
 
-    public @NotNull ColorGradientDrawable setStrokeColor(int strokeColor) {
-        this.strokeColor = strokeColor;
+    public @NotNull ColorGradientDrawable setStrokeRgbColor(int strokeRgbColor) {
+        this.strokeColor = strokeRgbColor | 0xff000000;
+        return this;
+    }
+
+    public @NotNull ColorGradientDrawable setStrokeColor(int strokeArgbColor) {
+        this.strokeColor = strokeArgbColor;
         return this;
     }
 

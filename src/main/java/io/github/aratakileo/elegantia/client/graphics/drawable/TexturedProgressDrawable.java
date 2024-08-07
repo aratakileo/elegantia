@@ -64,7 +64,7 @@ public class TexturedProgressDrawable implements Drawable {
             case RIGHT -> newBounds.width = renderAreaSizeScaledByProgress.width;
         }
 
-        rectDrawer.asTextureDrawer(texture, textureSize, newBounds)
+        rectDrawer.textureDrawer(texture, textureSize, newBounds)
                 .setUV(newUV)
                 .render();
     }

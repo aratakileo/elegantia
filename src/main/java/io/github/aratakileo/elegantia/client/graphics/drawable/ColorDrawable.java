@@ -10,13 +10,23 @@ public class ColorDrawable implements Drawable {
         this.color = color;
     }
 
-    public @NotNull ColorDrawable setColor(int color) {
-        this.color = color;
+    public @NotNull ColorDrawable setRgbColor(int rgbColor) {
+        this.color = rgbColor | 0xff000000;
         return this;
     }
 
-    public @NotNull ColorDrawable setStrokeColor(int strokeColor) {
-        this.strokeColor = strokeColor;
+    public @NotNull ColorDrawable setColor(int argbColor) {
+        this.color = argbColor;
+        return this;
+    }
+
+    public @NotNull ColorDrawable setStrokeRgbColor(int strokeRgbColor) {
+        this.strokeColor = strokeRgbColor | 0xff000000;
+        return this;
+    }
+
+    public @NotNull ColorDrawable setStrokeColor(int strokeArgbColor) {
+        this.strokeColor = strokeArgbColor;
         return this;
     }
 
