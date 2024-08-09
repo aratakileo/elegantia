@@ -14,7 +14,9 @@ public class TextureDrawable implements Drawable {
     public final Size2ic textureSize;
 
     public Vector2fInterface uv = Vector2fc.ZERO;
-    public boolean enabledBlend = false, fittedCenter = false;
+    public boolean enabledBlend = false;
+
+    public RenderType renderType = RenderType.DEFAULT;
 
     public TextureDrawable(
             @NotNull ResourceLocation texture,
@@ -39,24 +41,51 @@ public class TextureDrawable implements Drawable {
         return this;
     }
 
-    public @NotNull TextureDrawable setFittedCenter(boolean fittedCenter) {
-        this.fittedCenter = fittedCenter;
+    public @NotNull TextureDrawable setRenderType(@NotNull RenderType renderType) {
+        this.renderType = renderType;
         return this;
     }
 
     @Override
     public void render(@NotNull RectDrawer rectDrawer) {
-        final var textureDrawer = rectDrawer.asTextureDrawer(texture, textureSize)
+        final var textureDrawer = rectDrawer.texture(texture, textureSize)
                 .setEnabledBlend(enabledBlend)
                 .setUV(uv);
 
-        if (fittedCenter)
-            textureDrawer.renderFittedCenter();
-        else
-            textureDrawer.render();
+        switch (renderType) {
+            case DEFAULT -> textureDrawer.render();
+            case NO_REPEAT -> textureDrawer.renderNoRepeated();
+            case FIT_XY -> textureDrawer.renderFittedXY();
+            case FIT_CENTER -> textureDrawer.renderFittedCenter();
+        }
     }
 
     public static @NotNull TextureDrawable of(@NotNull ResourceLocation texture) {
         return new TextureDrawable(texture, TextureDrawer.getTextureSize(texture));
+    }
+
+    /**
+     * @see TextureDrawer
+     */
+    public enum RenderType {
+        /**
+         * Calls {@link TextureDrawer#render()}
+         */
+        DEFAULT,
+
+        /**
+         * Calls {@link TextureDrawer#renderNoRepeated()}
+         */
+        NO_REPEAT,
+
+        /**
+         * Calls {@link TextureDrawer#renderFittedXY()}
+         */
+        FIT_XY,
+
+        /**
+         * Calls {@link TextureDrawer#renderFittedCenter()}
+         */
+        FIT_CENTER
     }
 }

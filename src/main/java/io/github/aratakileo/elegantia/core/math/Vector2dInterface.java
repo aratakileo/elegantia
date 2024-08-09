@@ -50,16 +50,15 @@ public interface Vector2dInterface extends VectorInterface<Vector2dInterface> {
     @NotNull Vector2dInterface ceil();
     @NotNull Vector2dInterface round();
 
-    default boolean equals(int x, int y) {
-        return equals((double) x, y);
-    }
+    @NotNull Vector2iInterface asVec2i();
+    @NotNull Vector2fInterface asVec2f();
 
     default boolean equals(double x, double y) {
         return Double.doubleToLongBits(x) == Double.doubleToLongBits(x())
                 && Double.doubleToLongBits(y) == Double.doubleToLongBits(y());
     }
 
-    default boolean equals(float x, float y) {
-        return equals((double) x, y);
+    default boolean equals(@NotNull Vector2dInterface vec2d) {
+        return x() == vec2d.x() && y() == vec2d.y();
     }
 }

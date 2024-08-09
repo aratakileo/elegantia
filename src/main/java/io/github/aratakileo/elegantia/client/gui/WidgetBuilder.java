@@ -135,7 +135,7 @@ public class WidgetBuilder {
 
     public @NotNull Rect2i buildBounds() {
         final var minecraftWindow = Minecraft.getInstance().getWindow();
-        final var canvasBounds = Objects.nonNull(parentBounds) ? parentBounds : Rect2i.startPosition(
+        final var canvasBounds = Objects.nonNull(parentBounds) ? parentBounds : Rect2i.zeroPosition(
                 minecraftWindow.getGuiScaledWidth(),
                 minecraftWindow.getGuiScaledHeight()
         );

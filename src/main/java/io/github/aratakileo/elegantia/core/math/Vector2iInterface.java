@@ -34,7 +34,14 @@ public interface Vector2iInterface extends VectorInterface<Vector2iInterface> {
     @NotNull Vector2iInterface div(int x, int y);
     @NotNull Vector2iInterface div(@NotNull org.joml.Vector2ic vector2ic);
 
+    @NotNull Vector2fInterface asVec2f();
+    @NotNull Vector2dInterface asVec2d();
+
     default boolean equals(int x, int y) {
         return x() == x && y() == y;
+    }
+
+    default boolean equals(@NotNull Vector2iInterface vec2i) {
+        return x() == vec2i.x() && y() == vec2i.y();
     }
 }

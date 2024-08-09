@@ -28,7 +28,9 @@ public class TextureDrawer extends AbstractDrawer<TextureDrawer> {
 
     @Override
     public @NotNull TextureDrawer withNewBounds(@NotNull Rect2i bounds) {
-        return new TextureDrawer(texture, textureSize, bounds, guiGraphics);
+        return new TextureDrawer(texture, textureSize, bounds, guiGraphics)
+                .setEnabledBlend(enabledBlend)
+                .setUV(uv);
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -38,11 +40,47 @@ public class TextureDrawer extends AbstractDrawer<TextureDrawer> {
     }
 
     @SuppressWarnings("UnusedReturnValue")
+    public @NotNull TextureDrawer setUV(float u, float v) {
+        this.uv = new Vector2fc(u, v);
+        return this;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull TextureDrawer setEnabledBlend(boolean enabledBlend) {
         this.enabledBlend = enabledBlend;
         return this;
     }
 
+    /**
+     * Before rendering, it scales the image in such a way as to fit it into the bounds
+     * while not maintaining the original aspect ratio,
+     * unlike how it happens in {@link TextureDrawer#renderFittedCenter()}
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull TextureDrawer renderFittedXY() {
+        if (enabledBlend) RenderSystem.enableBlend();
+
+        guiGraphics.blit(
+                texture,
+                bounds.x,
+                bounds.y,
+                uv.x(),
+                uv.y(),
+                bounds.width,
+                bounds.height,
+                bounds.width,
+                bounds.height
+        );
+
+        if (enabledBlend) RenderSystem.disableBlend();
+
+        return this;
+    }
+
+    /**
+     * Before rendering, it scales the image in such a way as to fit it into the bounds
+     * while maintaining the original aspect ratio
+     */
     @SuppressWarnings("UnusedReturnValue")
     public @NotNull TextureDrawer renderFittedCenter() {
         final var renderBounds = bounds.copy();
@@ -65,6 +103,39 @@ public class TextureDrawer extends AbstractDrawer<TextureDrawer> {
                 uv.y(),
                 renderBounds.width,
                 renderBounds.height,
+                renderBounds.width,
+                renderBounds.height
+        );
+
+        if (enabledBlend) RenderSystem.disableBlend();
+
+        return this;
+    }
+
+    /**
+     * If the texture size is smaller than the size of the bounds, then the texture is not repeated,
+     * unlike how it happens in {@link TextureDrawer#render()}
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull TextureDrawer renderNoRepeated() {
+        final var renderBounds = bounds.copy();
+
+        if (renderBounds.width > textureSize.width)
+            renderBounds.width = textureSize.width;
+
+        if (renderBounds.height > textureSize.height)
+            renderBounds.height = textureSize.height;
+
+        if (enabledBlend) RenderSystem.enableBlend();
+
+        guiGraphics.blit(
+                texture,
+                bounds.getLeft(),
+                bounds.getTop(),
+                uv.x(),
+                uv.y(),
+                renderBounds.width,
+                renderBounds.height,
                 textureSize.width,
                 textureSize.height
         );
@@ -74,6 +145,10 @@ public class TextureDrawer extends AbstractDrawer<TextureDrawer> {
         return this;
     }
 
+    /**
+     * Standard texture rendering. If the texture size is smaller than the size of the borders,
+     * then the texture is repeated
+     */
     @SuppressWarnings("UnusedReturnValue")
     public @NotNull TextureDrawer render() {
         if (enabledBlend) RenderSystem.enableBlend();

@@ -219,6 +219,7 @@ public class Rect2i {
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull Rect2i move(@NotNull Vector2iInterface position) {
         x += position.x();
         y += position.y();
@@ -231,6 +232,41 @@ public class Rect2i {
         this.y += y;
 
         return this;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i moveBackX(int x) {
+        this.x -= x;
+        return this;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i moveBackY(int y) {
+        this.y -= y;
+        return this;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i moveBack(@NotNull Vector2iInterface position) {
+        x -= position.x();
+        y -= position.y();
+
+        return this;
+    }
+
+    public @NotNull Rect2i moveBack(int x, int y) {
+        this.x -= x;
+        this.y -= y;
+
+        return this;
+    }
+
+    public @NotNull Rect2i cut(@NotNull Vector2iInterface vec2i) {
+        return cut(vec2i.x(), vec2i.y());
+    }
+
+    public @NotNull Rect2i cut(int left, int top) {
+        return moveHorizontal(left, 0).moveVertical(top, 0);
     }
 
     public @NotNull Rect2i cutLeft(int length) {
@@ -280,9 +316,54 @@ public class Rect2i {
         return this;
     }
 
+    public @NotNull Rect2i expand(@NotNull Vector2iInterface vec2i) {
+        width += vec2i.x();
+        height += vec2i.y();
+
+        return this;
+    }
+
+    public @NotNull Rect2i expand(@NotNull Size2iInterface size) {
+        width += size.width();
+        height += size.height();
+
+        return this;
+    }
+
     public @NotNull Rect2i expand(int horizontal, int vertical) {
         width += horizontal;
         height += vertical;
+
+        return this;
+    }
+
+    public @NotNull Rect2i shrinkHorizontal(int horizontal) {
+        width -= horizontal;
+        return this;
+    }
+
+    public @NotNull Rect2i shrinkVertical(int vertical) {
+        height -= vertical;
+        return this;
+    }
+
+    public @NotNull Rect2i shrink(@NotNull Vector2iInterface vec2i) {
+        width -= vec2i.x();
+        height -= vec2i.y();
+
+        return this;
+    }
+
+    public @NotNull Rect2i shrink(@NotNull Size2iInterface size) {
+        width -= size.width();
+        height -= size.height();
+
+        return this;
+    }
+
+    public @NotNull Rect2i shrink(int horizontal, int vertical) {
+        width -= horizontal;
+        height -= vertical;
 
         return this;
     }
@@ -364,11 +445,11 @@ public class Rect2i {
         );
     }
 
-    public static @NotNull Rect2i ofSquare(@NotNull Vector2iInterface position, int size) {
+    public static @NotNull Rect2i square(@NotNull Vector2iInterface position, int size) {
         return new Rect2i(position.x(), position.y(), size, size);
     }
 
-    public static @NotNull Rect2i ofSquare(int x, int y, int size) {
+    public static @NotNull Rect2i square(int x, int y, int size) {
         return new Rect2i(x, y, size, size);
     }
 
@@ -376,7 +457,7 @@ public class Rect2i {
         return new Rect2i(0, 0, 0, 0);
     }
 
-    public static @NotNull Rect2i startPosition(int width, int height) {
+    public static @NotNull Rect2i zeroPosition(int width, int height) {
         return new Rect2i(0, 0, width, height);
     }
 }

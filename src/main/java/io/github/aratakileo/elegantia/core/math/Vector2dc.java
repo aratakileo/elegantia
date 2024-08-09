@@ -197,7 +197,17 @@ public class Vector2dc implements Vector2dInterface {
         return new Vector2dc(x, y);
     }
 
-    public @NotNull Vector2d copyAsMutable() {
+    @Override
+    public @NotNull Vector2ic asVec2i() {
+        return new Vector2ic((int)x, (int)y);
+    }
+
+    @Override
+    public @NotNull Vector2fc asVec2f() {
+        return new Vector2fc((float)x, (float)y);
+    }
+
+    public @NotNull Vector2d asMutable() {
         return new Vector2d(x, y);
     }
 

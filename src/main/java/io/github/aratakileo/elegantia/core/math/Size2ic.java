@@ -28,32 +28,42 @@ public class Size2ic implements Size2iInterface {
     }
 
     @Override
-    public @NotNull Size2ic add(int size) {
+    public @NotNull Size2ic expand(int size) {
         return new Size2ic(width + size, height + size);
     }
 
     @Override
-    public @NotNull Size2ic add(@NotNull Size2iInterface size) {
+    public @NotNull Size2ic expand(@NotNull Size2iInterface size) {
         return new Size2ic(width + size.width(), height + size.height());
     }
 
     @Override
-    public @NotNull Size2ic add(int width, int height) {
+    public @NotNull Size2ic expand(@NotNull Vector2iInterface vec2i) {
+        return new Size2ic(width + vec2i.x(), height + vec2i.y());
+    }
+
+    @Override
+    public @NotNull Size2ic expand(int width, int height) {
         return new Size2ic(this.width + width, this.height + height);
     }
 
     @Override
-    public @NotNull Size2ic sub(int size) {
+    public @NotNull Size2ic shrink(int size) {
         return new Size2ic(width - size, height - size);
     }
 
     @Override
-    public @NotNull Size2ic sub(@NotNull Size2iInterface size) {
+    public @NotNull Size2ic shrink(@NotNull Size2iInterface size) {
         return new Size2ic(width - size.width(), height - size.height());
     }
 
     @Override
-    public @NotNull Size2ic sub(int width, int height) {
+    public @NotNull Size2ic shrink(@NotNull Vector2iInterface vec2i) {
+        return new Size2ic(width - vec2i.x(), height - vec2i.y());
+    }
+
+    @Override
+    public @NotNull Size2ic shrink(int width, int height) {
         return new Size2ic(this.width - width, this.height - height);
     }
 

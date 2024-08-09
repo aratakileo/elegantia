@@ -204,7 +204,17 @@ public class Vector2f implements Vector2fInterface {
         return new Vector2f(x, y);
     }
 
-    public @NotNull Vector2fc copyAsImmutable() {
+    @Override
+    public @NotNull Vector2i asVec2i() {
+        return new Vector2i((int)x, (int)y);
+    }
+
+    @Override
+    public @NotNull Vector2d asVec2d() {
+        return new Vector2d(x, y);
+    }
+
+    public @NotNull Vector2fc asImmutable() {
         return new Vector2fc(x, y);
     }
 

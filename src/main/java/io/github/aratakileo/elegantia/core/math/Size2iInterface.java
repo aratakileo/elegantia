@@ -6,13 +6,15 @@ public interface Size2iInterface {
     int width();
     int height();
 
-    @NotNull Size2iInterface add(int size);
-    @NotNull Size2iInterface add(@NotNull Size2iInterface size);
-    @NotNull Size2iInterface add(int width, int height);
+    @NotNull Size2iInterface expand(int size);
+    @NotNull Size2iInterface expand(@NotNull Size2iInterface size);
+    @NotNull Size2iInterface expand(@NotNull Vector2iInterface vec2i);
+    @NotNull Size2iInterface expand(int width, int height);
 
-    @NotNull Size2iInterface sub(int size);
-    @NotNull Size2iInterface sub(@NotNull Size2iInterface size);
-    @NotNull Size2iInterface sub(int width, int height);
+    @NotNull Size2iInterface shrink(int size);
+    @NotNull Size2iInterface shrink(@NotNull Size2iInterface size);
+    @NotNull Size2iInterface shrink(@NotNull Vector2iInterface vec2i);
+    @NotNull Size2iInterface shrink(int width, int height);
 
     @NotNull Size2iInterface scale(int value);
     @NotNull Size2iInterface scale(float value);

@@ -44,7 +44,7 @@ public class TexturedProgressDrawable implements Drawable {
         final var newBounds = rectDrawer.bounds.copy();
         final var newUV = Vector2f.of(uv);
         final var renderAreaSizeScaledByProgress = renderAreaSize.scale(progressGetter.get());
-        final var remainedRenderAreaSize = renderAreaSize.sub(renderAreaSizeScaledByProgress);
+        final var remainedRenderAreaSize = renderAreaSize.shrink(renderAreaSizeScaledByProgress);
 
         switch (direction) {
             case TOP -> {
@@ -64,7 +64,7 @@ public class TexturedProgressDrawable implements Drawable {
             case RIGHT -> newBounds.width = renderAreaSizeScaledByProgress.width;
         }
 
-        rectDrawer.textureDrawer(texture, textureSize, newBounds)
+        rectDrawer.texture(texture, textureSize, newBounds)
                 .setUV(newUV)
                 .render();
     }

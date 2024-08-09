@@ -131,19 +131,19 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
         return this;
     }
 
-    public @NotNull TextureDrawer asTextureDrawer(@NotNull ResourceLocation texture) {
+    public @NotNull TextureDrawer texture(@NotNull ResourceLocation texture) {
         return new TextureDrawer(texture, TextureDrawer.getTextureSize(texture), bounds, guiGraphics);
     }
 
-    public @NotNull TextureDrawer asTextureDrawer(@NotNull ResourceLocation texture, @NotNull Size2iInterface textureSize) {
+    public @NotNull TextureDrawer texture(@NotNull ResourceLocation texture, @NotNull Size2iInterface textureSize) {
         return new TextureDrawer(texture, textureSize, bounds, guiGraphics);
     }
 
-    public @NotNull TextureDrawer textureDrawer(@NotNull ResourceLocation texture, @NotNull Rect2i bounds) {
+    public @NotNull TextureDrawer texture(@NotNull ResourceLocation texture, @NotNull Rect2i bounds) {
         return new TextureDrawer(texture, TextureDrawer.getTextureSize(texture), bounds, guiGraphics);
     }
 
-    public @NotNull TextureDrawer textureDrawer(
+    public @NotNull TextureDrawer texture(
             @NotNull ResourceLocation texture,
             @NotNull Size2iInterface textureSize,
             @NotNull Rect2i bounds
@@ -186,12 +186,12 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
         return new RectDrawer(guiGraphics, new Rect2i(x, y, width, height));
     }
 
-    public static RectDrawer ofSquare(@NotNull GuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int size) {
-        return new RectDrawer(guiGraphics, Rect2i.ofSquare(pos, size));
+    public static RectDrawer square(@NotNull GuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int size) {
+        return new RectDrawer(guiGraphics, Rect2i.square(pos, size));
     }
 
-    public static RectDrawer ofSquare(@NotNull GuiGraphics guiGraphics, int x, int y, int size) {
-        return new RectDrawer(guiGraphics, Rect2i.ofSquare(x, y, size));
+    public static RectDrawer square(@NotNull GuiGraphics guiGraphics, int x, int y, int size) {
+        return new RectDrawer(guiGraphics, Rect2i.square(x, y, size));
     }
 
     public enum GradientDirection {

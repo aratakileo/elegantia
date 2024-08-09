@@ -24,7 +24,7 @@ public class VerticalScrollbar extends AbstractWidget {
         super(bounds);
 
         this.padding = padding;
-        this.thumbRect = Rect2i.startPosition(bounds.width - padding * 2, 0);
+        this.thumbRect = Rect2i.zeroPosition(bounds.width - padding * 2, 0);
 
         setMaxProgress(maxProgress, segmentSize);
     }

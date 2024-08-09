@@ -38,7 +38,7 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
 
         for (final var slot: menu.slots)
             if (slot instanceof ElegantedSlot elegantedSlot)
-                elegantedSlot.getIconForRender().ifPresent(icon -> icon.render(RectDrawer.ofSquare(
+                elegantedSlot.getIconForRender().ifPresent(icon -> icon.render(RectDrawer.square(
                         guiGraphics,
                         getPanelPos().add(elegantedSlot.getPos()),
                         16

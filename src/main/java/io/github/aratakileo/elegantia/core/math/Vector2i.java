@@ -138,11 +138,21 @@ public class Vector2i implements Vector2iInterface {
     }
 
     @Override
+    public @NotNull Vector2f asVec2f() {
+        return new Vector2f(x, y);
+    }
+
+    @Override
+    public @NotNull Vector2d asVec2d() {
+        return new Vector2d(x, y);
+    }
+
+    @Override
     public @NotNull Vector2i copy() {
         return new Vector2i(x, y);
     }
 
-    public @NotNull Vector2ic copyAsImmutable() {
+    public @NotNull Vector2ic asImmutable() {
         return new Vector2ic(x, y);
     }
 
