@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.world.slot;
 
-import io.github.aratakileo.elegantia.client.graphics.GuiGraphicsUtil;
+import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
@@ -159,7 +159,7 @@ public interface FluidSlotController extends SlotController {
                     if (insertable.isEmpty()) return insertable;
 
                     if (mayTakeFluid() && insertable.is(getEmptyFluidContainer())) {
-                        GuiGraphicsUtil.playSound(getFluidTakeSound());
+                        ElGuiGraphics.playSound(getFluidTakeSound());
                         onTakeFluid();
 
                         final var containerItemWithFluid = new ItemStack(getContainerWithFluid());
@@ -174,7 +174,7 @@ public interface FluidSlotController extends SlotController {
                     }
 
                     if (mayInsertFluid() && insertable.is(getContainerWithFluid())) {
-                        GuiGraphicsUtil.playSound(getFluidInsertSound());
+                        ElGuiGraphics.playSound(getFluidInsertSound());
                         onInsertFluid();
                         return new ItemStack(getEmptyFluidContainer());
                     }

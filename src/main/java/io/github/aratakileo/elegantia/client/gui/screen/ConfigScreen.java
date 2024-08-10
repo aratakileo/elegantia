@@ -3,14 +3,14 @@ package io.github.aratakileo.elegantia.client.gui.screen;
 import io.github.aratakileo.elegantia.client.config.AbstractConfig;
 import io.github.aratakileo.elegantia.client.config.ConfigHandler;
 import io.github.aratakileo.elegantia.client.config.EntryInfo;
-import io.github.aratakileo.elegantia.client.graphics.GuiGraphicsUtil;
+import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.client.gui.WidgetBuilder;
 import io.github.aratakileo.elegantia.client.gui.widget.AbstractButton;
 import io.github.aratakileo.elegantia.client.gui.widget.AbstractWidget;
 import io.github.aratakileo.elegantia.client.gui.widget.Button;
 import io.github.aratakileo.elegantia.core.ModInfo;
+import io.github.aratakileo.elegantia.core.math.Vector2ic;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class ConfigScreen extends Screen {
-    private final @Nullable Screen parent;
+public class ConfigScreen extends AbstractScreen {
     private final ArrayList<Pair<AbstractWidget, String>> entryWidgets = new ArrayList<>();
     private final AbstractConfig configInstance;
     private HashMap<String, ArrayList<String>> triggeredFieldEntries;
@@ -33,26 +32,16 @@ public class ConfigScreen extends Screen {
             @NotNull AbstractConfig configInstance,
             @Nullable Screen parent
     ) {
-        super(Component.translatable(
+        super(parent, Component.translatable(
                 "elegantia.gui.config.title",
                 configInstance.getNamespace().getMod().map(ModInfo::getName).orElse("Unknown")
         ));
         this.configInstance = configInstance;
-        this.parent = parent;
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        renderForeground(guiGraphics, mouseX, mouseY, dt);
-    }
-
-    @Override
-    public void onClose() {
-        Minecraft.getInstance().setScreen(parent);
-    }
-
-    protected void renderForeground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        GuiGraphicsUtil.drawCenteredText(guiGraphics, title, width / 2, 15, 0xffffff);
+    public void renderForeground(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos, float dt) {
+        guiGraphics.drawCenteredText(title, width / 2, 15, 0xffffff);
     }
 
     protected void addConfigFieldWidget(@NotNull Button button, @Nullable String triggeredBy) {

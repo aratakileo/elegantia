@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.client.gui.screen;
 
-import io.github.aratakileo.elegantia.client.graphics.GuiGraphicsUtil;
+import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.client.graphics.drawable.TextureDrawable;
 import io.github.aratakileo.elegantia.client.graphics.drawer.RectDrawer;
 import io.github.aratakileo.elegantia.core.math.Vector2ic;
@@ -27,14 +27,23 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
         super(abstractContainerMenu, inventory, component);
     }
 
+
+    /**
+     * @deprecated use {@link #renderBackground(ElGuiGraphics, Vector2ic, float)} instead
+     */
+    @Deprecated
     @Override
-    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, dt);
+    public final void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+        renderBackground(ElGuiGraphics.of(guiGraphics), new Vector2ic(mouseX, mouseY), dt);
+    }
+
+    public void renderBackground(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos, float dt) {
+        super.renderBackground(guiGraphics, mousePos.x, mousePos.y, dt);
 
         if (backgroundPanel != null)
             backgroundPanel.render(RectDrawer.of(guiGraphics, getPanelPos(), imageWidth, imageHeight));
 
-        renderBackgroundContent(guiGraphics, mouseX, mouseY, dt);
+        renderBackgroundContent(guiGraphics, mousePos, dt);
 
         for (final var slot: menu.slots)
             if (slot instanceof ElegantedSlot elegantedSlot)
@@ -49,19 +58,31 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
     @Deprecated
     protected final void renderBg(@NotNull GuiGraphics guiGraphics, float dt, int mouseX, int mouseY) {}
 
-    public abstract void renderBackgroundContent(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt);
+    public abstract void renderBackgroundContent(
+            @NotNull ElGuiGraphics guiGraphics,
+            @NotNull Vector2ic mousePos,
+            float dt
+    );
 
+    /**
+     * @deprecated use {@link #render(ElGuiGraphics, Vector2ic, float)} instead
+     */
+    @Deprecated
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        super.render(guiGraphics, mouseX, mouseY, dt);
-        renderForeground(guiGraphics, mouseX, mouseY, dt);
+    public final void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+        render(ElGuiGraphics.of(guiGraphics), new Vector2ic(mouseX, mouseY), dt);
     }
 
-    public void renderForeground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        renderTooltip(guiGraphics, mouseX, mouseY);
+    public void render(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos, float dt) {
+        super.render(guiGraphics, mousePos.x, mousePos.y, dt);
+        renderForeground(guiGraphics, mousePos, dt);
+    }
+
+    public void renderForeground(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos, float dt) {
+        renderTooltip(guiGraphics, mousePos);
 
         for (final var tooltipMessage: tooltipsForRender)
-            GuiGraphicsUtil.renderTooltip(guiGraphics, tooltipMessage, mouseX, mouseY);
+            guiGraphics.renderTooltip(tooltipMessage, mousePos);
 
         tooltipsForRender.clear();
     }
@@ -72,5 +93,18 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
 
     public @NotNull Vector2ic getPanelPos() {
         return new Vector2ic((width - imageWidth) / 2, (height - imageHeight) / 2);
+    }
+
+    /**
+     * @deprecated use {@link #renderTooltip(ElGuiGraphics, Vector2ic)} instead
+     */
+    @Deprecated
+    @Override
+    protected final void renderTooltip(@NotNull GuiGraphics guiGraphics, int mousseX, int mouseY) {
+        renderTooltip(ElGuiGraphics.of(guiGraphics), new Vector2ic(mousseX, mouseY));
+    }
+
+    protected void renderTooltip(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos) {
+        super.renderTooltip(guiGraphics, mousePos.x, mousePos.y);
     }
 }

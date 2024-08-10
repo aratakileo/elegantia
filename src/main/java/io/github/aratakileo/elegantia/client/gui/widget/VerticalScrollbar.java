@@ -1,9 +1,10 @@
 package io.github.aratakileo.elegantia.client.gui.widget;
 
+import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.core.math.Rect2i;
 import io.github.aratakileo.elegantia.client.MouseHandler;
-import io.github.aratakileo.elegantia.client.graphics.drawer.RectDrawer;
-import net.minecraft.client.gui.GuiGraphics;
+import io.github.aratakileo.elegantia.core.math.Vector2dc;
+import io.github.aratakileo.elegantia.core.math.Vector2ic;
 import org.jetbrains.annotations.NotNull;
 
 public class VerticalScrollbar extends AbstractWidget {
@@ -91,33 +92,30 @@ public class VerticalScrollbar extends AbstractWidget {
     }
 
     @Override
-    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        new RectDrawer(guiGraphics, bounds)
-                .draw(0xaa222222)
-                .drawStroke(0xaa000000, padding);
-
-        new RectDrawer(guiGraphics, getRenderableThumbRect()).draw(
-                getRenderableThumbRect().contains(mouseX, mouseY) ? 0xaacbcbcb : 0xaa6c757d
+    public void renderBackground(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos, float dt) {
+        guiGraphics.rect(bounds).draw(0xaa222222).drawStroke(0xaa000000, padding);
+        guiGraphics.rect(getRenderableThumbRect()).draw(
+                getRenderableThumbRect().contains(mousePos) ? 0xaacbcbcb : 0xaa6c757d
         );
     }
 
     @Override
-    public boolean onMouseClick(double mouseX, double mouseY) {
-        if (getRenderableThumbRect().contains(mouseX, mouseY)) {
-            scrollingThumbTopToTouchOffset = (int) (mouseY - getRenderableThumbRect().y);
+    public boolean onMouseClick(@NotNull Vector2dc mousePos) {
+        if (getRenderableThumbRect().contains(mousePos)) {
+            scrollingThumbTopToTouchOffset = (int) (mousePos.y - getRenderableThumbRect().y);
             return true;
         }
 
         if (!isHovered) return false;
 
-        setScrollProgressByThumbY((int) (mouseY - getY()));
+        setScrollProgressByThumbY((int) (mousePos.y - getY()));
 
         return true;
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        setProgress((int) (progress - verticalAmount));
+    public boolean mouseScrolled(@NotNull Vector2dc mousePos, @NotNull Vector2dc amount) {
+        setProgress((int) (progress - amount.y));
 
         scrollingThumbTopToTouchOffset = -1;
 
@@ -126,21 +124,19 @@ public class VerticalScrollbar extends AbstractWidget {
 
     @Override
     public boolean mouseDragged(
-            double mouseX,
-            double mouseY,
-            double deltaX,
-            double deltaY,
+            @NotNull Vector2dc mousePos,
+            @NotNull Vector2dc delta,
             @NotNull MouseHandler.Button button
     ) {
         if (!isScrolling()) return false;
 
-        setScrollProgressByThumbY((int) (mouseY - getY() - scrollingThumbTopToTouchOffset));
+        setScrollProgressByThumbY((int) (mousePos.y - getY() - scrollingThumbTopToTouchOffset));
 
         return true;
     }
 
     @Override
-    public boolean onMouseRelease(double mouseX, double mouseY) {
+    public boolean onMouseRelease(@NotNull Vector2dc mousePos) {
         scrollingThumbTopToTouchOffset = -1;
 
         return true;

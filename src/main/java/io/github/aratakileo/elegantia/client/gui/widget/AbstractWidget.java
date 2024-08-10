@@ -1,12 +1,10 @@
 package io.github.aratakileo.elegantia.client.gui.widget;
 
-import io.github.aratakileo.elegantia.client.graphics.drawer.RectDrawer;
+import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.client.graphics.drawable.Drawable;
 import io.github.aratakileo.elegantia.client.graphics.drawable.InteractableDrawable;
 import io.github.aratakileo.elegantia.client.gui.tooltip.TooltipPositioner;
-import io.github.aratakileo.elegantia.core.math.Rect2i;
-import io.github.aratakileo.elegantia.core.math.Vector2iInterface;
-import io.github.aratakileo.elegantia.core.math.Vector2ic;
+import io.github.aratakileo.elegantia.core.math.*;
 import io.github.aratakileo.elegantia.client.MouseHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
@@ -136,16 +134,24 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
         setY(bottom - getHeight());
     }
 
+    /**
+     * @deprecated use {@link #render(ElGuiGraphics, Vector2ic, float)} instead
+     */
+    @Deprecated
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+    public final void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+        render(ElGuiGraphics.of(guiGraphics), new Vector2ic(mouseX, mouseY), dt);
+    }
+
+    public void render(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos, float dt) {
         if (!isVisible) return;
 
         wasFocused = isFocused() && Minecraft.getInstance().getLastInputType().isKeyboard();
         wasHovered = isHovered;
-        isHovered = bounds.contains(mouseX, mouseY);
+        isHovered = bounds.contains(mousePos);
 
-        renderBackground(guiGraphics, mouseX, mouseY, dt);
-        renderForeground(guiGraphics, mouseX, mouseY, dt);
+        renderBackground(guiGraphics, mousePos, dt);
+        renderForeground(guiGraphics, mousePos, dt);
 
         if (
                 tooltip != null
@@ -160,10 +166,10 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
             );
     }
 
-    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
+    public void renderBackground(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos, float dt) {
         if (backgroundDrawable == null) return;
 
-        final var rectDrawer = new RectDrawer(guiGraphics, bounds.copy());
+        final var rectDrawer = guiGraphics.rect(bounds.copy());
 
         if (backgroundDrawable instanceof InteractableDrawable interactableDrawable)
             interactableDrawable.renderInteraction(rectDrawer, new InteractableDrawable.InteractionState(
@@ -175,46 +181,62 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
         else backgroundDrawable.render(rectDrawer);
     }
 
-    public void renderForeground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {}
+    public void renderForeground(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos, float dt) {}
 
+    /**
+     * @deprecated use {@link #mouseMoved(Vector2dc)} instead
+     */
+    @Deprecated
     @Override
-    public void mouseMoved(double mouseX, double mouseY) {}
-
-    @Override
-    public final boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return mouseClicked(mouseX, mouseY, MouseHandler.Button.of(button));
+    public final void mouseMoved(double mouseX, double mouseY) {
+        mouseMoved(new Vector2dc(mouseX, mouseY));
     }
 
-    public boolean mouseClicked(double mouseX, double mouseY, @NotNull MouseHandler.Button button) {
+    public void mouseMoved(@NotNull Vector2dc pos) {}
+
+    /**
+     * @deprecated use {@link #mouseClicked(Vector2dc, MouseHandler.Button)} instead
+     */
+    @Deprecated
+    @Override
+    public final boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return mouseClicked(new Vector2dc(mouseX, mouseY), MouseHandler.Button.of(button));
+    }
+
+    public boolean mouseClicked(@NotNull Vector2dc mousePos, @NotNull MouseHandler.Button button) {
         wasHoveredBeforeRelease = false;
 
         return isEnabled
                 && isVisible
                 && button.isLeft()
-                && bounds.contains(mouseX, mouseY)
-                && onMouseClick(mouseX, mouseY);
+                && bounds.contains(mousePos)
+                && onMouseClick(mousePos);
     }
 
-    public boolean onMouseClick(double mouseX, double mouseY) {
+    public boolean onMouseClick(@NotNull Vector2dc mousePos) {
         wasHoveredBeforeRelease = true;
 
         return false;
     }
 
+    /**
+     * @deprecated use {@link #mouseReleased(Vector2dc, MouseHandler.Button)} instead
+     */
+    @Deprecated
     @Override
     public final boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return mouseReleased(mouseX, mouseY, MouseHandler.Button.of(button));
+        return mouseReleased(new Vector2dc(mouseX, mouseY), MouseHandler.Button.of(button));
     }
 
-    public boolean mouseReleased(double mouseX, double mouseY, @NotNull MouseHandler.Button button) {
+    public boolean mouseReleased(@NotNull Vector2dc mousePos, @NotNull MouseHandler.Button button) {
         return isEnabled
                 && isVisible
                 && button.isLeft()
-                && bounds.contains(mouseX, mouseY)
-                && onMouseRelease(mouseX, mouseY);
+                && bounds.contains(mousePos)
+                && onMouseRelease(mousePos);
     }
 
-    public boolean onMouseRelease(double mouseX, double mouseY) {
+    public boolean onMouseRelease(@NotNull Vector2dc mousePos) {
         if (wasHoveredBeforeRelease) {
             wasHoveredBeforeRelease = false;
             return onClick(true);
@@ -223,30 +245,41 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
         return false;
     }
 
+    /**
+     * @deprecated use {@link #mouseDragged(Vector2dc, Vector2dc, MouseHandler.Button)} instead
+     */
+    @Deprecated
     @Override
     public final boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        return mouseDragged(mouseX, mouseY, deltaX, deltaY, MouseHandler.Button.of(button));
+        return mouseDragged(new Vector2dc(mouseX, mouseY), new Vector2dc(deltaX, deltaY), MouseHandler.Button.of(button));
     }
 
     public boolean mouseDragged(
-            double mouseX,
-            double mouseY,
-            double deltaX,
-            double deltaY,
+            @NotNull Vector2dc mousePos,
+            @NotNull Vector2dc delta,
             @NotNull MouseHandler.Button button
     ) {
         return isEnabled
                 && isVisible
                 && button.isLeft()
-                && bounds.contains(mouseX, mouseY)
-                && onMouseDrag(mouseX, mouseY, deltaX, deltaY);
+                && bounds.contains(mousePos)
+                && onMouseDrag(mousePos, delta);
     }
 
-    public boolean onMouseDrag(double mouseX, double mouseY, double deltaX, double deltaY) {
+    public boolean onMouseDrag(@NotNull Vector2dc mousePos, @NotNull Vector2dc delta) {
         return false;
     }
 
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+    /**
+     * @deprecated use {@link #mouseScrolled(Vector2dc, Vector2dc)} instead
+     */
+    @Deprecated
+    @Override
+    public final boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        return mouseScrolled(new Vector2dc(mouseX, mouseY), new Vector2dc(horizontalAmount, verticalAmount));
+    }
+
+    public boolean mouseScrolled(@NotNull Vector2dc mousePos, @NotNull Vector2dc amount) {
         return false;
     }
 
@@ -274,8 +307,12 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     @Override
-    public ComponentPath nextFocusPath(FocusNavigationEvent focusNavigationEvent) {
+    public ComponentPath nextFocusPath(@NotNull FocusNavigationEvent focusNavigationEvent) {
         return isEnabled && isVisible && !isFocused() ? ComponentPath.leaf(this) : null;
+    }
+
+    public final boolean isMouseOver(@NotNull Vector2dInterface mousePos) {
+        return isMouseOver(mousePos.x(), mousePos.y());
     }
 
     @Override
@@ -326,7 +363,7 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    public void updateNarration(@NotNull NarrationElementOutput narrationElementOutput) {
         if (tooltip != null)
             tooltip.updateNarration(narrationElementOutput);
     }

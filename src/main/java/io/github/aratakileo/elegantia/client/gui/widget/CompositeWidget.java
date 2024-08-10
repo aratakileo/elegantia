@@ -1,10 +1,12 @@
 package io.github.aratakileo.elegantia.client.gui.widget;
 
 import io.github.aratakileo.elegantia.Elegantia;
+import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
+import io.github.aratakileo.elegantia.core.math.Vector2dc;
+import io.github.aratakileo.elegantia.core.math.Vector2ic;
 import io.github.aratakileo.elegantia.util.Classes;
 import io.github.aratakileo.elegantia.core.math.Rect2i;
 import io.github.aratakileo.elegantia.client.MouseHandler;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.LayoutElement;
@@ -20,12 +22,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * {@link CompositeWidget} automatically adds widgets marked with the {@link CompositePart} annotation
- * to the logic of its methods, such as: {@link AbstractWidget#render(GuiGraphics, int, int, float)},
- * {@link AbstractWidget#setX(int)}, {@link AbstractWidget#mouseClicked(double, double, MouseHandler.Button)}, etc.
+ * to the logic of its methods, such as: {@link #render(ElGuiGraphics, Vector2ic, float)},
+ * {@link #setX(int)}, {@link #mouseClicked(Vector2dc, MouseHandler.Button)}, etc.
  */
 public abstract class CompositeWidget extends AbstractWidget {
     private final List<Object> compositeParts = new ArrayList<>();
@@ -75,7 +76,7 @@ public abstract class CompositeWidget extends AbstractWidget {
             return;
         }
 
-        if (Objects.isNull(fieldValue))
+        if (fieldValue == null)
             throw new NullPointerException("Value of field `%s` of a composite part cannot be null".formatted(
                             Classes.getFieldView(field)
             ));
@@ -88,10 +89,10 @@ public abstract class CompositeWidget extends AbstractWidget {
                 layoutElement.setY(getY() + layoutElement.getY());
             }
         }
-        else if (fieldValue instanceof AbstractWidget abstractWidget) {
+        else if (fieldValue instanceof AbstractWidget elWidget) {
             if (isLocalised) {
-                abstractWidget.setX(getX() + abstractWidget.getX());
-                abstractWidget.setY(getY() + abstractWidget.getY());
+                elWidget.setX(getX() + elWidget.getX());
+                elWidget.setY(getY() + elWidget.getY());
             }
         } else if (!(fieldValue instanceof Renderable) || !(fieldValue instanceof GuiEventListener))
             throw new UnsupportedCompositePartException("in `%s`".formatted(Classes.getFieldView(field)));
@@ -105,8 +106,8 @@ public abstract class CompositeWidget extends AbstractWidget {
         super.setX(x);
 
         for (final var widget: compositeParts) {
-            if (widget instanceof AbstractWidget abstractWidget) {
-                abstractWidget.setX(abstractWidget.getX() + valueDiff);
+            if (widget instanceof AbstractWidget elWidget) {
+                elWidget.setX(elWidget.getX() + valueDiff);
                 continue;
             }
 
@@ -121,8 +122,8 @@ public abstract class CompositeWidget extends AbstractWidget {
         super.setY(y);
 
         for (final var unknownWidget: compositeParts) {
-            if (unknownWidget instanceof AbstractWidget abstractWidget) {
-                abstractWidget.setY(abstractWidget.getY() + valueDiff);
+            if (unknownWidget instanceof AbstractWidget elWidget) {
+                elWidget.setY(elWidget.getY() + valueDiff);
                 continue;
             }
 
@@ -132,57 +133,99 @@ public abstract class CompositeWidget extends AbstractWidget {
     }
 
     @Override
-    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float dt) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, dt);
+    public void renderBackground(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos, float dt) {
+        super.renderBackground(guiGraphics, mousePos, dt);
 
         for (final var unknownWidget: compositeParts)
-            ((Renderable) unknownWidget).render(guiGraphics, mouseX, mouseY, dt);
+            if (unknownWidget instanceof AbstractWidget elWidget)
+                elWidget.render(guiGraphics, mousePos, dt);
+            else ((Renderable) unknownWidget).render(guiGraphics, mousePos.x, mousePos.y, dt);
     }
 
     @Override
-    public void mouseMoved(double mouseX, double mouseY) {
+    public void mouseMoved(@NotNull Vector2dc pos) {
         for (final var unknownWidget: compositeParts)
-            ((GuiEventListener) unknownWidget).mouseMoved(mouseX, mouseY);
+            if (unknownWidget instanceof AbstractWidget elWidget)
+                elWidget.mouseMoved(pos);
+            else ((GuiEventListener) unknownWidget).mouseMoved(pos.x, pos.y);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, @NotNull MouseHandler.Button button) {
-        for (final var unknownWidget: compositeParts)
-            if (((GuiEventListener) unknownWidget).mouseClicked(mouseX, mouseY, button.ordinal())) return true;
-
-        return super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(@NotNull Vector2dc mousePos, @NotNull MouseHandler.Button button) {
+        for (final var unknownWidget: compositeParts) {
+            if (unknownWidget instanceof AbstractWidget elWidget) {
+                if (elWidget.mouseClicked(mousePos, button))
+                    return true;
+                
+                continue;
+            }
+            
+            if (((GuiEventListener) unknownWidget).mouseClicked(mousePos.x, mousePos.y, button.ordinal()))
+                return true;
+        }
+        
+        return super.mouseClicked(mousePos, button);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, @NotNull MouseHandler.Button button) {
-        for (final var unknownWidget: compositeParts)
-            if (((GuiEventListener) unknownWidget).mouseReleased(mouseX, mouseY, button.ordinal())) return true;
+    public boolean mouseReleased(@NotNull Vector2dc mousePos, @NotNull MouseHandler.Button button) {
+        for (final var unknownWidget: compositeParts) {
+            if (unknownWidget instanceof AbstractWidget elWidget) {
+                if (elWidget.mouseReleased(mousePos, button))
+                    return true;
 
-        return super.mouseReleased(mouseX, mouseY, button);
+                continue;
+            }
+
+            if (((GuiEventListener) unknownWidget).mouseReleased(mousePos.x, mousePos.y, button.ordinal()))
+                return true;
+        }
+        
+        return super.mouseReleased(mousePos, button);
     }
 
     @Override
     public boolean mouseDragged(
-            double mouseX,
-            double mouseY,
-            double deltaX,
-            double deltaY,
+            @NotNull Vector2dc mousePos, 
+            @NotNull Vector2dc delta, 
             @NotNull MouseHandler.Button button
     ) {
-        for (final var unknownWidget: compositeParts)
-            if (((GuiEventListener) unknownWidget).mouseDragged(mouseX, mouseY, button.ordinal(), deltaX, deltaY))
-                return true;
+        for (final var unknownWidget: compositeParts) {
+            if (unknownWidget instanceof AbstractWidget elWidget) {
+                if (elWidget.mouseDragged(mousePos, delta, button))
+                    return true;
 
-        return super.mouseDragged(mouseX, mouseY, deltaX, deltaY, button);
+                continue;
+            }
+
+            if (((GuiEventListener) unknownWidget).mouseDragged(
+                    mousePos.x, 
+                    mousePos.y,
+                    button.ordinal(),
+                    delta.x,
+                    delta.y
+            ))
+                return true;
+        }
+        
+        return super.mouseDragged(mousePos, delta, button);
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        for (final var unknownWidget: compositeParts)
-            if (((GuiEventListener) unknownWidget).mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount))
-                return true;
+    public boolean mouseScrolled(@NotNull Vector2dc mousePos, @NotNull Vector2dc amount) {
+        for (final var unknownWidget: compositeParts) {
+            if (unknownWidget instanceof AbstractWidget elWidget) {
+                if (elWidget.mouseScrolled(mousePos, amount))
+                    return true;
 
-        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+                continue;
+            }
+
+            if (((GuiEventListener) unknownWidget).mouseScrolled(mousePos.x, mousePos.y, amount.x, amount.y))
+                return true;
+        }
+        
+        return super.mouseScrolled(mousePos, amount);
     }
 
     @Override
