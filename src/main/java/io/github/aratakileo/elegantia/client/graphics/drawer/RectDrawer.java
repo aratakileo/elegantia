@@ -1,13 +1,13 @@
 package io.github.aratakileo.elegantia.client.graphics.drawer;
 
+import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.core.math.*;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-public class RectDrawer extends AbstractDrawer<RectDrawer> {
-    public RectDrawer(@NotNull GuiGraphics guiGraphics, @NotNull Rect2i bounds) {
+public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
+    public RectDrawer(@NotNull ElGuiGraphics guiGraphics, @NotNull Rect2i bounds) {
         super(guiGraphics, bounds);
     }
 
@@ -83,10 +83,14 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
         final var lastPose = guiGraphics.pose().last();
 
         guiGraphics.bufferSource().getBuffer(RenderType.gui())
-                .addVertex(lastPose, bounds.getLeft(), bounds.getTop(), 0).setColor(argbTopLeftColor)
-                .addVertex(lastPose, bounds.getLeft(), bounds.getBottom(), 0).setColor(argbBottomLeftColor)
-                .addVertex(lastPose, bounds.getRight(), bounds.getBottom(), 0).setColor(argbBottomRightColor)
-                .addVertex(lastPose, bounds.getRight(), bounds.getTop(), 0).setColor(argbTopRightColor);
+                .addVertex(lastPose, bounds.getLeft(), bounds.getTop(), 0)
+                .setColor(argbTopLeftColor)
+                .addVertex(lastPose, bounds.getLeft(), bounds.getBottom(), 0)
+                .setColor(argbBottomLeftColor)
+                .addVertex(lastPose, bounds.getRight(), bounds.getBottom(), 0)
+                .setColor(argbBottomRightColor)
+                .addVertex(lastPose, bounds.getRight(), bounds.getTop(), 0)
+                .setColor(argbTopRightColor);
 
         return this;
     }
@@ -162,7 +166,7 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
     }
 
     public static RectDrawer of(
-            @NotNull GuiGraphics guiGraphics,
+            @NotNull ElGuiGraphics guiGraphics,
             @NotNull Vector2iInterface pos,
             @NotNull Size2iInterface size
     ) {
@@ -170,7 +174,7 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
     }
 
     public static RectDrawer of(
-            @NotNull GuiGraphics guiGraphics,
+            @NotNull ElGuiGraphics guiGraphics,
             @NotNull Vector2iInterface pos,
             int width,
             int height
@@ -178,19 +182,19 @@ public class RectDrawer extends AbstractDrawer<RectDrawer> {
         return new RectDrawer(guiGraphics, Rect2i.of(pos, width, height));
     }
 
-    public static RectDrawer of(@NotNull GuiGraphics guiGraphics, int x, int y, @NotNull Size2iInterface size) {
+    public static RectDrawer of(@NotNull ElGuiGraphics guiGraphics, int x, int y, @NotNull Size2iInterface size) {
         return new RectDrawer(guiGraphics, Rect2i.of(x, y, size));
     }
 
-    public static RectDrawer of(@NotNull GuiGraphics guiGraphics, int x, int y, int width, int height) {
+    public static RectDrawer of(@NotNull ElGuiGraphics guiGraphics, int x, int y, int width, int height) {
         return new RectDrawer(guiGraphics, new Rect2i(x, y, width, height));
     }
 
-    public static RectDrawer square(@NotNull GuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int size) {
+    public static RectDrawer square(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2iInterface pos, int size) {
         return new RectDrawer(guiGraphics, Rect2i.square(pos, size));
     }
 
-    public static RectDrawer square(@NotNull GuiGraphics guiGraphics, int x, int y, int size) {
+    public static RectDrawer square(@NotNull ElGuiGraphics guiGraphics, int x, int y, int size) {
         return new RectDrawer(guiGraphics, Rect2i.square(x, y, size));
     }
 

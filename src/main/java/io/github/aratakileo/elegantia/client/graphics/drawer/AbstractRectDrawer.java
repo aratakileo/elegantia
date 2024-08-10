@@ -1,14 +1,14 @@
 package io.github.aratakileo.elegantia.client.graphics.drawer;
 
+import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.core.math.Rect2i;
-import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractDrawer<D extends AbstractDrawer<D>> {
-    public final GuiGraphics guiGraphics;
+public abstract class AbstractRectDrawer<D extends AbstractRectDrawer<D>> {
+    public final ElGuiGraphics guiGraphics;
     public final Rect2i bounds;
 
-    public AbstractDrawer(@NotNull GuiGraphics guiGraphics, @NotNull Rect2i bounds) {
+    public AbstractRectDrawer(@NotNull ElGuiGraphics guiGraphics, @NotNull Rect2i bounds) {
         this.guiGraphics = guiGraphics;
         this.bounds = bounds;
     }

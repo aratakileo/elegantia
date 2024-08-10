@@ -1,14 +1,14 @@
 package io.github.aratakileo.elegantia.client.graphics.drawer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.core.math.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
-public class TextureDrawer extends AbstractDrawer<TextureDrawer> {
+public class TextureDrawer extends AbstractRectDrawer<TextureDrawer> {
     public final ResourceLocation texture;
     public final Size2ic textureSize;
 
@@ -19,7 +19,7 @@ public class TextureDrawer extends AbstractDrawer<TextureDrawer> {
             @NotNull ResourceLocation texture,
             @NotNull Size2iInterface textureSize,
             @NotNull Rect2i bounds,
-            @NotNull GuiGraphics guiGraphics
+            @NotNull ElGuiGraphics guiGraphics
     ) {
         super(guiGraphics, bounds);
         this.texture = texture;
