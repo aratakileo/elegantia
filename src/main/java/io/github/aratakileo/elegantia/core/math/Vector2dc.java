@@ -1,6 +1,7 @@
 package io.github.aratakileo.elegantia.core.math;
 
 import org.jetbrains.annotations.NotNull;
+import org.joml.Math;
 
 public class Vector2dc implements Vector2dInterface {
     public static final Vector2dc ZERO = new Vector2dc(0, 0);
@@ -175,6 +176,18 @@ public class Vector2dc implements Vector2dInterface {
     @Override
     public @NotNull Vector2dc div(@NotNull org.joml.Vector2fc vector2fc) {
         return new Vector2dc(x / vector2fc.x(), y / vector2fc.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc perpendicular() {
+        return new Vector2dc(x * -1, y);
+    }
+
+    @Override
+    public @NotNull Vector2dc normalize() {
+        final var invLength = Math.invsqrt(x * x + y * y);
+
+        return new Vector2dc(x * invLength, y * invLength);
     }
 
     @Override

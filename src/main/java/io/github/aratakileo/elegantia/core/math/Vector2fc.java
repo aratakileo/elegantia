@@ -1,6 +1,7 @@
 package io.github.aratakileo.elegantia.core.math;
 
 import org.jetbrains.annotations.NotNull;
+import org.joml.Math;
 
 public class Vector2fc implements Vector2fInterface {
     public static final Vector2fc ZERO = new Vector2fc(0, 0);
@@ -158,13 +159,25 @@ public class Vector2fc implements Vector2fInterface {
     }
 
     @Override
+    public @NotNull Vector2fc perpendicular() {
+        return new Vector2fc(x * -1, y);
+    }
+
+    @Override
+    public @NotNull Vector2fc normalize() {
+        final var invLength = Math.invsqrt(x * x + y * y);
+
+        return new Vector2fc(x * invLength, y * invLength);
+    }
+
+    @Override
     public @NotNull Vector2fc floor() {
-        return new Vector2fc((float) Math.floor(x), (float) Math.floor(y));
+        return new Vector2fc(Math.floor(x), Math.floor(y));
     }
 
     @Override
     public @NotNull Vector2fc ceil() {
-        return new Vector2fc((float) Math.floor(x), (float) Math.floor(y));
+        return new Vector2fc(Math.floor(x), Math.floor(y));
     }
 
     @Override

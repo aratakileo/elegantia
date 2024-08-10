@@ -11,5 +11,8 @@ public interface VectorInterface<V> {
     @NotNull V mul(@NotNull V vector);
     @NotNull V div(@NotNull V vector);
 
+    @NotNull V perpendicular();
+    @NotNull V normalize();
+
     @NotNull V copy();
 }

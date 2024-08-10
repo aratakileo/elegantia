@@ -34,6 +34,9 @@ public interface Vector2iInterface extends VectorInterface<Vector2iInterface> {
     @NotNull Vector2iInterface div(int x, int y);
     @NotNull Vector2iInterface div(@NotNull org.joml.Vector2ic vector2ic);
 
+    @NotNull Vector2iInterface perpendicular();
+    @NotNull Vector2iInterface normalize();
+
     @NotNull Vector2fInterface asVec2f();
     @NotNull Vector2dInterface asVec2d();
 
