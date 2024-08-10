@@ -12,10 +12,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-
 public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> extends net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<T> {
-    private final static ArrayList<Component> tooltipsForRender = new ArrayList<>();
+    private static @Nullable Component tooltipMessage = null;
 
     public @Nullable TextureDrawable backgroundPanel;
 
@@ -26,7 +24,6 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
     ) {
         super(abstractContainerMenu, inventory, component);
     }
-
 
     /**
      * @deprecated use {@link #renderBackground(ElGuiGraphics, Vector2ic, float)} instead
@@ -81,14 +78,14 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
     public void renderForeground(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos, float dt) {
         renderTooltip(guiGraphics, mousePos);
 
-        for (final var tooltipMessage: tooltipsForRender)
+        if (tooltipMessage != null)
             guiGraphics.renderTooltip(tooltipMessage, mousePos);
 
-        tooltipsForRender.clear();
+        tooltipMessage = null;
     }
 
     public void showTooltip(@NotNull Component message) {
-        tooltipsForRender.add(message);
+        tooltipMessage = message;
     }
 
     public @NotNull Vector2ic getPanelPos() {

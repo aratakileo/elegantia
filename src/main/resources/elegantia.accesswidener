@@ -10,6 +10,7 @@ accessible method net/minecraft/world/level/block/entity/AbstractFurnaceBlockEnt
 accessible method net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity add (Ljava/util/Map;Lnet/minecraft/world/level/ItemLike;I)V
 accessible method net/minecraft/client/gui/GuiGraphics <init> (Lnet/minecraft/client/Minecraft;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V
 
+accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
 accessible field com/mojang/blaze3d/vertex/BufferBuilder buffer Lcom/mojang/blaze3d/vertex/ByteBufferBuilder;
 accessible field com/mojang/blaze3d/vertex/BufferBuilder mode Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;
 accessible field com/mojang/blaze3d/vertex/BufferBuilder format Lcom/mojang/blaze3d/vertex/VertexFormat;
