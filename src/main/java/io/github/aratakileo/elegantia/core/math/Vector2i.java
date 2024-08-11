@@ -190,6 +190,10 @@ public class Vector2i implements Vector2iInterface {
         return new Vector2i(vector2ic.x(), vector2ic.y());
     }
 
+    public static @NotNull Vector2i createXY(int value) {
+        return new Vector2i(value, value);
+    }
+
     public static @NotNull Vector2i zero() {
         return new Vector2i(0, 0);
     }

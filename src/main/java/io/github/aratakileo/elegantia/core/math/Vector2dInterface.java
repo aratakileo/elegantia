@@ -1,6 +1,7 @@
 package io.github.aratakileo.elegantia.core.math;
 
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3d;
 
 public interface Vector2dInterface extends VectorInterface<Vector2dInterface> {
     double x();
@@ -46,15 +47,15 @@ public interface Vector2dInterface extends VectorInterface<Vector2dInterface> {
     @NotNull Vector2dInterface div(@NotNull org.joml.Vector2dc vector2dc);
     @NotNull Vector2dInterface div(@NotNull org.joml.Vector2fc vector2fc);
 
-    @NotNull Vector2dInterface perpendicular();
-    @NotNull Vector2dInterface normalize();
-
     @NotNull Vector2dInterface floor();
     @NotNull Vector2dInterface ceil();
     @NotNull Vector2dInterface round();
 
     @NotNull Vector2iInterface asVec2i();
     @NotNull Vector2fInterface asVec2f();
+    default @NotNull Vector3d asVector3d(double z) {
+        return new Vector3d(x(), y(), z);
+    }
 
     default boolean equals(double x, double y) {
         return Double.doubleToLongBits(x) == Double.doubleToLongBits(x())

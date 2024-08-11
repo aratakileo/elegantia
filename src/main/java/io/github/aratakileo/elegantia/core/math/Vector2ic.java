@@ -161,4 +161,8 @@ public class Vector2ic implements Vector2iInterface {
     public static @NotNull Vector2ic of(@NotNull org.joml.Vector2ic vector2ic) {
         return new Vector2ic(vector2ic.x(), vector2ic.y());
     }
+
+    public static @NotNull Vector2ic createXY(int value) {
+        return new Vector2ic(value, value);
+    }
 }

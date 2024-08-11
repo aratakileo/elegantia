@@ -268,6 +268,10 @@ public class Vector2f implements Vector2fInterface {
         return new Vector2f(vector2fc.x(), vector2fc.y());
     }
 
+    public static @NotNull Vector2f createXY(float value) {
+        return new Vector2f(value, value);
+    }
+
     public static @NotNull Vector2f zero() {
         return new Vector2f(0, 0);
     }

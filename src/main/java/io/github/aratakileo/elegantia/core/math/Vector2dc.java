@@ -248,4 +248,8 @@ public class Vector2dc implements Vector2dInterface {
     public static @NotNull Vector2dc of(@NotNull org.joml.Vector2fc vector2fc) {
         return new Vector2dc(vector2fc.x(), vector2fc.y());
     }
+
+    public static @NotNull Vector2dc createXY(double value) {
+        return new Vector2dc(value, value);
+    }
 }

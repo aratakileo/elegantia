@@ -228,4 +228,8 @@ public class Vector2fc implements Vector2fInterface {
     public static @NotNull Vector2fc of(@NotNull org.joml.Vector2fc vector2fc) {
         return new Vector2fc(vector2fc.x(), vector2fc.y());
     }
+
+    public static @NotNull Vector2fc createXY(float value) {
+        return new Vector2fc(value, value);
+    }
 }

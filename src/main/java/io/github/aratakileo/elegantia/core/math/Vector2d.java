@@ -2,6 +2,7 @@ package io.github.aratakileo.elegantia.core.math;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Math;
+import org.joml.Vector3f;
 
 public class Vector2d implements Vector2dInterface {
     public double x, y;
@@ -282,6 +283,10 @@ public class Vector2d implements Vector2dInterface {
 
     public static @NotNull Vector2d of(@NotNull org.joml.Vector2fc vector2fc) {
         return new Vector2d(vector2fc.x(), vector2fc.y());
+    }
+
+    public static @NotNull Vector2d createXY(double value) {
+        return new Vector2d(value, value);
     }
 
     public static @NotNull Vector2d zero() {
