@@ -119,6 +119,16 @@ public class Vector2ic implements Vector2iInterface {
     }
 
     @Override
+    public @NotNull Vector2ic max(@NotNull Vector2iInterface vector2iInterface) {
+        return new Vector2ic(Math.max(x, vector2iInterface.x()), Math.max(y, vector2iInterface.y()));
+    }
+
+    @Override
+    public @NotNull Vector2ic min(@NotNull Vector2iInterface vector2iInterface) {
+        return new Vector2ic(Math.min(x, vector2iInterface.x()), Math.min(y, vector2iInterface.y()));
+    }
+
+    @Override
     public @NotNull Vector2ic perpendicular() {
         return new Vector2ic(x * -1, y);
     }

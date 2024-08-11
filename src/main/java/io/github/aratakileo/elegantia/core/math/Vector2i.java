@@ -139,6 +139,20 @@ public class Vector2i implements Vector2iInterface {
     }
 
     @Override
+    public @NotNull Vector2i max(@NotNull Vector2iInterface vector2iInterface) {
+        x = Math.max(x, vector2iInterface.x());
+        y = Math.max(y, vector2iInterface.y());
+        return this;
+    }
+
+    @Override
+    public @NotNull Vector2i min(@NotNull Vector2iInterface vector2iInterface) {
+        x = Math.min(x, vector2iInterface.x());
+        y = Math.min(y, vector2iInterface.y());
+        return this;
+    }
+
+    @Override
     public @NotNull Vector2i perpendicular() {
         final var temp = y;
 

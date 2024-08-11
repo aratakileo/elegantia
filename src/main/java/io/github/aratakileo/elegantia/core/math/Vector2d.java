@@ -201,6 +201,20 @@ public class Vector2d implements Vector2dInterface {
     }
 
     @Override
+    public @NotNull Vector2d max(@NotNull Vector2dInterface vector2dInterface) {
+        x = Math.max(x, vector2dInterface.x());
+        y = Math.max(y, vector2dInterface.y());
+        return this;
+    }
+
+    @Override
+    public @NotNull Vector2d min(@NotNull Vector2dInterface vector2dInterface) {
+        x = Math.min(x, vector2dInterface.x());
+        y = Math.min(y, vector2dInterface.y());
+        return this;
+    }
+
+    @Override
     public @NotNull Vector2d perpendicular() {
         final var temp = y;
 

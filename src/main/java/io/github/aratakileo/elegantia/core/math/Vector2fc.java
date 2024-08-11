@@ -130,7 +130,7 @@ public class Vector2fc implements Vector2fInterface {
 
     @Override
     public @NotNull Vector2fc div(float value) {
-        return new Vector2fc(x / value, x / value);
+        return new Vector2fc(x / value, y / value);
     }
 
     @Override
@@ -156,6 +156,16 @@ public class Vector2fc implements Vector2fInterface {
     @Override
     public @NotNull Vector2fc div(@NotNull org.joml.Vector2fc vector2fc) {
         return new Vector2fc(x / vector2fc.x(), y / vector2fc.y());
+    }
+
+    @Override
+    public @NotNull Vector2fc max(@NotNull Vector2fInterface vector2fInterface) {
+        return new Vector2fc(Math.max(x, vector2fInterface.x()), Math.max(y, vector2fInterface.y()));
+    }
+
+    @Override
+    public @NotNull Vector2fc min(@NotNull Vector2fInterface vector2fInterface) {
+        return new Vector2fc(Math.min(x, vector2fInterface.x()), Math.min(y, vector2fInterface.y()));
     }
 
     @Override

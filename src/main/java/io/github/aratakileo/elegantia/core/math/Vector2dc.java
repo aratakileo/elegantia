@@ -145,7 +145,7 @@ public class Vector2dc implements Vector2dInterface {
 
     @Override
     public @NotNull Vector2dc div(double value) {
-        return new Vector2dc(x / value, x / value);
+        return new Vector2dc(x / value, y / value);
     }
 
     @Override
@@ -176,6 +176,16 @@ public class Vector2dc implements Vector2dInterface {
     @Override
     public @NotNull Vector2dc div(@NotNull org.joml.Vector2fc vector2fc) {
         return new Vector2dc(x / vector2fc.x(), y / vector2fc.y());
+    }
+
+    @Override
+    public @NotNull Vector2dc max(@NotNull Vector2dInterface vector2dInterface) {
+        return new Vector2dc(Math.max(x, vector2dInterface.x()), Math.max(y, vector2dInterface.y()));
+    }
+
+    @Override
+    public @NotNull Vector2dc min(@NotNull Vector2dInterface vector2dInterface) {
+        return new Vector2dc(Math.min(x, vector2dInterface.x()), Math.min(y, vector2dInterface.y()));
     }
 
     @Override

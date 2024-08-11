@@ -47,6 +47,14 @@ public interface Vector2dInterface extends VectorInterface<Vector2dInterface> {
     @NotNull Vector2dInterface div(@NotNull org.joml.Vector2dc vector2dc);
     @NotNull Vector2dInterface div(@NotNull org.joml.Vector2fc vector2fc);
 
+    default double max() {
+        return Math.max(x(), y());
+    }
+
+    default double min() {
+        return Math.max(x(), y());
+    }
+
     @NotNull Vector2dInterface floor();
     @NotNull Vector2dInterface ceil();
     @NotNull Vector2dInterface round();

@@ -180,6 +180,20 @@ public class Vector2f implements Vector2fInterface {
     }
 
     @Override
+    public @NotNull Vector2f max(@NotNull Vector2fInterface vector2fInterface) {
+        x = Math.max(x, vector2fInterface.x());
+        y = Math.max(y, vector2fInterface.y());
+        return this;
+    }
+
+    @Override
+    public @NotNull Vector2f min(@NotNull Vector2fInterface vector2fInterface) {
+        x = Math.min(x, vector2fInterface.x());
+        y = Math.min(y, vector2fInterface.y());
+        return this;
+    }
+
+    @Override
     public @NotNull Vector2f perpendicular() {
         final var temp = y;
 

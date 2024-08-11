@@ -125,6 +125,24 @@ public class Rect2i {
         return this;
     }
 
+    public @NotNull Vector2ic getLeftBottom() {
+        return new Vector2ic(x, y + height);
+    }
+
+    public @NotNull Rect2i setLeftBottom(@NotNull Vector2iInterface leftBottom) {
+        x = leftBottom.x();
+        y = leftBottom.y() - height;
+
+        return this;
+    }
+
+    public @NotNull Rect2i setLeftBottom(int left, int bottom) {
+        x = left;
+        y = bottom - height;
+
+        return this;
+    }
+
     public @NotNull Vector2ic getRightBottom() {
         return new Vector2ic(x + width, y + height);
     }
@@ -140,6 +158,44 @@ public class Rect2i {
         x = right - width;
         y = bottom - height;
         
+        return this;
+    }
+
+    public @NotNull Vector2ic getRightTop() {
+        return new Vector2ic(x + width, y);
+    }
+
+    public @NotNull Rect2i setRightTop(@NotNull Vector2iInterface rightTop) {
+        x = rightTop.x() - width;
+        y = rightTop.y();
+
+        return this;
+    }
+
+    public @NotNull Rect2i setRightTop(int right, int top) {
+        x = right - width;
+        y = top;
+
+        return this;
+    }
+
+    public @NotNull Vector2ic getCornerPos(@NotNull Corner corner) {
+        return switch (corner) {
+            case LEFT_TOP -> getLeftTop();
+            case LEFT_BOTTOM -> getLeftBottom();
+            case RIGHT_BOTTOM -> getRightBottom();
+            case RIGHT_TOP -> getRightTop();
+        };
+    }
+
+    public @NotNull Rect2i setCornerPos(@NotNull Corner corner, @NotNull Vector2iInterface pos) {
+        switch (corner) {
+            case LEFT_TOP -> setLeftTop(pos);
+            case LEFT_BOTTOM -> setLeftBottom(pos);
+            case RIGHT_BOTTOM -> setRightBottom(pos);
+            case RIGHT_TOP -> setRightTop(pos);
+        };
+
         return this;
     }
 

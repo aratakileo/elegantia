@@ -35,6 +35,14 @@ public interface Vector2iInterface extends VectorInterface<Vector2iInterface> {
     @NotNull Vector2iInterface div(int x, int y);
     @NotNull Vector2iInterface div(@NotNull org.joml.Vector2ic vector2ic);
 
+    default int max() {
+        return Math.max(x(), y());
+    }
+
+    default int min() {
+        return Math.max(x(), y());
+    }
+
     @NotNull Vector2fInterface asVec2f();
     @NotNull Vector2dInterface asVec2d();
     default @NotNull Vector3i asVector3i(int z) {

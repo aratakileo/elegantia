@@ -28,5 +28,20 @@ public interface Size2iInterface {
     @NotNull Size2iInterface scale(float value);
     @NotNull Size2iInterface scale(double value);
 
+    default int max() {
+        return Math.max(width(), height());
+    }
+
+    default int min() {
+        return Math.max(width(), height());
+    }
+
+    @NotNull Size2iInterface max(@NotNull Size2iInterface size2iInterface);
+    @NotNull Size2iInterface min(@NotNull Size2iInterface size2iInterface);
+
     @NotNull Size2iInterface copy();
+
+    @NotNull Vector2iInterface asVec2i();
+    @NotNull Vector2dInterface asVec2d();
+    @NotNull Vector2fInterface asVec2f();
 }

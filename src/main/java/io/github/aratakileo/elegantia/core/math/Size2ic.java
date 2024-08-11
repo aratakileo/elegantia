@@ -82,8 +82,33 @@ public class Size2ic implements Size2iInterface {
         return new Size2ic((int) (width * value), (int) (height * value));
     }
 
+    @Override
+    public @NotNull Size2ic max(@NotNull Size2iInterface size2iInterface) {
+        return new Size2ic(Math.max(width, size2iInterface.width()), Math.max(height, size2iInterface.height()));
+    }
+
+    @Override
+    public @NotNull Size2ic min(@NotNull Size2iInterface size2iInterface) {
+        return new Size2ic(Math.min(width, size2iInterface.width()), Math.min(height, size2iInterface.height()));
+    }
+
     public @NotNull Size2ic copy() {
         return new Size2ic(width, height);
+    }
+
+    @Override
+    public @NotNull Vector2ic asVec2i() {
+        return new Vector2ic(width, height);
+    }
+
+    @Override
+    public @NotNull Vector2dc asVec2d() {
+        return new Vector2dc(width, height);
+    }
+
+    @Override
+    public @NotNull Vector2fc asVec2f() {
+        return new Vector2fc(width, height);
     }
 
     public @NotNull Size2i copyAsMutable() {

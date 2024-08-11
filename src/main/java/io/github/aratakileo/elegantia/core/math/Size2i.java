@@ -120,8 +120,37 @@ public class Size2i implements Size2iInterface{
         return this;
     }
 
+    @Override
+    public @NotNull Size2i max(@NotNull Size2iInterface size2iInterface) {
+        width = Math.max(width, size2iInterface.width());
+        height = Math.max(height, size2iInterface.height());
+        return this;
+    }
+
+    @Override
+    public @NotNull Size2i min(@NotNull Size2iInterface size2iInterface) {
+        width = Math.min(width, size2iInterface.width());
+        height = Math.min(height, size2iInterface.height());
+        return this;
+    }
+
     public @NotNull Size2i copy() {
         return new Size2i(width, height);
+    }
+
+    @Override
+    public @NotNull Vector2i asVec2i() {
+        return new Vector2i(width, height);
+    }
+
+    @Override
+    public @NotNull Vector2d asVec2d() {
+        return new Vector2d(width, height);
+    }
+
+    @Override
+    public @NotNull Vector2f asVec2f() {
+        return new Vector2f(width, height);
     }
 
     public @NotNull Size2ic copyAsImmutable() {
