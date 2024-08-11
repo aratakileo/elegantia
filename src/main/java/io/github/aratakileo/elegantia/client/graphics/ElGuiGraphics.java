@@ -1,6 +1,7 @@
 package io.github.aratakileo.elegantia.client.graphics;
 
 import com.mojang.blaze3d.vertex.*;
+import io.github.aratakileo.elegantia.client.graphics.drawer.CircleDrawer;
 import io.github.aratakileo.elegantia.client.graphics.drawer.RectDrawer;
 import io.github.aratakileo.elegantia.client.graphics.drawer.TextureDrawer;
 import io.github.aratakileo.elegantia.core.math.*;
@@ -402,6 +403,14 @@ public class ElGuiGraphics extends GuiGraphics {
 
     public @NotNull RectDrawer square(int x, int y, int size) {
         return RectDrawer.square(this, x, y, size);
+    }
+
+    public @NotNull CircleDrawer circle(@NotNull Vector2iInterface center, double radius) {
+        return new CircleDrawer(this, center, radius);
+    }
+
+    public @NotNull CircleDrawer circle(int centerX, int centerY, double radius) {
+        return new CircleDrawer(this, centerX, centerY, radius);
     }
 
     public static @NotNull ElGuiGraphics of(@NotNull GuiGraphics guiGraphics) {
