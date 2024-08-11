@@ -27,7 +27,17 @@ public class Size2i implements Size2iInterface{
         return height;
     }
 
-    public @NotNull Size2i set(int width, int height) {
+    public @NotNull Size2i set(int index, int value) {
+        switch (index) {
+            case 0 -> this.width = value;
+            case 1 -> this.height = value;
+            default -> throw new IllegalArgumentException();
+        }
+
+        return this;
+    }
+
+    public @NotNull Size2i setSize(int width, int height) {
         this.width = width;
         this.height = height;
         return this;

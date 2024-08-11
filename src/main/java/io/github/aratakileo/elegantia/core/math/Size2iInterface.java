@@ -6,6 +6,14 @@ public interface Size2iInterface {
     int width();
     int height();
 
+    default double get(int index) {
+        return switch (index) {
+            case 0 -> width();
+            case 1 -> height();
+            default -> throw new IllegalArgumentException();
+        };
+    }
+
     @NotNull Size2iInterface expand(int size);
     @NotNull Size2iInterface expand(@NotNull Size2iInterface size);
     @NotNull Size2iInterface expand(@NotNull Vector2iInterface vec2i);
