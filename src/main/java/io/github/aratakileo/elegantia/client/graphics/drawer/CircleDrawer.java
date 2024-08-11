@@ -16,7 +16,7 @@ public class CircleDrawer {
     private final ElGuiGraphics guiGraphics;
     private final int centerX, centerY;
     private final double radius;
-    private double angleFrom = 0, angleTo = 360;
+    private double startAngle = 0, endAngle = 360;
 
     public double smoothness = 1;
 
@@ -31,18 +31,18 @@ public class CircleDrawer {
         this.radius = radius;
     }
 
-    public @NotNull CircleDrawer setAngleSpan(double angleFrom, double angleTo) {
-        Preconditions.checkArgument(angleFrom < angleTo, "angleFrom must be less than angleTo");
+    public @NotNull CircleDrawer setAngleSpan(double startAngle, double endAngle) {
+        Preconditions.checkArgument(startAngle < endAngle, "startAngle must be less than endAngle");
 
-        this.angleFrom = angleFrom;
-        this.angleTo = angleTo;
+        this.startAngle = startAngle;
+        this.endAngle = endAngle;
 
         return this;
     }
 
     public @NotNull CircleDrawer setFullAngleSpan() {
-        angleFrom = 0;
-        angleTo = 360;
+        startAngle = 0;
+        endAngle = 360;
 
         return this;
     }
@@ -105,13 +105,13 @@ public class CircleDrawer {
 
         final var circumference = 2d * Math.PI * radius;
         final var segments = Math.max(4, (int)Math.ceil(circumference * smoothness));
-        final var angleStep = Math.toRadians((angleTo - angleFrom) / segments);
+        final var angleStep = Math.toRadians((endAngle - startAngle) / segments);
 
         if (prepareConsumer != null)
             prepareConsumer.accept(buffer, lastPose);
 
         for (var i = segments; i >= 0; i--) {
-            final var theta = Math.toRadians(angleFrom) + i * angleStep;
+            final var theta = Math.toRadians(startAngle) + i * angleStep;
 
             consumer.accept(buffer, lastPose, theta);
         }
@@ -129,9 +129,9 @@ public class CircleDrawer {
                 centerX,
                 centerY,
                 radius,
-                angleFrom,
-                angleTo,
-                angleFrom == 0 && angleTo == 360 ? " (FULL)" : "",
+                startAngle,
+                endAngle,
+                startAngle == 0 && endAngle == 360 ? " (FULL)" : "",
                 smoothness
         );
     }
