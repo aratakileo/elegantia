@@ -1,14 +1,29 @@
 package io.github.aratakileo.elegantia.client.graphics.drawer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.core.math.*;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
+    public @NotNull CornersRadius cornersRadius = CornersRadius.EMPTY;
+
     public RectDrawer(@NotNull ElGuiGraphics guiGraphics, @NotNull Rect2i bounds) {
         super(guiGraphics, bounds);
+    }
+
+    public @NotNull RectDrawer setCornersRadius(double radius) {
+        cornersRadius = CornersRadius.createSameRadius(radius);
+        return this;
+    }
+
+    public @NotNull RectDrawer setCornersRadius(@NotNull CornersRadius cornersRadius) {
+        this.cornersRadius = cornersRadius;
+        return this;
     }
 
     @Override
@@ -21,12 +36,59 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
     }
 
     public @NotNull RectDrawer draw(int argbColor) {
-        if (argbColor != 0x0) {
+        if (argbColor == 0x0) return this;
+
+        if (cornersRadius.isEmpty()) {
             guiGraphics.fill(bounds.getLeft(), bounds.getTop(), bounds.getRight(), bounds.getBottom(), argbColor);
             return this;
         }
 
+        final var lastPose = guiGraphics.pose().last();
+        final var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+
+        drawCorner(buffer, lastPose, argbColor, Corner.LEFT_TOP);
+        drawCorner(buffer, lastPose, argbColor, Corner.LEFT_BOTTOM);
+        drawCorner(buffer, lastPose, argbColor, Corner.RIGHT_BOTTOM);
+        drawCorner(buffer, lastPose, argbColor, Corner.RIGHT_TOP);
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        BufferUploader.drawWithShader(buffer.build());
+        RenderSystem.disableBlend();
+
         return this;
+    }
+
+    private void drawCorner(
+            @NotNull BufferBuilder buffer,
+            @NotNull PoseStack.Pose lastPose,
+            int argbColor,
+            @NotNull Corner corner
+    ) {
+        final var radius = cornersRadius.getRadius(corner);
+        final var segments = Math.round(2d * Math.PI * radius);
+
+        if (segments == 0) {
+            final var vertexPos = bounds.getCornerPos(corner).asVec2f().asVector3f(0);
+
+            buffer.addVertex(lastPose, vertexPos).setColor(argbColor);
+
+            return;
+        }
+
+        final var radiusVec = Vector2dc.createXY(radius);
+        final var center = corner.getCenter(bounds, cornersRadius);
+        final var angleStep = (float)corner.spanAngle() / (float)segments;
+
+        for (var i = segments; i >= 0; i--) {
+            final var angle = corner.startAngle + i * angleStep;
+            final var theta = Math.toRadians(angle);
+            final var polarPos = radiusVec.mul(Math.cos(theta), Math.sin(theta));
+            final var vertexPos = center.add(polarPos).asVec2f().asVector3f(0);
+
+            buffer.addVertex(lastPose, vertexPos).setColor(argbColor);
+        }
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -206,5 +268,49 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
         CORNER_LEFT_BOTTOM,
         CORNER_RIGHT_BOTTOM,
         CORNER_RIGHT_TOP
+    }
+
+    public static final class CornersRadius {
+        public final double leftTop, rightTop, rightBottom, leftBottom;
+
+        public final static CornersRadius EMPTY = new CornersRadius(0, 0, 0, 0);
+
+        public CornersRadius(double leftTop, double rightTop, double rightBottom, double leftBottom) {
+            this.leftTop = leftTop;
+            this.rightTop = rightTop;
+            this.rightBottom = rightBottom;
+            this.leftBottom = leftBottom;
+        }
+
+        public boolean isEmpty() {
+            return leftTop == 0 && rightTop == 0 && rightBottom == 0 && leftBottom == 0;
+        }
+
+        public double getRadius(@NotNull Corner corner) {
+            return switch (corner) {
+                case LEFT_TOP -> leftTop;
+                case LEFT_BOTTOM -> leftBottom;
+                case RIGHT_BOTTOM -> rightBottom;
+                case RIGHT_TOP -> rightTop;
+            };
+        }
+
+        public double getFittedInRadius(@NotNull Corner corner, @NotNull Size2iInterface size) {
+            return Math.min(getRadius(corner), size.asVec2d().min());
+        }
+
+        public static @NotNull CornersRadius createSameRadius(double radius) {
+            return new CornersRadius(radius, radius, radius, radius);
+        }
+
+        @Override
+        public String toString() {
+            return "CornersRadius{leftTop=%s, rightTop=%s, rightBottom=%s, leftBottom=%s}".formatted(
+                    leftTop,
+                    rightTop,
+                    rightBottom,
+                    leftBottom
+            );
+        }
     }
 }
