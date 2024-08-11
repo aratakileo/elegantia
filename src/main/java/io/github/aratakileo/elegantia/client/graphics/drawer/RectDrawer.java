@@ -1,5 +1,6 @@
 package io.github.aratakileo.elegantia.client.graphics.drawer;
 
+import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
@@ -28,7 +29,7 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
 
     @Override
     public @NotNull RectDrawer withNewBounds(@NotNull Rect2i bounds) {
-        return new RectDrawer(guiGraphics, bounds);
+        return new RectDrawer(guiGraphics, bounds).setCornersRadius(cornersRadius);
     }
 
     public @NotNull RectDrawer drawRgb(int rgbColor) {
@@ -144,15 +145,31 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
 
         final var lastPose = guiGraphics.pose().last();
 
-        guiGraphics.bufferSource().getBuffer(RenderType.gui())
-                .addVertex(lastPose, bounds.getLeft(), bounds.getTop(), 0)
-                .setColor(argbTopLeftColor)
-                .addVertex(lastPose, bounds.getLeft(), bounds.getBottom(), 0)
-                .setColor(argbBottomLeftColor)
-                .addVertex(lastPose, bounds.getRight(), bounds.getBottom(), 0)
-                .setColor(argbBottomRightColor)
-                .addVertex(lastPose, bounds.getRight(), bounds.getTop(), 0)
-                .setColor(argbTopRightColor);
+        if (cornersRadius.isEmpty()) {
+            guiGraphics.bufferSource().getBuffer(RenderType.gui())
+                    .addVertex(lastPose, bounds.getLeft(), bounds.getTop(), 0)
+                    .setColor(argbTopLeftColor)
+                    .addVertex(lastPose, bounds.getLeft(), bounds.getBottom(), 0)
+                    .setColor(argbBottomLeftColor)
+                    .addVertex(lastPose, bounds.getRight(), bounds.getBottom(), 0)
+                    .setColor(argbBottomRightColor)
+                    .addVertex(lastPose, bounds.getRight(), bounds.getTop(), 0)
+                    .setColor(argbTopRightColor);
+            return this;
+        }
+
+        final var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+
+        drawCorner(buffer, lastPose, argbTopLeftColor, Corner.LEFT_TOP);
+        drawCorner(buffer, lastPose, argbBottomLeftColor, Corner.LEFT_BOTTOM);
+        drawCorner(buffer, lastPose, argbBottomRightColor, Corner.RIGHT_BOTTOM);
+        drawCorner(buffer, lastPose, argbTopRightColor, Corner.RIGHT_TOP);
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        BufferUploader.drawWithShader(buffer.build());
+        RenderSystem.disableBlend();
 
         return this;
     }
@@ -276,6 +293,11 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
         public final static CornersRadius EMPTY = new CornersRadius(0, 0, 0, 0);
 
         public CornersRadius(double leftTop, double rightTop, double rightBottom, double leftBottom) {
+            Preconditions.checkArgument(leftTop >= 0, "leftTop must be greater or equal 0");
+            Preconditions.checkArgument(rightTop >= 0, "rightTop must be greater or equal 0");
+            Preconditions.checkArgument(rightBottom >= 0, "rightBottom must be greater or equal 0");
+            Preconditions.checkArgument(leftBottom >= 0, "leftBottom must be greater or equal 0");
+
             this.leftTop = leftTop;
             this.rightTop = rightTop;
             this.rightBottom = rightBottom;
