@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Math;
 import org.joml.Vector3f;
 
+import java.awt.geom.Point2D;
+
 public class Vector2d implements Vector2dInterface {
     public double x, y;
 
@@ -285,6 +287,10 @@ public class Vector2d implements Vector2dInterface {
 
     public static @NotNull Vector2d of(@NotNull Vector2dInterface vector2dInterface) {
         return new Vector2d(vector2dInterface.x(), vector2dInterface.y());
+    }
+
+    public static @NotNull Vector2d of(@NotNull Point2D point) {
+        return new Vector2d(point.getX(), point.getY());
     }
 
     public static @NotNull Vector2d of(@NotNull org.joml.Vector2ic vector2ic) {

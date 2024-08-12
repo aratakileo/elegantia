@@ -3,7 +3,9 @@ package io.github.aratakileo.elegantia.core.math;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector2fc;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
 
 public class Rect2i {
     public int x, y, width, height;
@@ -64,6 +66,34 @@ public class Rect2i {
     public @NotNull Rect2i setPosition(int x, int y) {
         this.x = x;
         this.y = y;
+        return this;
+    }
+
+    public int getCenterX() {
+        return x + width / 2;
+    }
+
+    public @NotNull Rect2i setCenterX(int centerX) {
+        x = centerX - width / 2;
+        return this;
+    }
+
+    public int getCenterY() {
+        return y + height / 2;
+    }
+
+    public @NotNull Rect2i setCenterY(int centerY) {
+        y = centerY - height / 2;
+        return this;
+    }
+
+    public @NotNull Vector2ic getCenterPos() {
+        return new Vector2ic(x + width / 2, y + height / 2);
+    }
+
+    public @NotNull Rect2i setCenter(@NotNull Vector2iInterface center) {
+        x = center.x() - width / 2;
+        y = center.y() - height / 2;
         return this;
     }
 
@@ -239,20 +269,16 @@ public class Rect2i {
         return this;
     }
 
+    public boolean contains(@NotNull Point2D point) {
+        return contains(point.getX(), point.getY());
+    }
+
     public boolean contains(@NotNull Vector2iInterface position) {
         return contains(position.x(), position.y());
     }
-    
-    public boolean contains(int x, int y) {
-        return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height;
-    }
 
-    public boolean contains(@NotNull Vector2fc position) {
+    public boolean contains(@NotNull Vector2fInterface position) {
         return contains(position.x(), position.y());
-    }
-
-    public boolean contains(float x, float y) {
-        return contains((int) Math.ceil(x), (int) Math.ceil(y));
     }
 
     public boolean contains(@NotNull Vector2dInterface position) {
@@ -261,6 +287,14 @@ public class Rect2i {
 
     public boolean contains(double x, double y) {
         return contains((int) Math.ceil(x), (int) Math.ceil(y));
+    }
+
+    public boolean contains(float x, float y) {
+        return contains((int) Math.ceil(x), (int) Math.ceil(y));
+    }
+
+    public boolean contains(int x, int y) {
+        return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height;
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -446,21 +480,25 @@ public class Rect2i {
         );
     }
 
-    @Override
-    public @NotNull String toString() {
-        return "Rect2i{%d, %d, %d, %d}".formatted(x, y, width, height);
-    }
-
     public @NotNull Rect2i copy() {
         return new Rect2i(x, y, width, height);
     }
+
+    public @NotNull Rectangle asRectangle() {
+        return new Rectangle(x, y, width, height);
+    }
     
-    public @NotNull net.minecraft.client.renderer.Rect2i toNativeRect2i() {
+    public @NotNull net.minecraft.client.renderer.Rect2i asMinecraftRect2i() {
         return new net.minecraft.client.renderer.Rect2i(x, y, width, height);
     }
     
     public int @NotNull[] toArray() {
         return new int[]{ x, y, width, height };
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "Rect2i{%d, %d, %d, %d}".formatted(x, y, width, height);
     }
 
     public static @NotNull Rect2i of(int @NotNull [] rect) {
@@ -477,6 +515,15 @@ public class Rect2i {
 
     public static @NotNull Rect2i of(@NotNull Vector2iInterface position, int width, int height) {
         return new Rect2i(position.x(), position.y(), width, height);
+    }
+
+    public static @NotNull Rect2i of(@NotNull Rectangle rect) {
+        return new Rect2i(
+                rect.x,
+                rect.y,
+                rect.width,
+                rect.height
+        );
     }
 
     public static @NotNull Rect2i of(@NotNull LayoutElement layoutElement) {

@@ -3,6 +3,8 @@ package io.github.aratakileo.elegantia.core.math;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Math;
 
+import java.awt.geom.Point2D;
+
 public class Vector2f implements Vector2fInterface {
     public float x, y;
 
@@ -268,6 +270,10 @@ public class Vector2f implements Vector2fInterface {
 
     public static @NotNull Vector2f of(@NotNull Vector2fInterface vector2fInterface) {
         return new Vector2f(vector2fInterface.x(), vector2fInterface.y());
+    }
+
+    public static @NotNull Vector2f of(@NotNull Point2D point) {
+        return new Vector2f((float)point.getX(), (float)point.getY());
     }
 
     public static @NotNull Vector2f of(@NotNull org.joml.Vector2ic vector2ic) {
