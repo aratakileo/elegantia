@@ -80,7 +80,7 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
 
         final var radiusVec = Vector2dc.createXY(radius);
         final var center = corner.getCenter(bounds, cornersRadius);
-        final var angleStep = (float)corner.spanAngle() / (float)segments;
+        final var angleStep = (float)Corner.SPAN_ANGLE / (float)segments;
 
         for (var i = segments; i >= 0; i--) {
             final var angle = corner.startAngle + i * angleStep;
@@ -214,7 +214,7 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
         return this;
     }
 
-    public @NotNull TextureDrawer texture(@NotNull ResourceLocation texture) {
+    public @NotNull TextureDrawer textureAutoSize(@NotNull ResourceLocation texture) {
         return new TextureDrawer(texture, TextureDrawer.getTextureSize(texture), bounds, guiGraphics);
     }
 
@@ -222,7 +222,7 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
         return new TextureDrawer(texture, textureSize, bounds, guiGraphics);
     }
 
-    public @NotNull TextureDrawer texture(@NotNull ResourceLocation texture, @NotNull Rect2i bounds) {
+    public @NotNull TextureDrawer textureAutoSize(@NotNull ResourceLocation texture, @NotNull Rect2i bounds) {
         return new TextureDrawer(texture, TextureDrawer.getTextureSize(texture), bounds, guiGraphics);
     }
 
@@ -288,24 +288,24 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
     }
 
     public static final class CornersRadius {
-        public final double leftTop, rightTop, rightBottom, leftBottom;
+        public final double leftTop, leftBottom, rightBottom, rightTop;
 
         public final static CornersRadius EMPTY = new CornersRadius(0, 0, 0, 0);
 
-        public CornersRadius(double leftTop, double rightTop, double rightBottom, double leftBottom) {
+        public CornersRadius(double leftTop, double leftBottom, double rightBottom, double rightTop) {
             Preconditions.checkArgument(leftTop >= 0, "leftTop must be greater or equal 0");
-            Preconditions.checkArgument(rightTop >= 0, "rightTop must be greater or equal 0");
-            Preconditions.checkArgument(rightBottom >= 0, "rightBottom must be greater or equal 0");
             Preconditions.checkArgument(leftBottom >= 0, "leftBottom must be greater or equal 0");
+            Preconditions.checkArgument(rightBottom >= 0, "rightBottom must be greater or equal 0");
+            Preconditions.checkArgument(rightTop >= 0, "rightTop must be greater or equal 0");
 
             this.leftTop = leftTop;
-            this.rightTop = rightTop;
-            this.rightBottom = rightBottom;
             this.leftBottom = leftBottom;
+            this.rightBottom = rightBottom;
+            this.rightTop = rightTop;
         }
 
         public boolean isEmpty() {
-            return leftTop == 0 && rightTop == 0 && rightBottom == 0 && leftBottom == 0;
+            return leftTop == 0 && leftBottom == 0 && rightBottom == 0 && rightTop == 0;
         }
 
         public double getRadius(@NotNull Corner corner) {
@@ -327,11 +327,11 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
 
         @Override
         public String toString() {
-            return "CornersRadius{leftTop=%s, rightTop=%s, rightBottom=%s, leftBottom=%s}".formatted(
+            return "CornersRadius{leftTop=%s, leftBottom=%s, rightBottom=%s, rightTop=%s}".formatted(
                     leftTop,
-                    rightTop,
+                    leftBottom,
                     rightBottom,
-                    leftBottom
+                    rightTop
             );
         }
     }

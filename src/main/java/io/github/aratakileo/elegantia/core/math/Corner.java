@@ -9,15 +9,13 @@ public enum Corner {
     RIGHT_BOTTOM(0, 90),
     RIGHT_TOP(270, 360);
 
+    public static final int SPAN_ANGLE = 90;
+
     public final int startAngle, stopAngle;
 
     Corner(int startAngle, int stopAngle) {
         this.startAngle = startAngle;
         this.stopAngle = stopAngle;
-    }
-
-    public int spanAngle() {
-        return stopAngle - startAngle;
     }
 
     public @NotNull Vector2dc getCenter(@NotNull Rect2i bounds, @NotNull RectDrawer.CornersRadius cornersRadius) {
