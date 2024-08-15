@@ -309,7 +309,13 @@ public class Rect2i {
         return this;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i move(int units) {
+        x += units;
+        y += units;
+
+        return this;
+    }
+
     public @NotNull Rect2i move(@NotNull Vector2iInterface position) {
         x += position.x();
         y += position.y();
@@ -324,19 +330,23 @@ public class Rect2i {
         return this;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
     public @NotNull Rect2i moveBackX(int x) {
         this.x -= x;
         return this;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
     public @NotNull Rect2i moveBackY(int y) {
         this.y -= y;
         return this;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i moveBack(int units) {
+        x -= units;
+        y -= units;
+
+        return this;
+    }
+
     public @NotNull Rect2i moveBack(@NotNull Vector2iInterface position) {
         x -= position.x();
         y -= position.y();
@@ -391,7 +401,11 @@ public class Rect2i {
         return this;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
+    public @NotNull Rect2i expandBounds(int units) {
+        return moveBounds(-units, -units, units, units);
+    }
+
+
     public @NotNull Rect2i moveBounds(int left, int top, int right, int bottom) {
         return moveHorizontal(left, right).moveVertical(top, bottom);
     }
@@ -403,6 +417,13 @@ public class Rect2i {
 
     public @NotNull Rect2i expandVertical(int vertical) {
         height += vertical;
+        return this;
+    }
+
+    public @NotNull Rect2i expand(int units) {
+        width += units;
+        height += units;
+
         return this;
     }
 
@@ -434,6 +455,13 @@ public class Rect2i {
 
     public @NotNull Rect2i shrinkVertical(int vertical) {
         height -= vertical;
+        return this;
+    }
+
+    public @NotNull Rect2i shrink(int units) {
+        width -= units;
+        height -= units;
+
         return this;
     }
 
@@ -558,6 +586,10 @@ public class Rect2i {
 
     public static @NotNull Rect2i empty() {
         return new Rect2i(0, 0, 0, 0);
+    }
+
+    public static @NotNull Rect2i zeroPositionSquare(int size) {
+        return new Rect2i(0, 0, size, size);
     }
 
     public static @NotNull Rect2i zeroPosition(int width, int height) {
