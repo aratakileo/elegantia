@@ -19,6 +19,6 @@ public class GuiMixin {
             @NotNull DeltaTracker deltaTracker,
             @NotNull CallbackInfo callbackInfo
     ) {
-        HudRenderListener.EVENT.getInvoker().onHudRender(ElGuiGraphics.of(guiGraphics), deltaTracker);
+        HudRenderListener.EVENT.getInvoker().onHudRender(ElGuiGraphics.of(guiGraphics));
     }
 }
