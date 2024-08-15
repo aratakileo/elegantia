@@ -9,22 +9,34 @@ import java.util.regex.Pattern;
 public final class Versions {
     private Versions() {}
 
-    private final static Pattern ONLY_NUMBER_PATTERN = Pattern.compile(
+    private final static Pattern VERSION_KERNEL_PATTERN = Pattern.compile(
             "^([a-zA-Z]+((\\d+\\.)+\\d+)?[-_]?)?"
                     + "(?<kernel>(\\d+\\.)+\\d+(-(?:alpha|beta|a|b)(?![a-zA-Z])(\\.\\d+)?)?)"
     );
 
     public static @NotNull Optional<String> getVersionKernel(@NotNull String version) {
-        final var matcher = ONLY_NUMBER_PATTERN.matcher(version);
+        final var matcher = VERSION_KERNEL_PATTERN.matcher(version);
 
         return matcher.find() ? Optional.of(matcher.group("kernel")) : Optional.empty();
     }
 
+    public static @NotNull String getKernelVersionOrThrow(@NotNull String version) {
+        return getVersionKernel(version).orElseThrow(
+                () -> new InvalidVersionFormatException(version)
+        );
+    }
+
     public static int compareTo(@NotNull String leftVersion, @NotNull String rightVersion) {
-        return Version.parse(rightVersion).compareTo(Version.parse(leftVersion));
+        return Version.parse(leftVersion).compareTo(Version.parse(rightVersion));
     }
 
     public static boolean isGreaterThan(@NotNull String leftVersion, @NotNull String rightVersion) {
-        return Version.parse(rightVersion).compareTo(Version.parse(leftVersion)) >= 1;
+        return Version.parse(leftVersion).compareTo(Version.parse(rightVersion)) >= 1;
+    }
+
+    public static class InvalidVersionFormatException extends RuntimeException {
+        public InvalidVersionFormatException(@NotNull String message) {
+            super(message);
+        }
     }
 }

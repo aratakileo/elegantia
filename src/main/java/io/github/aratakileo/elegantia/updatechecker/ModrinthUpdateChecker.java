@@ -115,32 +115,19 @@ public class ModrinthUpdateChecker {
             final var versionInfo = versionsMetadata.get(0).getAsJsonObject();
             final var modrinthProjectVersion = versionInfo.get("version_number").getAsString();
             final var versionId = versionInfo.get("id").getAsString();
-            final var modVersion = mod.getVersion();
-            final var isNewVersionAvailable = Versions.isGreaterThan(
-                    Versions.getVersionKernel(modVersion).orElseThrow(
-                            () -> new InvalidVersionFormatException("`%s` of mod with id `%s`".formatted(
-                                    modVersion,
-                                    modId
-                            ))
-                    ),
-                    Versions.getVersionKernel(modrinthProjectVersion).orElseThrow(
-                            () -> new InvalidVersionFormatException("`%s` of modrinth project with id `%s`".formatted(
-                                    modrinthProjectVersion,
-                                    projectId
-                            ))
-                    )
-            );
+
+            final var modrinthProjectKernelVersion = Versions.getKernelVersionOrThrow(modrinthProjectVersion);
+            final var modKernelVersion = Versions.getKernelVersionOrThrow(mod.getVersion());
 
             lastResponse = Response.of(
-                    isNewVersionAvailable ? ResponseCode.NEW_VERSION_IS_AVAILABLE : ResponseCode.SUCCESSFUL,
+                    Versions.isGreaterThan(modrinthProjectKernelVersion, modKernelVersion)
+                            ? ResponseCode.NEW_VERSION_IS_AVAILABLE
+                            : ResponseCode.SUCCESSFUL,
                     modrinthProjectVersion,
-                    NOT_FORMATTED_VERSION_PAGE_URL.replace(
-                            "{project_id}",
-                            projectId
-                    ).replace("{version_id}", versionId),
+                    getVersionPageUrl(versionId),
                     versionInfo.get("files").getAsJsonArray().get(0).getAsJsonObject().get("url").getAsString()
             );
-        } catch (IOException | InvalidVersionFormatException | NoSuchModException | InterruptedException e) {
+        } catch (IOException | Versions.InvalidVersionFormatException | NoSuchModException | InterruptedException e) {
             LOGGER.error("Failed to check updates for mod with id `%s` (modrinth project id: %s) v%s".formatted(
                     modId,
                     projectId,
@@ -168,8 +155,13 @@ public class ModrinthUpdateChecker {
                 .replace("{platform}", platform.name().toLowerCase());
     }
 
+    private @NotNull String getVersionPageUrl(@NotNull String versionId) {
+        return NOT_FORMATTED_VERSION_PAGE_URL.replace("{project_id}", projectId)
+                .replace("{version_id}", versionId);
+    }
+
     private @NotNull String getRequestHeader() {
-        final var baseRequestHeader = getVersionedSourceUrl(ModInfo.get(Namespace.ELEGANTIA).orElseThrow()).orElseThrow();
+        final var baseRequestHeader = getVersionedSourcePath(ModInfo.get(Namespace.ELEGANTIA).orElseThrow()).orElseThrow();
 
         if (Namespace.ELEGANTIA.equals(modId))
             return baseRequestHeader;
@@ -178,7 +170,7 @@ public class ModrinthUpdateChecker {
 
         return "%s for 3rd party mod %s".formatted(
                 baseRequestHeader,
-                getVersionedSourceUrl(modInfo).orElse("`%s` (mod id: %s)".formatted(modInfo.getName(), modId))
+                getVersionedSourcePath(modInfo).orElse("`%s` (mod id: %s)".formatted(modInfo.getName(), modId))
         );
     }
 
@@ -198,17 +190,11 @@ public class ModrinthUpdateChecker {
         return new ModrinthUpdateChecker(modId, projectId).check();
     }
 
-    private static @NotNull Optional<String> getVersionedSourceUrl(@NotNull ModInfo modInfo) {
+    private static @NotNull Optional<String> getVersionedSourcePath(@NotNull ModInfo modInfo) {
         return modInfo.getSourcesUrl().map(sourceUrl -> "%s@%s".formatted(
                 sourceUrl.strip().replaceFirst("^https?://", ""),
                 modInfo.getVersion()
         ));
-    }
-
-    public static class InvalidVersionFormatException extends RuntimeException {
-        public InvalidVersionFormatException(@NotNull String message) {
-            super(message);
-        }
     }
 
     public static class InvalidResponseCodeException extends RuntimeException {
