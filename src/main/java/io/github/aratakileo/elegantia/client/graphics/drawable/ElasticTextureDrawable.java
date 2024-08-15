@@ -13,7 +13,6 @@ public class ElasticTextureDrawable implements Drawable {
     public final int borderWidth;
 
     public @NotNull Vector2fInterface uv = Vector2fc.ZERO;
-    public boolean strictCenterSlice = false;
 
     public ElasticTextureDrawable(
             @NotNull ResourceLocation source,
