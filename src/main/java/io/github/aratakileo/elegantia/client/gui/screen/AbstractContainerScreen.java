@@ -3,6 +3,7 @@ package io.github.aratakileo.elegantia.client.gui.screen;
 import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.client.graphics.drawable.TextureDrawable;
 import io.github.aratakileo.elegantia.client.graphics.drawer.RectDrawer;
+import io.github.aratakileo.elegantia.core.BuiltinTextures;
 import io.github.aratakileo.elegantia.core.math.Vector2ic;
 import io.github.aratakileo.elegantia.world.slot.ElegantedSlot;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,6 +24,7 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
             @NotNull Component component
     ) {
         super(abstractContainerMenu, inventory, component);
+        backgroundPanel = BuiltinTextures.DEFAULT_BLOCK_INVENTORY.get();
     }
 
     /**
@@ -43,12 +45,16 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
         renderBackgroundContent(guiGraphics, mousePos, dt);
 
         for (final var slot: menu.slots)
-            if (slot instanceof ElegantedSlot elegantedSlot)
-                elegantedSlot.getIconForRender().ifPresent(icon -> icon.render(RectDrawer.square(
-                        guiGraphics,
-                        getPanelPos().add(elegantedSlot.getPos()),
-                        16
-                )));
+            if (slot instanceof ElegantedSlot elegantedSlot) {
+                final var rectDrawer = guiGraphics.square(getPanelPos().add(elegantedSlot.getPos()), 16);
+
+                if (elegantedSlot.renderBackground)
+                    BuiltinTextures.SLOT_BACKGROUND.get().render(guiGraphics.rect(
+                            rectDrawer.bounds.copy().expandBounds(1)
+                    ));
+
+                elegantedSlot.getIconForRender().ifPresent(icon -> icon.render(rectDrawer));
+            }
     }
 
     @Override
