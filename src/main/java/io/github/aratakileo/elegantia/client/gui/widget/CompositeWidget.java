@@ -6,7 +6,7 @@ import io.github.aratakileo.elegantia.core.math.Vector2dc;
 import io.github.aratakileo.elegantia.core.math.Vector2ic;
 import io.github.aratakileo.elegantia.util.Classes;
 import io.github.aratakileo.elegantia.core.math.Rect2i;
-import io.github.aratakileo.elegantia.client.MouseHandler;
+import io.github.aratakileo.elegantia.client.MouseProvider;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.LayoutElement;
@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * {@link CompositeWidget} automatically adds widgets marked with the {@link CompositePart} annotation
  * to the logic of its methods, such as: {@link #render(ElGuiGraphics, Vector2ic, float)},
- * {@link #setX(int)}, {@link #mouseClicked(Vector2dc, MouseHandler.Button)}, etc.
+ * {@link #setX(int)}, {@link #mouseClicked(Vector2dc, MouseProvider.Button)}, etc.
  */
 public abstract class CompositeWidget extends AbstractWidget {
     private final List<Object> compositeParts = new ArrayList<>();
@@ -151,7 +151,7 @@ public abstract class CompositeWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(@NotNull Vector2dc mousePos, @NotNull MouseHandler.Button button) {
+    public boolean mouseClicked(@NotNull Vector2dc mousePos, @NotNull MouseProvider.Button button) {
         for (final var unknownWidget: compositeParts) {
             if (unknownWidget instanceof AbstractWidget elWidget) {
                 if (elWidget.mouseClicked(mousePos, button))
@@ -168,7 +168,7 @@ public abstract class CompositeWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseReleased(@NotNull Vector2dc mousePos, @NotNull MouseHandler.Button button) {
+    public boolean mouseReleased(@NotNull Vector2dc mousePos, @NotNull MouseProvider.Button button) {
         for (final var unknownWidget: compositeParts) {
             if (unknownWidget instanceof AbstractWidget elWidget) {
                 if (elWidget.mouseReleased(mousePos, button))
@@ -188,7 +188,7 @@ public abstract class CompositeWidget extends AbstractWidget {
     public boolean mouseDragged(
             @NotNull Vector2dc mousePos, 
             @NotNull Vector2dc delta, 
-            @NotNull MouseHandler.Button button
+            @NotNull MouseProvider.Button button
     ) {
         for (final var unknownWidget: compositeParts) {
             if (unknownWidget instanceof AbstractWidget elWidget) {

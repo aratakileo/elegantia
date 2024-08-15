@@ -3,12 +3,13 @@ package io.github.aratakileo.elegantia.client;
 import com.mojang.blaze3d.platform.Window;
 import io.github.aratakileo.elegantia.core.math.Vector2dc;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public final class MouseHandler {
-    static @NotNull net.minecraft.client.MouseHandler getMouseHandler() {
+public final class MouseProvider {
+    private static @NotNull MouseHandler getMouseHandler() {
         return Minecraft.getInstance().mouseHandler;
     }
 
@@ -74,7 +75,7 @@ public final class MouseHandler {
             return this == MIDDLE;
         }
 
-        public static @NotNull MouseHandler.Button of(int button) {
+        public static @NotNull MouseProvider.Button of(int button) {
             return button == 1 ? RIGHT : (button == 2 ? MIDDLE : LEFT);
         }
     }

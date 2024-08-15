@@ -2,7 +2,7 @@ package io.github.aratakileo.elegantia.client.gui.widget;
 
 import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.core.math.Rect2i;
-import io.github.aratakileo.elegantia.client.MouseHandler;
+import io.github.aratakileo.elegantia.client.MouseProvider;
 import io.github.aratakileo.elegantia.core.math.Vector2dc;
 import io.github.aratakileo.elegantia.core.math.Vector2ic;
 import org.jetbrains.annotations.NotNull;
@@ -126,7 +126,7 @@ public class VerticalScrollbar extends AbstractWidget {
     public boolean mouseDragged(
             @NotNull Vector2dc mousePos,
             @NotNull Vector2dc delta,
-            @NotNull MouseHandler.Button button
+            @NotNull MouseProvider.Button button
     ) {
         if (!isScrolling()) return false;
 

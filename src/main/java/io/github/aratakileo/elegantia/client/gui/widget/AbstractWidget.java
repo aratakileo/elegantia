@@ -5,7 +5,7 @@ import io.github.aratakileo.elegantia.client.graphics.drawable.Drawable;
 import io.github.aratakileo.elegantia.client.graphics.drawable.InteractionDrawable;
 import io.github.aratakileo.elegantia.client.gui.tooltip.TooltipPositioner;
 import io.github.aratakileo.elegantia.core.math.*;
-import io.github.aratakileo.elegantia.client.MouseHandler;
+import io.github.aratakileo.elegantia.client.MouseProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiGraphics;
@@ -193,15 +193,15 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     public void mouseMoved(@NotNull Vector2dc pos) {}
 
     /**
-     * @deprecated use {@link #mouseClicked(Vector2dc, MouseHandler.Button)} instead
+     * @deprecated use {@link #mouseClicked(Vector2dc, MouseProvider.Button)} instead
      */
     @Deprecated
     @Override
     public final boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return mouseClicked(new Vector2dc(mouseX, mouseY), MouseHandler.Button.of(button));
+        return mouseClicked(new Vector2dc(mouseX, mouseY), MouseProvider.Button.of(button));
     }
 
-    public boolean mouseClicked(@NotNull Vector2dc mousePos, @NotNull MouseHandler.Button button) {
+    public boolean mouseClicked(@NotNull Vector2dc mousePos, @NotNull MouseProvider.Button button) {
         wasHoveredBeforeRelease = false;
 
         return isEnabled
@@ -218,15 +218,15 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     /**
-     * @deprecated use {@link #mouseReleased(Vector2dc, MouseHandler.Button)} instead
+     * @deprecated use {@link #mouseReleased(Vector2dc, MouseProvider.Button)} instead
      */
     @Deprecated
     @Override
     public final boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return mouseReleased(new Vector2dc(mouseX, mouseY), MouseHandler.Button.of(button));
+        return mouseReleased(new Vector2dc(mouseX, mouseY), MouseProvider.Button.of(button));
     }
 
-    public boolean mouseReleased(@NotNull Vector2dc mousePos, @NotNull MouseHandler.Button button) {
+    public boolean mouseReleased(@NotNull Vector2dc mousePos, @NotNull MouseProvider.Button button) {
         return isEnabled
                 && isVisible
                 && button.isLeft()
@@ -244,18 +244,18 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
     }
 
     /**
-     * @deprecated use {@link #mouseDragged(Vector2dc, Vector2dc, MouseHandler.Button)} instead
+     * @deprecated use {@link #mouseDragged(Vector2dc, Vector2dc, MouseProvider.Button)} instead
      */
     @Deprecated
     @Override
     public final boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        return mouseDragged(new Vector2dc(mouseX, mouseY), new Vector2dc(deltaX, deltaY), MouseHandler.Button.of(button));
+        return mouseDragged(new Vector2dc(mouseX, mouseY), new Vector2dc(deltaX, deltaY), MouseProvider.Button.of(button));
     }
 
     public boolean mouseDragged(
             @NotNull Vector2dc mousePos,
             @NotNull Vector2dc delta,
-            @NotNull MouseHandler.Button button
+            @NotNull MouseProvider.Button button
     ) {
         return isEnabled
                 && isVisible
