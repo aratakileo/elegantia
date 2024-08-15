@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.world;
+package io.github.aratakileo.elegantia.world.item.recipe;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
