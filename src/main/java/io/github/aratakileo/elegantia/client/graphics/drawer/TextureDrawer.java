@@ -170,6 +170,89 @@ public class TextureDrawer extends AbstractRectDrawer<TextureDrawer> {
         return this;
     }
 
+    public @NotNull TextureDrawer render(
+            @NotNull Vector2iInterface posOffset,
+            float uOffset,
+            float vOffset,
+            @NotNull Size2iInterface size
+    ) {
+        return render(posOffset.x(), posOffset.y(), uOffset, vOffset, size.width(), size.height());
+    }
+
+    public @NotNull TextureDrawer render(
+            int xOffset,
+            int yOffset,
+            float uOffset,
+            float vOffset,
+            @NotNull Size2iInterface size
+    ) {
+        return render(xOffset, yOffset, uOffset, vOffset, size.width(), size.height());
+    }
+
+    public @NotNull TextureDrawer renderSquare(
+            @NotNull Vector2iInterface posOffset,
+            @NotNull Vector2fInterface uvOffset,
+            int size
+    ) {
+        return render(posOffset, uvOffset.x(), uvOffset.y(), size, size);
+    }
+
+    public @NotNull TextureDrawer renderSquare(
+            @NotNull Vector2iInterface posOffset,
+            float uOffset,
+            float vOffset,
+            int size
+    ) {
+        return render(posOffset, uOffset, vOffset, size, size);
+    }
+
+    public @NotNull TextureDrawer renderSquare(
+            int xOffset,
+            int yOffset,
+            float uOffset,
+            float vOffset,
+            int size
+    ) {
+        return render(xOffset, yOffset, uOffset, vOffset, size, size);
+    }
+
+    public @NotNull TextureDrawer render(
+            @NotNull Vector2iInterface posOffset,
+            float uOffset,
+            float vOffset,
+            int width,
+            int height
+    ) {
+        return render(posOffset.x(), posOffset.y(), uOffset, vOffset, width, height);
+    }
+
+    public @NotNull TextureDrawer render(
+            int xOffset,
+            int yOffset,
+            float uOffset,
+            float vOffset,
+            int width,
+            int height
+    ) {
+        if (enabledBlend) RenderSystem.enableBlend();
+
+        guiGraphics.blit(
+                texture,
+                bounds.getLeft() + xOffset,
+                bounds.getTop() + yOffset,
+                uv.x() + uOffset,
+                uv.y() + vOffset,
+                width,
+                height,
+                textureSize.width,
+                textureSize.height
+        );
+
+        if (enabledBlend) RenderSystem.disableBlend();
+
+        return this;
+    }
+
     public @NotNull RectDrawer asRectDrawer() {
         return new RectDrawer(guiGraphics, bounds);
     }
@@ -185,11 +268,16 @@ public class TextureDrawer extends AbstractRectDrawer<TextureDrawer> {
         );
     }
 
+    /**
+     * The fast way to get the size of the texture only inside the render thread
+     * (check this out using {@link RenderSystem#isOnRenderThread()})
+     */
     public static @NotNull Size2ic getTextureSize(@NotNull ResourceLocation texture) {
         if (!RenderSystem.isOnRenderThread())
-            throw new IllegalStateException(
-                    TextureDrawer.class.getName() + "#getTextureSize called outside the render thread"
-            );
+            throw new IllegalStateException("%s#getTextureSize called outside the render thread for `%s`".formatted(
+                    TextureDrawer.class.getName(),
+                    texture
+            ));
 
         Minecraft.getInstance().getTextureManager().getTexture(texture).bind();
 

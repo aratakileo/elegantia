@@ -37,6 +37,10 @@ public class Namespace {
         return ResourceLocation.fromNamespaceAndPath(namespace, path);
     }
 
+    public @NotNull TextureProvider getTextureProvider() {
+        return new TextureProvider(this);
+    }
+
     public boolean equals(@NotNull Namespace namespace) {
         return this.namespace.equals(namespace.namespace);
     }
