@@ -4,6 +4,7 @@ import io.github.aratakileo.elegantia.client.graphics.drawable.TextureDrawable;
 import io.github.aratakileo.elegantia.client.graphics.drawer.TextureDrawer;
 import io.github.aratakileo.elegantia.core.math.Vector2iInterface;
 import io.github.aratakileo.elegantia.core.math.Vector2ic;
+import io.github.aratakileo.elegantia.util.type.InitOnGet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
@@ -12,13 +13,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class ElegantedSlot extends Slot {
     public final @Nullable SlotController controller;
+    private @Nullable InitOnGet<TextureDrawable> icon;
 
-    private @Nullable TextureDrawable icon = null;
-    private @Nullable Supplier<TextureDrawable> iconGetter = null;
+    public boolean renderBackground = true;
 
     public ElegantedSlot(
             @NotNull Container container,
@@ -41,32 +41,50 @@ public class ElegantedSlot extends Slot {
         this.controller = controller;
     }
 
-    /**
-     * The function sets the getter that is called on first try to get or render an icon.
-     * It must be used to avoid crash if {@link TextureDrawer#getTextureSize(ResourceLocation)}
-     * is called when creating the {@link TextureDrawable} instance outside the render thread
-     */
-    public @NotNull ElegantedSlot setIconGetter(@Nullable Supplier<TextureDrawable> iconGetter) {
-        this.icon = null;
-        this.iconGetter = iconGetter;
+    public @NotNull ElegantedSlot setRenderBackground(boolean renderBackground) {
+        this.renderBackground = renderBackground;
+        return this;
+    }
 
+    /**
+     * The function allows safely set icon outside of render thread and avoid game crash
+     * because of {@link TextureDrawer#getTextureSize(ResourceLocation)}
+     */
+    public @NotNull ElegantedSlot setIcon(@Nullable InitOnGet<TextureDrawable> icon) {
+        this.icon = icon;
+
+        return this;
+    }
+
+    /**
+     * The function allows safely set icon outside of render thread and avoid game crash
+     * because of {@link TextureDrawer#getTextureSize(ResourceLocation)}
+     */
+    public @NotNull ElegantedSlot setIcon(@Nullable ResourceLocation icon) {
+        if (icon == null) {
+            this.icon = null;
+            return this;
+        }
+
+        this.icon = TextureDrawable.safeAutoSize(icon);
         return this;
     }
 
     public @NotNull ElegantedSlot setIcon(@Nullable TextureDrawable icon) {
-        this.icon = icon;
-        this.iconGetter = null;
+        if (icon == null) {
+            this.icon = null;
+            return this;
+        }
+
+        this.icon = InitOnGet.of(icon);
         return this;
     }
 
     public @NotNull Optional<TextureDrawable> getIcon() {
-        if (icon == null && iconGetter != null)
-            return Optional.of(iconGetter.get());
+        if (icon == null)
+            return Optional.empty();
 
-        if (icon != null)
-            return Optional.of(icon);
-
-        return Optional.empty();
+        return Optional.of(icon.get());
     }
 
     public @NotNull Optional<TextureDrawable> getIconForRender() {
