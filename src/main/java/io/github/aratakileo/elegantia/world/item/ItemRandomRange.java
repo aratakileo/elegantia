@@ -54,6 +54,20 @@ public final class ItemRandomRange {
         );
     }
 
+    public @NotNull ItemStack getMinItemStack() {
+        return new ItemStack(
+                item,
+                minCount
+        );
+    }
+
+    public @NotNull ItemStack getMaxItemStack() {
+        return new ItemStack(
+                item,
+                maxCount
+        );
+    }
+
     public static @NotNull ItemRandomRange of(@NotNull ItemStack itemStack) {
         return new ItemRandomRange(itemStack.getItem(), itemStack.getCount(), itemStack.getCount());
     }
