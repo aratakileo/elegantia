@@ -1,6 +1,7 @@
 package io.github.aratakileo.elegantia.client.graphics.drawable;
 
 import io.github.aratakileo.elegantia.client.MouseHandler;
+import io.github.aratakileo.elegantia.client.graphics.drawer.RectDrawer;
 import io.github.aratakileo.elegantia.core.math.Rect2i;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,5 +26,21 @@ public abstract class InteractionDrawable implements Drawable {
 
     public boolean hovered(@NotNull Rect2i bounds) {
         return bounds.contains(MouseHandler.getPosition());
+    }
+
+    public static @NotNull InteractionDrawable createElegantiaButton() {
+        return new InteractionDrawable() {
+            @Override
+            public void render(@NotNull RectDrawer rectDrawer) {
+                if (pressed) rectDrawer.bounds.expandBounds(-1);
+
+                rectDrawer.draw(0xaa222222).drawStroke(
+                        hoveredOrFocused(rectDrawer.bounds)
+                                ? 0xffffffff
+                                : 0xaa000000,
+                        1
+                );
+            }
+        };
     }
 }
