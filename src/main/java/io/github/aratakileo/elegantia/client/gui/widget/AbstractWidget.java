@@ -2,7 +2,7 @@ package io.github.aratakileo.elegantia.client.gui.widget;
 
 import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.client.graphics.drawable.Drawable;
-import io.github.aratakileo.elegantia.client.graphics.drawable.InteractableDrawable;
+import io.github.aratakileo.elegantia.client.graphics.drawable.InteractionDrawable;
 import io.github.aratakileo.elegantia.client.gui.tooltip.TooltipPositioner;
 import io.github.aratakileo.elegantia.core.math.*;
 import io.github.aratakileo.elegantia.client.MouseHandler;
@@ -171,14 +171,12 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
 
         final var rectDrawer = guiGraphics.rect(bounds.copy());
 
-        if (backgroundDrawable instanceof InteractableDrawable interactableDrawable)
-            interactableDrawable.renderInteraction(rectDrawer, new InteractableDrawable.InteractionState(
-                    isHovered,
-                    isFocused,
-                    wasHoveredBeforeRelease,
-                    isEnabled
-            ));
-        else backgroundDrawable.render(rectDrawer);
+        if (backgroundDrawable instanceof InteractionDrawable interactionDrawable) {
+            interactionDrawable.setEnabled(isEnabled);
+            interactionDrawable.setFocused(isFocused);
+            interactionDrawable.setPressed(wasHoveredBeforeRelease);
+            interactionDrawable.render(rectDrawer);
+        } else backgroundDrawable.render(rectDrawer);
     }
 
     public void renderForeground(@NotNull ElGuiGraphics guiGraphics, @NotNull Vector2ic mousePos, float dt) {}
