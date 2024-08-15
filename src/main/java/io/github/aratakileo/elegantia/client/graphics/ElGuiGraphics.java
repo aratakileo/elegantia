@@ -204,11 +204,11 @@ public class ElGuiGraphics extends GuiGraphics {
         super.enableScissor(x, y, x + width, y + height);
     }
 
-    public @NotNull TextureDrawer texture(@NotNull ResourceLocation location, @NotNull Rect2i bounds) {
+    public @NotNull TextureDrawer textureAutoSize(@NotNull ResourceLocation location, @NotNull Rect2i bounds) {
         return new TextureDrawer(location, TextureDrawer.getTextureSize(location), bounds, this);
     }
 
-    public @NotNull TextureDrawer texture(
+    public @NotNull TextureDrawer textureAutoSize(
             @NotNull ResourceLocation location,
             @NotNull Vector2iInterface vec2i,
             @NotNull Size2iInterface size
@@ -221,7 +221,7 @@ public class ElGuiGraphics extends GuiGraphics {
         );
     }
 
-    public @NotNull TextureDrawer texture(
+    public @NotNull TextureDrawer textureAutoSize(
             @NotNull ResourceLocation location,
             int x,
             int y,
@@ -235,7 +235,7 @@ public class ElGuiGraphics extends GuiGraphics {
         );
     }
 
-    public @NotNull TextureDrawer texture(
+    public @NotNull TextureDrawer textureAutoSize(
             @NotNull ResourceLocation location,
             @NotNull Vector2iInterface vec2i,
             int width,
@@ -249,7 +249,7 @@ public class ElGuiGraphics extends GuiGraphics {
         );
     }
 
-    public @NotNull TextureDrawer texture(@NotNull ResourceLocation location, int x, int y, int width, int height) {
+    public @NotNull TextureDrawer textureAutoSize(@NotNull ResourceLocation location, int x, int y, int width, int height) {
         return new TextureDrawer(
                 location,
                 TextureDrawer.getTextureSize(location),
@@ -258,7 +258,7 @@ public class ElGuiGraphics extends GuiGraphics {
         );
     }
 
-    public @NotNull TextureDrawer textureSquare(
+    public @NotNull TextureDrawer textureAutoSizeSquare(
             @NotNull ResourceLocation location,
             @NotNull Vector2iInterface vec2i,
             int size
@@ -271,7 +271,7 @@ public class ElGuiGraphics extends GuiGraphics {
         );
     }
 
-    public @NotNull TextureDrawer textureSquare(@NotNull ResourceLocation location, int x, int y, int size) {
+    public @NotNull TextureDrawer textureAutoSizeSquare(@NotNull ResourceLocation location, int x, int y, int size) {
         return new TextureDrawer(
                 location,
                 TextureDrawer.getTextureSize(location),
@@ -435,5 +435,9 @@ public class ElGuiGraphics extends GuiGraphics {
 
     public static void playClickSound() {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1f));
+    }
+
+    public static float getDeltaTime() {
+        return Minecraft.getInstance().getTimer().getGameTimeDeltaTicks();
     }
 }
