@@ -2,7 +2,7 @@ package io.github.aratakileo.elegantia.client.config;
 
 import io.github.aratakileo.elegantia.client.gui.screen.ConfigScreen;
 import io.github.aratakileo.elegantia.util.*;
-import io.github.aratakileo.elegantia.util.type.LateInit;
+import io.github.aratakileo.elegantia.util.type.LateInitedConst;
 import io.github.aratakileo.elegantia.core.Namespace;
 import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ import java.util.Objects;
 public abstract class AbstractConfig {
     private final static Logger LOGGER = LoggerFactory.getLogger(AbstractConfig.class);
 
-    protected final transient @NotNull LateInit<Namespace> namespaceLateInit = new LateInit<>();
+    protected final transient @NotNull LateInitedConst<Namespace> namespaceLateInit = new LateInitedConst<>();
     protected final transient @NotNull ArrayList<EntryInfo> entries = new ArrayList<>();
     protected final transient @NotNull HashMap<String, String> triggerFields = new HashMap<>();
 
@@ -132,10 +132,9 @@ public abstract class AbstractConfig {
     }
 
     public @NotNull Namespace getNamespace() {
-        if (namespaceLateInit.isInited())
-            return namespaceLateInit.getOrThrow();
-
-        throw new IllegalInitException(getClass().getName());
+        return namespaceLateInit.asOptional().orElseThrow(() -> new IllegalStateException(
+                "No namespace value present for instance of " + getClass().getName()
+        ));
     }
 
     public @NotNull ArrayList<EntryInfo> getEntries() {
@@ -144,11 +143,5 @@ public abstract class AbstractConfig {
 
     public @NotNull HashMap<String, String> getTriggerFields() {
         return triggerFields;
-    }
-
-    public static class IllegalInitException extends RuntimeException {
-        public IllegalInitException(@NotNull String message) {
-            super(message);
-        }
     }
 }
