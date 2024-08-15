@@ -1,8 +1,11 @@
 package io.github.aratakileo.elegantia.client.graphics.drawable;
 
+import com.google.common.util.concurrent.AtomicDouble;
+import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.client.graphics.drawer.RectDrawer;
 import io.github.aratakileo.elegantia.client.graphics.drawer.TextureDrawer;
 import io.github.aratakileo.elegantia.core.math.*;
+import io.github.aratakileo.elegantia.util.type.InitOnGet;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +72,7 @@ public class TexturedProgressDrawable implements Drawable {
                 .render();
     }
 
-    public static @NotNull TexturedProgressDrawable of(
+    public static @NotNull TexturedProgressDrawable autoSize(
             @NotNull ResourceLocation texture,
             @NotNull Direction direction,
             @NotNull Supplier<Float> progressGetter
@@ -80,6 +83,47 @@ public class TexturedProgressDrawable implements Drawable {
                 direction,
                 progressGetter
         );
+    }
+
+    public static @NotNull TexturedProgressDrawable of(
+            @NotNull TextureDrawable textureDrawable,
+            @NotNull Direction direction,
+            @NotNull Supplier<Float> progressGetter
+    ) {
+        return new TexturedProgressDrawable(
+                textureDrawable.texture,
+                textureDrawable.textureSize,
+                direction,
+                progressGetter
+        ).setUV(textureDrawable.uv);
+    }
+
+    public static @NotNull TexturedProgressDrawable of(
+            @NotNull InitOnGet<TextureDrawable> textureDrawable,
+            @NotNull Direction direction,
+            @NotNull Supplier<Float> progressGetter
+    ) {
+        return new TexturedProgressDrawable(
+                textureDrawable.get().texture,
+                textureDrawable.get().textureSize,
+                direction,
+                progressGetter
+        ).setUV(textureDrawable.get().uv);
+    }
+
+    /**
+     * Returns a supplier that automatically generates a smooth increase in progress
+     * according to the specified animation speed
+     */
+    public static Supplier<Float> demoProgressAnimation(float speed) {
+        final var counter = new AtomicDouble(0);
+
+        return () -> {
+            if (counter.addAndGet(ElGuiGraphics.getDeltaTime() * (speed / 100f)) > 1d)
+                counter.set(0);
+
+            return counter.floatValue();
+        };
     }
 
     public enum Direction {

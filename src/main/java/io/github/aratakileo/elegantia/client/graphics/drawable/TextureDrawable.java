@@ -6,6 +6,7 @@ import io.github.aratakileo.elegantia.core.math.Size2iInterface;
 import io.github.aratakileo.elegantia.core.math.Size2ic;
 import io.github.aratakileo.elegantia.core.math.Vector2fInterface;
 import io.github.aratakileo.elegantia.core.math.Vector2fc;
+import io.github.aratakileo.elegantia.util.type.InitOnGet;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,8 +61,27 @@ public class TextureDrawable implements Drawable {
         }
     }
 
-    public static @NotNull TextureDrawable of(@NotNull ResourceLocation texture) {
+    public static @NotNull TextureDrawable autoSize(@NotNull ResourceLocation texture) {
         return new TextureDrawable(texture, TextureDrawer.getTextureSize(texture));
+    }
+
+    public static @NotNull InitOnGet<TextureDrawable> safeAutoSize(@NotNull ResourceLocation texture) {
+        return InitOnGet.of(() -> autoSize(texture));
+    }
+
+    public static @NotNull InitOnGet<TextureDrawable> safeAutoSize(
+            @NotNull ResourceLocation texture,
+            @NotNull Vector2fInterface uv
+    ) {
+        return InitOnGet.of(() -> autoSize(texture).setUV(uv));
+    }
+
+    public static @NotNull InitOnGet<TextureDrawable> safeAutoSize(
+            @NotNull ResourceLocation texture,
+            float u,
+            float v
+    ) {
+        return InitOnGet.of(() -> autoSize(texture).setUV(u, v));
     }
 
     /**
