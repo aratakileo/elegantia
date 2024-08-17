@@ -2,22 +2,26 @@ package io.github.aratakileo.elegantia.client.graphics.drawable;
 
 import io.github.aratakileo.elegantia.client.MouseProvider;
 import io.github.aratakileo.elegantia.client.graphics.drawer.RectDrawer;
+import io.github.aratakileo.elegantia.core.BuiltinTextures;
 import io.github.aratakileo.elegantia.core.math.Rect2i;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class InteractionDrawable implements Drawable {
     protected boolean focused = false, pressed = false, enabled = false;
 
-    public void setEnabled(boolean enabled) {
+    public @NotNull InteractionDrawable setEnabled(boolean enabled) {
         this.enabled = enabled;
+        return this;
     }
 
-    public void setFocused(boolean focused) {
+    public @NotNull InteractionDrawable setFocused(boolean focused) {
         this.focused = focused;
+        return this;
     }
 
-    public void setPressed(boolean pressed) {
+    public @NotNull InteractionDrawable setPressed(boolean pressed) {
         this.pressed = pressed;
+        return this;
     }
 
     public boolean hoveredOrFocused(@NotNull Rect2i bounds) {
@@ -40,6 +44,25 @@ public abstract class InteractionDrawable implements Drawable {
                                 : 0xaa000000,
                         1
                 );
+            }
+        };
+    }
+
+    public static @NotNull InteractionDrawable createMinecraftButton() {
+        return new InteractionDrawable() {
+            @Override
+            public void render(@NotNull RectDrawer rectDrawer) {
+                if (hoveredOrFocused(rectDrawer.bounds)) {
+                    BuiltinTextures.ELASTIC_MINECRAFT_BUTTON_FOCUSED.get().render(rectDrawer);
+                    return;
+                }
+
+                if (!enabled) {
+                    BuiltinTextures.ELASTIC_MINECRAFT_BUTTON_DISABLED.get().render(rectDrawer);
+                    return;
+                }
+
+                BuiltinTextures.ELASTIC_MINECRAFT_BUTTON.get().render(rectDrawer);
             }
         };
     }

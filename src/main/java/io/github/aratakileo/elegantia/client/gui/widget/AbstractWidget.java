@@ -172,10 +172,10 @@ public abstract class AbstractWidget implements Renderable, GuiEventListener, Na
         final var rectDrawer = guiGraphics.rect(bounds.copy());
 
         if (backgroundDrawable instanceof InteractionDrawable interactionDrawable) {
-            interactionDrawable.setEnabled(isEnabled);
-            interactionDrawable.setFocused(isFocused);
-            interactionDrawable.setPressed(wasHoveredBeforeRelease);
-            interactionDrawable.render(rectDrawer);
+            interactionDrawable.setEnabled(isEnabled)
+                    .setFocused(isFocused)
+                    .setPressed(wasHoveredBeforeRelease)
+                    .render(rectDrawer);
         } else backgroundDrawable.render(rectDrawer);
     }
 
