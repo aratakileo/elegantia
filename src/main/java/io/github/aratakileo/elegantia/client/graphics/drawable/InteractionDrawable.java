@@ -33,7 +33,7 @@ public abstract class InteractionDrawable implements Drawable {
     public boolean hovered(@NotNull Rect2i bounds) {
         return bounds.contains(MouseProvider.getPosition());
     }
-    
+
     public static @NotNull InteractionDrawable create(@NotNull BiConsumer<InteractionDrawable, RectDrawer> renderer) {
         return new InteractionDrawable() {
             @Override
