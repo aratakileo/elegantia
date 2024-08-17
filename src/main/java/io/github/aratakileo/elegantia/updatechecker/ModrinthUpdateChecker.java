@@ -104,16 +104,16 @@ public class ModrinthUpdateChecker {
                 default -> throw new InvalidResponseCodeException(basicResponse.statusCode());
             }
 
-            final var versionsMetadata = JsonParser.parseString(basicResponse.body()).getAsJsonArray();
+            final var versionMetadatas = JsonParser.parseString(basicResponse.body()).getAsJsonArray();
 
-            if (versionsMetadata.isEmpty()) {
+            if (versionMetadatas.isEmpty()) {
                 lastResponse = ModrinthResponse.ofFailed(this, FailReason.NO_VERSIONS_FOUND);
                 return lastResponse;
             }
 
             lastResponse = ModrinthResponse.ofSuccessful(
                     this,
-                    versionsMetadata.get(0).getAsJsonObject()
+                    versionMetadatas.get(0).getAsJsonObject()
             );
         } catch (IOException | Versions.InvalidVersionFormatException | NoSuchModException | InterruptedException e) {
             LOGGER.error("Failed to check updates for mod with id `%s` (modrinth project id: %s) v%s".formatted(
