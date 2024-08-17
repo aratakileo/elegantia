@@ -16,7 +16,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Objects;
 import java.util.Optional;
 
 public class ModrinthUpdateChecker {
@@ -26,61 +25,58 @@ public class ModrinthUpdateChecker {
             "https://api.modrinth.com/v2/project/{project_id}/version?game_versions=%5B%22{minecraft_version}%22%5D" +
                     "&loaders=%5B%22{platform}%22%5D";
 
-    private final static String NOT_FORMATTED_VERSION_PAGE_URL
-            = "https://modrinth.com/mod/{project_id}/version/{version_id}";
-
     private final static HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
-    private final String modId, projectId, minecraftVersion;
+    protected final ModInfo mod;
+    protected final String projectId;
 
-    private @Nullable Response lastResponse = null;
+    private @Nullable ModrinthResponse lastResponse = null;
 
-    public ModrinthUpdateChecker(@NotNull Namespace modAndProjectNamespace) {
-        this(modAndProjectNamespace.get(), modAndProjectNamespace.get());
-    }
-
-    public ModrinthUpdateChecker(@NotNull Namespace namespace, @NotNull String projectId) {
-        this(namespace.get(), projectId, Platform.getMinecraftVersion());
-    }
+    public @NotNull Platform platform;
+    public @NotNull String minecraftVersion;
 
     public ModrinthUpdateChecker(
             @NotNull Namespace namespace,
-            @NotNull String projectId,
-            @NotNull String minecraftVersion
+            @NotNull String projectId
     ) {
-        this.modId = namespace.get();
+        this.mod = ModInfo.getOrThrow(namespace);
         this.projectId = projectId;
-        this.minecraftVersion = minecraftVersion;
-    }
-
-    public ModrinthUpdateChecker(@NotNull String modAndProjectId) {
-        this(modAndProjectId, modAndProjectId);
-    }
-
-    public ModrinthUpdateChecker(@NotNull String modId, @NotNull String projectId) {
-        this(modId, projectId, Platform.getMinecraftVersion());
+        this.minecraftVersion = Platform.getMinecraftVersion();
+        this.platform = mod.getKernelPlatform();
     }
 
     public ModrinthUpdateChecker(
             @NotNull String modId,
-            @NotNull String projectId,
-            @NotNull String minecraftVersion
+            @NotNull String projectId
     ) {
-        this.modId = modId;
+        this.mod = ModInfo.getOrThrow(modId);
         this.projectId = projectId;
+        this.minecraftVersion = Platform.getMinecraftVersion();
+        this.platform = mod.getKernelPlatform();
+    }
+
+    public @NotNull ModrinthUpdateChecker setModKernelPlatform() {
+        platform = mod.getKernelPlatform();
+        return this;
+    }
+
+    public @NotNull ModrinthUpdateChecker setPlatform(@NotNull Platform platform) {
+        this.platform = platform;
+        return this;
+    }
+
+    public @NotNull ModrinthUpdateChecker setMinecraftCurrentVersion() {
+        minecraftVersion = Platform.getMinecraftVersion();
+        return this;
+    }
+
+    public @NotNull ModrinthUpdateChecker setMinecraftVersion(@NotNull String minecraftVersion) {
         this.minecraftVersion = minecraftVersion;
+        return this;
     }
 
-    public @NotNull Response check() {
-        return check(null);
-    }
-
-    public @NotNull Response check(@Nullable Platform platform) {
-        final var mod = ModInfo.getOrThrow(modId);
-
+    public @NotNull ModrinthResponse check() {
         try {
-            platform = Objects.requireNonNullElse(platform, mod.getKernelPlatform());
-
             final var requestHeader = getRequestHeader();
             final var request = HttpRequest.newBuilder(URI.create(getRequestUrl(platform)))
                     .setHeader("User-Agent", requestHeader)
@@ -88,7 +84,7 @@ public class ModrinthUpdateChecker {
 
             LOGGER.info(
                     "Checking updates for mod with id `{}` (modrinth project id: {}) with request header `{}` for {}",
-                    modId,
+                    mod.getId(),
                     projectId,
                     requestHeader,
                     "%s platform (minecraft v%s)".formatted(platform, minecraftVersion)
@@ -98,7 +94,10 @@ public class ModrinthUpdateChecker {
 
             switch (basicResponse.statusCode()) {
                 case 404 -> {
-                    lastResponse = Response.of(ResponseCode.DOES_NOT_EXIST_AT_MODRINTH);
+                    lastResponse = ModrinthResponse.ofFailed(
+                            this,
+                            FailReason.DOES_NOT_EXIST_AT_MODRINTH
+                    );
                     return lastResponse;
                 }
                 case 200 -> {}
@@ -108,45 +107,29 @@ public class ModrinthUpdateChecker {
             final var versionsMetadata = JsonParser.parseString(basicResponse.body()).getAsJsonArray();
 
             if (versionsMetadata.isEmpty()) {
-                lastResponse = Response.of(ResponseCode.NO_VERSIONS_FOUND);
+                lastResponse = ModrinthResponse.ofFailed(this, FailReason.NO_VERSIONS_FOUND);
                 return lastResponse;
             }
 
-            final var versionInfo = versionsMetadata.get(0).getAsJsonObject();
-            final var modrinthProjectVersion = versionInfo.get("version_number").getAsString();
-            final var versionId = versionInfo.get("id").getAsString();
-
-            final var modrinthProjectKernelVersion = Versions.getKernelVersionOrThrow(modrinthProjectVersion);
-            final var modKernelVersion = Versions.getKernelVersionOrThrow(mod.getVersion());
-
-            lastResponse = Response.of(
-                    Versions.isGreaterThan(modrinthProjectKernelVersion, modKernelVersion)
-                            ? ResponseCode.NEW_VERSION_IS_AVAILABLE
-                            : ResponseCode.SUCCESSFUL,
-                    modrinthProjectVersion,
-                    getVersionPageUrl(versionId),
-                    versionInfo.get("files").getAsJsonArray().get(0).getAsJsonObject().get("url").getAsString()
+            lastResponse = ModrinthResponse.ofSuccessful(
+                    this,
+                    versionsMetadata.get(0).getAsJsonObject()
             );
         } catch (IOException | Versions.InvalidVersionFormatException | NoSuchModException | InterruptedException e) {
             LOGGER.error("Failed to check updates for mod with id `%s` (modrinth project id: %s) v%s".formatted(
-                    modId,
+                    mod.getId(),
                     projectId,
-                    ModInfo.get(modId).map(ModInfo::getVersion).orElse("-unknown")
+                    mod.getVersion()
             ), e);
 
-            lastResponse = Response.of(ResponseCode.FAILED);
+            lastResponse = ModrinthResponse.ofFailed(this, FailReason.UNKNOWN);
         }
 
         return lastResponse;
     }
 
-    public @NotNull Optional<Response> getLastResponse() {
+    public @NotNull Optional<ModrinthResponse> getLastResponse() {
         return Optional.ofNullable(lastResponse);
-    }
-
-    public @NotNull Optional<SuccessfulResponse> getLastResponseAsSuccessful() {
-        return lastResponse instanceof SuccessfulResponse successfulResponse
-                ? Optional.of(successfulResponse) : Optional.empty();
     }
 
     private @NotNull String getRequestUrl(@NotNull Platform platform) {
@@ -155,39 +138,26 @@ public class ModrinthUpdateChecker {
                 .replace("{platform}", platform.name().toLowerCase());
     }
 
-    private @NotNull String getVersionPageUrl(@NotNull String versionId) {
-        return NOT_FORMATTED_VERSION_PAGE_URL.replace("{project_id}", projectId)
-                .replace("{version_id}", versionId);
-    }
-
     private @NotNull String getRequestHeader() {
         final var baseRequestHeader = getVersionedSourcePath(ModInfo.get(Namespace.ELEGANTIA).orElseThrow()).orElseThrow();
 
-        if (Namespace.ELEGANTIA.equals(modId))
+        if (Namespace.ELEGANTIA.equals(mod.getId()))
             return baseRequestHeader;
 
-        final var modInfo = ModInfo.get(modId).orElseThrow();
+        final var modInfo = ModInfo.get(mod.getId()).orElseThrow();
 
         return "%s for 3rd party mod %s".formatted(
                 baseRequestHeader,
-                getVersionedSourcePath(modInfo).orElse("`%s` (mod id: %s)".formatted(modInfo.getName(), modId))
+                getVersionedSourcePath(modInfo).orElse("`%s` (mod id: %s)".formatted(modInfo.getName(), mod.getId()))
         );
     }
 
-    public static @NotNull Response quickCheck(@NotNull Namespace modAndProjectNamespace) {
-        return new ModrinthUpdateChecker(modAndProjectNamespace).check();
+    public static @NotNull ModrinthUpdateChecker of(@NotNull String modAndProjectId) {
+        return new ModrinthUpdateChecker(modAndProjectId, modAndProjectId);
     }
 
-    public static @NotNull Response quickCheck(@NotNull Namespace namespace, @NotNull String projectId) {
-        return new ModrinthUpdateChecker(namespace, projectId).check();
-    }
-
-    public static @NotNull Response quickCheck(@NotNull String modAndProjectId) {
-        return new ModrinthUpdateChecker(modAndProjectId).check();
-    }
-
-    public static @NotNull Response quickCheck(@NotNull String modId, @NotNull String projectId) {
-        return new ModrinthUpdateChecker(modId, projectId).check();
+    public static @NotNull ModrinthUpdateChecker of(@NotNull Namespace modAndProjectNamespace) {
+        return new ModrinthUpdateChecker(modAndProjectNamespace, modAndProjectNamespace.get());
     }
 
     private static @NotNull Optional<String> getVersionedSourcePath(@NotNull ModInfo modInfo) {

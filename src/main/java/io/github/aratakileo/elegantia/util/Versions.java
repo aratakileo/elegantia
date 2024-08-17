@@ -20,7 +20,7 @@ public final class Versions {
         return matcher.find() ? Optional.of(matcher.group("kernel")) : Optional.empty();
     }
 
-    public static @NotNull String getKernelVersionOrThrow(@NotNull String version) {
+    public static @NotNull String getVersionKernelOrThrow(@NotNull String version) {
         return getVersionKernel(version).orElseThrow(
                 () -> new InvalidVersionFormatException(version)
         );
