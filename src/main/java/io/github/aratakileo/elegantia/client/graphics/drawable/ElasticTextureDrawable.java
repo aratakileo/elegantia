@@ -41,7 +41,7 @@ public class ElasticTextureDrawable implements Drawable {
         final var centerAndSideSegmentTextureSize = textureSize.shrink(borderWidth);
         final var centerTextureSize = centerAndSideSegmentTextureSize.shrink(borderWidth);
 
-        final var textureDrawer = rectDrawer.texture(source, textureSize);
+        final var textureDrawer = rectDrawer.texture(source, textureSize).setUV(uv);
 
         textureDrawer.renderSquare(0, 0, 0, 0, borderWidth)
                 .renderSquare(
