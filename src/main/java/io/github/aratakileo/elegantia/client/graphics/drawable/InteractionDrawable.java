@@ -6,6 +6,8 @@ import io.github.aratakileo.elegantia.core.BuiltinTextures;
 import io.github.aratakileo.elegantia.core.math.Rect2i;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.BiConsumer;
+
 public abstract class InteractionDrawable implements Drawable {
     protected boolean focused = false, pressed = false, enabled = false;
 
@@ -30,6 +32,15 @@ public abstract class InteractionDrawable implements Drawable {
 
     public boolean hovered(@NotNull Rect2i bounds) {
         return bounds.contains(MouseProvider.getPosition());
+    }
+    
+    public static @NotNull InteractionDrawable create(@NotNull BiConsumer<InteractionDrawable, RectDrawer> renderer) {
+        return new InteractionDrawable() {
+            @Override
+            public void render(@NotNull RectDrawer rectDrawer) {
+                renderer.accept(this, rectDrawer);
+            }
+        };
     }
 
     public static @NotNull InteractionDrawable createElegantiaButton() {
