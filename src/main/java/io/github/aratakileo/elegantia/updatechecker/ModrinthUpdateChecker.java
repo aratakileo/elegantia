@@ -27,10 +27,10 @@ public class ModrinthUpdateChecker {
 
     private final static HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
-    protected final ModInfo mod;
-    protected final String projectId;
-
     private @Nullable ModrinthResponse lastResponse = null;
+
+    public final ModInfo mod;
+    public final String projectId;
 
     public @NotNull Platform platform;
     public @NotNull String minecraftVersion;
