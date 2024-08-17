@@ -98,17 +98,19 @@ public class TexturedProgressDrawable implements Drawable {
         ).setUV(textureDrawable.uv);
     }
 
-    public static @NotNull TexturedProgressDrawable of(
+    public static @NotNull InitOnGet<TexturedProgressDrawable> of(
             @NotNull InitOnGet<TextureDrawable> textureDrawable,
             @NotNull Direction direction,
             @NotNull Supplier<Float> progressGetter
     ) {
-        return new TexturedProgressDrawable(
-                textureDrawable.get().texture,
-                textureDrawable.get().textureSize,
-                direction,
-                progressGetter
-        ).setUV(textureDrawable.get().uv);
+        return InitOnGet.of(
+                () -> new TexturedProgressDrawable(
+                        textureDrawable.get().texture,
+                        textureDrawable.get().textureSize,
+                        direction,
+                        progressGetter
+                ).setUV(textureDrawable.get().uv)
+        );
     }
 
     /**
