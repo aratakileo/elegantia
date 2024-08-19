@@ -67,7 +67,7 @@ public class Vector2fc implements Vector2fInterface {
 
     @Override
     public @NotNull Vector2fc sub(@NotNull org.joml.Vector2fc vector2fc) {
-        return new Vector2fc(x - (float) vector2fc.x(), y - (float) vector2fc.y());
+        return new Vector2fc(x - vector2fc.x(), y - vector2fc.y());
     }
 
     @Override

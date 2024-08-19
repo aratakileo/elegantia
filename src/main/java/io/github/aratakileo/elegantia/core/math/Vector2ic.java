@@ -62,7 +62,7 @@ public class Vector2ic implements Vector2iInterface {
 
     @Override
     public @NotNull Vector2ic add(int value) {
-        return sub(value, value);
+        return add(value, value);
     }
 
     @Override
