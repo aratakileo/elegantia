@@ -115,3 +115,5 @@ You can place badges on your project page to improve the perception of the poste
     <img src="https://github.com/aratakileo/elegantia/blob/main/shared/badges/available_on_modrinth.svg?raw=true" height="64" alt="Available on modrinth"/>
 </a>
 ```
+
+for modrinth page replace `.svg` to `.png`
