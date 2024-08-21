@@ -2,6 +2,10 @@
     <img src="shared/badges/requires_fabric_api.svg" height="64" alt="Requires fabric API"/>
 </a>
 
+<a href="https://modrinth.com/mod/modmenu">
+    <img src="shared/badges/supports_mod_menu.svg" height="64" alt="Supports Mod Menu"/>
+</a>
+
 <a href="https://discord.gg/t5ZqftXG4b">
     <img src="shared/badges/chat_with_us_on_discord.svg" height="64" alt="Chat with us on Discord"/>
 </a>
@@ -83,12 +87,12 @@ You can place badges on your project page to improve the perception of the poste
 ```
 
 <a href="https://modrinth.com/mod/modmenu">
-    <img src="shared/badges/supports_mod_menu.svg" height="64" alt="Supports REI"/>
+    <img src="shared/badges/supports_mod_menu.svg" height="64" alt="Supports Mod Menu"/>
 </a>
 
 ```html
 <a href="https://modrinth.com/mod/modmenu">
-    <img src="https://github.com/aratakileo/elegantia/blob/main/shared/badges/supports_mod_menu.svg?raw=true" height="64" alt="Supports REI"/>
+    <img src="https://github.com/aratakileo/elegantia/blob/main/shared/badges/supports_mod_menu.svg?raw=true" height="64" alt="Supports Mod Menu"/>
 </a>
 ```
 
