@@ -78,7 +78,7 @@ You can place badges on your project page to improve the perception of the poste
 
 ```html
 <a href="https://modrinth.com/mod/rei">
-    <img src="https://github.com/aratakileo/elegantia/blob/main/shared/badges/supports_rei.svg" height="64" alt="Supports REI"/>
+    <img src="https://github.com/aratakileo/elegantia/blob/main/shared/badges/supports_rei.svg?raw=true" height="64" alt="Supports REI"/>
 </a>
 ```
 
