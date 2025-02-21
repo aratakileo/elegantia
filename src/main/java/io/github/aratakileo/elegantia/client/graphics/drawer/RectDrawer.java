@@ -1,12 +1,10 @@
 package io.github.aratakileo.elegantia.client.graphics.drawer;
 
 import com.google.common.base.Preconditions;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import io.github.aratakileo.elegantia.client.graphics.ElBufferBuilder;
 import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.core.math.*;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,26 +42,20 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
             return this;
         }
 
-        final var lastPose = guiGraphics.pose().last();
-        final var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+        final var buffer = guiGraphics.getIndependentBuffer(VertexFormat.Mode.TRIANGLE_FAN);
 
-        drawCorner(buffer, lastPose, argbColor, Corner.LEFT_TOP);
-        drawCorner(buffer, lastPose, argbColor, Corner.LEFT_BOTTOM);
-        drawCorner(buffer, lastPose, argbColor, Corner.RIGHT_BOTTOM);
-        drawCorner(buffer, lastPose, argbColor, Corner.RIGHT_TOP);
+        drawCorner(buffer, argbColor, Corner.LEFT_TOP);
+        drawCorner(buffer, argbColor, Corner.LEFT_BOTTOM);
+        drawCorner(buffer, argbColor, Corner.RIGHT_BOTTOM);
+        drawCorner(buffer, argbColor, Corner.RIGHT_TOP);
 
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        BufferUploader.drawWithShader(buffer.build());
-        RenderSystem.disableBlend();
+        buffer.buildAndRender();
 
         return this;
     }
 
     private void drawCorner(
-            @NotNull BufferBuilder buffer,
-            @NotNull PoseStack.Pose lastPose,
+            @NotNull ElBufferBuilder buffer,
             int argbColor,
             @NotNull Corner corner
     ) {
@@ -71,10 +63,7 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
         final var segments = Math.round(2d * Math.PI * radius);
 
         if (segments == 0) {
-            final var vertexPos = bounds.getCornerPos(corner).asVec2f().asVector3f(0);
-
-            buffer.addVertex(lastPose, vertexPos).setColor(argbColor);
-
+            buffer.addVertex(bounds.getCornerPos(corner).asVec2f(), argbColor);
             return;
         }
 
@@ -86,9 +75,9 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
             final var angle = corner.startAngle + i * angleStep;
             final var theta = Math.toRadians(angle);
             final var polarPos = radiusVec.mul(Math.cos(theta), Math.sin(theta));
-            final var vertexPos = center.add(polarPos).asVec2f().asVector3f(0);
+            final var vertexPos = center.add(polarPos).asVec2f();
 
-            buffer.addVertex(lastPose, vertexPos).setColor(argbColor);
+            buffer.addVertex(vertexPos, argbColor);
         }
     }
 
@@ -143,33 +132,23 @@ public class RectDrawer extends AbstractRectDrawer<RectDrawer> {
                         || argbTopRightColor == 0x0
         ) return this;
 
-        final var lastPose = guiGraphics.pose().last();
-
         if (cornersRadius.isEmpty()) {
-            guiGraphics.bufferSource().getBuffer(RenderType.gui())
-                    .addVertex(lastPose, bounds.getLeft(), bounds.getTop(), 0)
-                    .setColor(argbTopLeftColor)
-                    .addVertex(lastPose, bounds.getLeft(), bounds.getBottom(), 0)
-                    .setColor(argbBottomLeftColor)
-                    .addVertex(lastPose, bounds.getRight(), bounds.getBottom(), 0)
-                    .setColor(argbBottomRightColor)
-                    .addVertex(lastPose, bounds.getRight(), bounds.getTop(), 0)
-                    .setColor(argbTopRightColor);
+            guiGraphics.getGuiBuffer().addVertex(bounds.getLeft(), bounds.getTop(), argbTopLeftColor)
+                    .addVertex(bounds.getLeft(), bounds.getBottom(), argbBottomLeftColor)
+                    .addVertex(bounds.getRight(), bounds.getBottom(), argbBottomRightColor)
+                    .addVertex(bounds.getRight(), bounds.getTop(), argbBottomLeftColor);
+
             return this;
         }
 
-        final var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+        final var buffer = guiGraphics.getIndependentBuffer(VertexFormat.Mode.TRIANGLE_FAN);
 
-        drawCorner(buffer, lastPose, argbTopLeftColor, Corner.LEFT_TOP);
-        drawCorner(buffer, lastPose, argbBottomLeftColor, Corner.LEFT_BOTTOM);
-        drawCorner(buffer, lastPose, argbBottomRightColor, Corner.RIGHT_BOTTOM);
-        drawCorner(buffer, lastPose, argbTopRightColor, Corner.RIGHT_TOP);
+        drawCorner(buffer, argbTopLeftColor, Corner.LEFT_TOP);
+        drawCorner(buffer, argbBottomLeftColor, Corner.LEFT_BOTTOM);
+        drawCorner(buffer, argbBottomRightColor, Corner.RIGHT_BOTTOM);
+        drawCorner(buffer, argbTopRightColor, Corner.RIGHT_TOP);
 
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        BufferUploader.drawWithShader(buffer.build());
-        RenderSystem.disableBlend();
+        buffer.buildAndRender();
 
         return this;
     }

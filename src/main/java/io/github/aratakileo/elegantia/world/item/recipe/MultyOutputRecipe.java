@@ -13,13 +13,19 @@ public abstract class MultyOutputRecipe<T extends RecipeInput> implements Recipe
     @Override
     public abstract boolean matches(@NotNull T recipeInput, @NotNull Level level);
 
-    public @NotNull List<ItemStack> assembles(@NotNull T recipeInput, HolderLookup.Provider provider) {
+    public @NotNull List<ItemStack> assembles(@NotNull T recipeInput, @NotNull HolderLookup.Provider provider) {
         return List.copyOf(getResultItems());
     }
 
     @Deprecated
     @Override
-    public final @NotNull ItemStack assemble(@NotNull T recipeInput, HolderLookup.Provider provider) {
+    public final @NotNull ItemStack assemble(@NotNull T recipeInput, @NotNull HolderLookup.Provider provider) {
+        throw new RuntimeException("Do not use this method!");
+    }
+
+    @Deprecated
+    @Override
+    public final @NotNull ItemStack getResultItem(@NotNull HolderLookup.Provider provider) {
         throw new RuntimeException("Do not use this method!");
     }
 
@@ -29,10 +35,4 @@ public abstract class MultyOutputRecipe<T extends RecipeInput> implements Recipe
     }
 
     public abstract @NotNull List<ItemStack> getResultItems();
-
-    @Deprecated
-    @Override
-    public final @NotNull ItemStack getResultItem(HolderLookup.Provider provider) {
-        throw new RuntimeException("Do not use this method!");
-    }
 }

@@ -29,7 +29,7 @@
     "elegantia.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.21"
+    "minecraft": ">=${minecraft_version}"
   },
   "accessWidener": "elegantia.accesswidener"
 }

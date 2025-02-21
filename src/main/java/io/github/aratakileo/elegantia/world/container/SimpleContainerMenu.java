@@ -1,6 +1,5 @@
 package io.github.aratakileo.elegantia.world.container;
 
-import io.github.aratakileo.elegantia.world.container.ContainerAutoData;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

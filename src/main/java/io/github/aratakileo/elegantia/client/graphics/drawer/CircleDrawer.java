@@ -1,16 +1,15 @@
 package io.github.aratakileo.elegantia.client.graphics.drawer;
 
 import com.google.common.base.Preconditions;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import io.github.aratakileo.elegantia.client.graphics.ElBufferBuilder;
 import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.core.math.Vector2dc;
 import io.github.aratakileo.elegantia.core.math.Vector2iInterface;
-import net.minecraft.client.renderer.GameRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class CircleDrawer {
     private final ElGuiGraphics guiGraphics;
@@ -61,12 +60,12 @@ public class CircleDrawer {
 
         _forEachVertex(
                 VertexFormat.Mode.TRIANGLE_FAN,
-                (buffer, lastPose) -> buffer.addVertex(lastPose, centerX, centerY, 0).setColor(argbColor),
-                (buffer, lastPose, theta) -> {
+                buffer -> buffer.addVertex(centerX, centerY, argbColor),
+                (buffer, theta) -> {
                     final var polarPos = radiusVec.mul(Math.cos(theta), Math.sin(theta)).asVec2f();
                     final var vertexPos = polarPos.neg().add(centerX, centerY);
 
-                    buffer.addVertex(lastPose, vertexPos.asVector3f(0)).setColor(argbColor);
+                    buffer.addVertex(vertexPos, argbColor);
                 }
         );
 
@@ -82,14 +81,14 @@ public class CircleDrawer {
         final var innerRadiusVec = Vector2dc.createXY(radius - halfThickness);
         final var outerRadiusVec = Vector2dc.createXY(radius + halfThickness);
 
-        _forEachVertex(VertexFormat.Mode.TRIANGLE_STRIP, null, (buffer, lastPose, theta) -> {
+        _forEachVertex(VertexFormat.Mode.TRIANGLE_STRIP, null, (buffer, theta) -> {
             final var innerPolarPos = innerRadiusVec.mul(Math.cos(theta), Math.sin(theta)).asVec2f();
             final var innerVertexPos = innerPolarPos.neg().add(centerX, centerY);
             final var outerPolarPos = outerRadiusVec.mul(Math.cos(theta), Math.sin(theta)).asVec2f();
             final var outerVertexPos = outerPolarPos.neg().add(centerX, centerY);
 
-            buffer.addVertex(lastPose, innerVertexPos.asVector3f(0)).setColor(argbColor);
-            buffer.addVertex(lastPose, outerVertexPos.asVector3f(0)).setColor(argbColor);
+            buffer.addVertex(innerVertexPos, argbColor);
+            buffer.addVertex(outerVertexPos, argbColor);
         });
 
         return this;
@@ -97,30 +96,25 @@ public class CircleDrawer {
 
     private void _forEachVertex(
             @NotNull VertexFormat.Mode mode,
-            @Nullable BiConsumer<BufferBuilder, PoseStack.Pose> prepareConsumer,
+            @Nullable Consumer<ElBufferBuilder> prepareConsumer,
             @NotNull CircleVertexConsumer consumer
     ) {
-        final var lastPose = guiGraphics.pose().last();
-        final var buffer = Tesselator.getInstance().begin(mode, DefaultVertexFormat.POSITION_COLOR);
+        final var buffer = guiGraphics.getIndependentBuffer(mode);
 
         final var circumference = 2d * Math.PI * radius;
         final var segments = Math.max(4, (int)Math.ceil(circumference * smoothness));
         final var angleStep = Math.toRadians((endAngle - startAngle) / segments);
 
         if (prepareConsumer != null)
-            prepareConsumer.accept(buffer, lastPose);
+            prepareConsumer.accept(buffer);
 
         for (var i = segments; i >= 0; i--) {
             final var theta = Math.toRadians(startAngle) + i * angleStep;
 
-            consumer.accept(buffer, lastPose, theta);
+            consumer.accept(buffer, theta);
         }
 
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        BufferUploader.drawWithShader(buffer.build());
-        RenderSystem.disableBlend();
+        buffer.buildAndRender();
     }
 
     @Override
@@ -137,6 +131,6 @@ public class CircleDrawer {
     }
 
     private interface CircleVertexConsumer {
-        void accept(@NotNull BufferBuilder buffer, @NotNull PoseStack.Pose lastPose, double theta);
+        void accept(@NotNull ElBufferBuilder buffer, double theta);
     }
 }

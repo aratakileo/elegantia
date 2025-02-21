@@ -9,6 +9,7 @@ accessible method net/minecraft/world/inventory/MenuType <init> (Lnet/minecraft/
 accessible method net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity add (Ljava/util/Map;Lnet/minecraft/tags/TagKey;I)V
 accessible method net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity add (Ljava/util/Map;Lnet/minecraft/world/level/ItemLike;I)V
 accessible method net/minecraft/client/gui/GuiGraphics <init> (Lnet/minecraft/client/Minecraft;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V
+accessible method net/minecraft/server/packs/repository/Pack <init> (Ljava/lang/String;ZLnet/minecraft/server/packs/repository/Pack$ResourcesSupplier;Lnet/minecraft/network/chat/Component;Lnet/minecraft/server/packs/repository/Pack$Info;Lnet/minecraft/server/packs/repository/PackCompatibility;Lnet/minecraft/server/packs/repository/Pack$Position;ZLnet/minecraft/server/packs/repository/PackSource;)V
 
 accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
 accessible field com/mojang/blaze3d/vertex/BufferBuilder buffer Lcom/mojang/blaze3d/vertex/ByteBufferBuilder;

@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.aratakileo.elegantia.util.Random;
+import io.github.aratakileo.elegantia.util.RegistriesUtil;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -44,7 +44,7 @@ public final class ItemRandomRange {
     }
 
     public @NotNull Holder.Reference<Item> getItemHolder() {
-        return BuiltInRegistries.ITEM.getHolder(BuiltInRegistries.ITEM.getId(item)).orElseThrow();
+        return RegistriesUtil.getBuiltInItemHolder(item).orElseThrow();
     }
 
     public @NotNull ItemStack getItemStack() {

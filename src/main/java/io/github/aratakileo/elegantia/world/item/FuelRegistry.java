@@ -35,6 +35,7 @@ public final class FuelRegistry {
         if (canNotAdd(item.toString(), cookTime)) return item;
 
         ITEM_COOK_TIMES.put(item, cookTime);
+
         AbstractFurnaceBlockEntity.invalidateCache();
 
         return item;
@@ -44,6 +45,7 @@ public final class FuelRegistry {
         if (canNotAdd(tag.location().toString(), cookTime)) return tag;
 
         TAG_COOK_TIMES.put(tag, cookTime);
+
         AbstractFurnaceBlockEntity.invalidateCache();
 
         return tag;

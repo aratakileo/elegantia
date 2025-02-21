@@ -52,18 +52,12 @@ public class ElGuiGraphics extends GuiGraphics {
 
     public void drawLine(int x1, int y1, int x2, int y2, double thickness, int argbColor) {
         final var offset = new Vector2d(x2 - x1, y2 - y1).perpendicular().normalize().mul(thickness * 0.5d);
+        final var buffer = getGuiBuffer();
 
-        final var lastPose = pose().last();
-
-        bufferSource().getBuffer(RenderType.gui())
-                .addVertex(lastPose, (float)(x1 + offset.x), (float)(y1 + offset.y), 0)
-                .setColor(argbColor)
-                .addVertex(lastPose, (float)(x1 - offset.x), (float)(y1 - offset.y), 0)
-                .setColor(argbColor)
-                .addVertex(lastPose, (float)(x2 - offset.x), (float)(y2 - offset.y), 0)
-                .setColor(argbColor)
-                .addVertex(lastPose, (float)(x2 + offset.x), (float)(y2 + offset.y), 0)
-                .setColor(argbColor);
+        buffer.addVertex((float)(x1 + offset.x), (float)(y1 + offset.y), argbColor);
+        buffer.addVertex((float)(x1 - offset.x), (float)(y1 - offset.y), argbColor);
+        buffer.addVertex((float)(x2 - offset.x), (float)(y2 - offset.y), argbColor);
+        buffer.addVertex((float)(x2 + offset.x), (float)(y2 + offset.y), argbColor);
     }
 
     public void renderTooltip(
@@ -202,6 +196,18 @@ public class ElGuiGraphics extends GuiGraphics {
     @Override
     public void enableScissor(int x, int y, int width, int height) {
         super.enableScissor(x, y, x + width, y + height);
+    }
+
+    public @NotNull ElBufferBuilder getGuiBuffer() {
+        return new ElBufferBuilder((BufferBuilder) bufferSource().getBuffer(RenderType.gui()), pose().last());
+    }
+
+    public @NotNull ElBufferBuilder getIndependentBuffer(@NotNull VertexFormat.Mode mode) {
+        final var buffer = Tesselator.getInstance().begin(
+                mode,
+                DefaultVertexFormat.POSITION_COLOR
+        );
+        return new ElBufferBuilder(buffer, pose().last());
     }
 
     public @NotNull TextureDrawer textureAutoSize(@NotNull ResourceLocation location, @NotNull Rect2i bounds) {

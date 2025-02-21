@@ -152,9 +152,9 @@ public final class ResourcePacksProvider {
             @NotNull Path resourcePackPath,
             @NotNull Component finishedDisplayName
     ) {
-        final var packLocationInfo = createPackLocationInfo(packId, finishedDisplayName);
         final var resourceSupplier = createResourceSupplier(resourcePackPath);
 
+        final var packLocationInfo = createPackLocationInfo(packId, finishedDisplayName);
         var defaultMetadata = Optional.ofNullable(Pack.readPackMetadata(
                 packLocationInfo,
                 resourceSupplier,

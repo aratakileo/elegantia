@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.core.DefaultedRegistry;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -27,10 +28,15 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public final class RegistriesUtil {
     private RegistriesUtil() {}
+
+    public static @NotNull Optional<Holder.Reference<Item>> getBuiltInItemHolder(@NotNull Item item) {
+        return BuiltInRegistries.ITEM.getHolder(BuiltInRegistries.ITEM.getId(item));
+    }
 
     public static <T> @NotNull HashSet<T> getElementsFromTag(
             @NotNull DefaultedRegistry<T> registry,

@@ -59,11 +59,6 @@ public abstract class AbstractContainerBlockEntity extends BaseContainerBlockEnt
     }
 
     @Override
-    public int getContainerSize() {
-        return items.size();
-    }
-
-    @Override
     protected void saveAdditional(@NotNull CompoundTag compoundTag, @NotNull HolderLookup.Provider provider) {
         super.saveAdditional(compoundTag, provider);
 
@@ -73,6 +68,23 @@ public abstract class AbstractContainerBlockEntity extends BaseContainerBlockEnt
         }
 
         ContainerHelper.saveAllItems(compoundTag, items, provider);
+    }
+
+    @Override
+    protected void loadAdditional(@NotNull CompoundTag compoundTag, @NotNull HolderLookup.Provider provider) {
+        super.loadAdditional(compoundTag, provider);
+
+        ContainerHelper.loadAllItems(compoundTag, items, provider);
+
+        for (final var field: this.getClass().getDeclaredFields()) {
+            if (field.isAnnotationPresent(CompoundDataField.class))
+                loadFieldData(compoundTag, this, field, null);
+        }
+    }
+
+    @Override
+    public int getContainerSize() {
+        return items.size();
     }
 
     private void saveFieldData(
@@ -111,18 +123,6 @@ public abstract class AbstractContainerBlockEntity extends BaseContainerBlockEnt
                 saveFieldData(compoundTag, field.get(instance), subfield, field.getName());
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    protected void loadAdditional(@NotNull CompoundTag compoundTag, @NotNull HolderLookup.Provider provider) {
-        super.loadAdditional(compoundTag, provider);
-
-        ContainerHelper.loadAllItems(compoundTag, items, provider);
-
-        for (final var field: this.getClass().getDeclaredFields()) {
-            if (field.isAnnotationPresent(CompoundDataField.class))
-                loadFieldData(compoundTag, this, field, null);
         }
     }
 

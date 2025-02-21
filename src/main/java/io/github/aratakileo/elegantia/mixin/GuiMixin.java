@@ -3,6 +3,7 @@ package io.github.aratakileo.elegantia.mixin;
 import io.github.aratakileo.elegantia.client.event.HudRenderListener;
 import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import net.minecraft.client.DeltaTracker;
+
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;
@@ -20,5 +21,6 @@ public class GuiMixin {
             @NotNull CallbackInfo callbackInfo
     ) {
         HudRenderListener.EVENT.getInvoker().onHudRender(ElGuiGraphics.of(guiGraphics));
+
     }
 }
