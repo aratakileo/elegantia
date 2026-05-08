@@ -1,26 +1,20 @@
 package io.github.aratakileo.elegantia.client.graphics.drawable;
 
-import io.github.aratakileo.elegantia.client.graphics.drawer.RectDrawer;
 import io.github.aratakileo.elegantia.client.graphics.drawer.TextureDrawer;
 import io.github.aratakileo.elegantia.core.math.*;
 import io.github.aratakileo.elegantia.util.type.InitOnGet;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-public class ElasticTextureDrawable implements Drawable {
-    public final ResourceLocation source;
-    public final Size2ic textureSize;
+public class ElasticTextureDrawable extends AbstractTextureDrawable<ElasticTextureDrawable> {
     public final int borderWidth;
 
-    public @NotNull Vector2fInterface uv = Vector2fc.ZERO;
-
     public ElasticTextureDrawable(
-            @NotNull ResourceLocation source,
+            @NotNull ResourceLocation texture,
             @NotNull Size2iInterface textureSize,
             int borderWidth
     ) {
-        this.source = source;
-        this.textureSize = Size2ic.of(textureSize);
+        super(texture, textureSize);
         this.borderWidth = borderWidth;
     }
 
@@ -35,15 +29,13 @@ public class ElasticTextureDrawable implements Drawable {
     }
 
     @Override
-    public void render(@NotNull RectDrawer rectDrawer) {
-        final var centerAndSideSegmentSize = rectDrawer.bounds.getSize().shrink(borderWidth);
+    public void render(@NotNull TextureDrawer drawer) {
+        final var centerAndSideSegmentSize = drawer.bounds.getSize().shrink(borderWidth);
         final var centerSize = centerAndSideSegmentSize.shrink(borderWidth);
         final var centerAndSideSegmentTextureSize = textureSize.shrink(borderWidth);
         final var centerTextureSize = centerAndSideSegmentTextureSize.shrink(borderWidth);
 
-        final var textureDrawer = rectDrawer.texture(source, textureSize).setUV(uv);
-
-        textureDrawer.renderSquare(0, 0, 0, 0, borderWidth)
+        drawer.renderSquare(0, 0, 0, 0, borderWidth)
                 .renderSquare(
                         0,
                         centerAndSideSegmentSize.height,
@@ -71,17 +63,17 @@ public class ElasticTextureDrawable implements Drawable {
             final var xOffset = borderWidth + minCenterTextureSize.width * xIndex;
             final var lastXSegment = xIndex == horizontalCenterSegments - 1;
             final var finalWidth = lastXSegment
-                    ? rectDrawer.bounds.width - xOffset - borderWidth
+                    ? drawer.bounds.width - xOffset - borderWidth
                     : minCenterTextureSize.width;
 
             for (var yIndex = 0; yIndex < verticalCenterSegments; yIndex++) {
                 final var yOffset = borderWidth + minCenterTextureSize.height * yIndex;
                 final var lastYSegment = yIndex == verticalCenterSegments - 1;
                 final var finalHeight = lastYSegment
-                        ? rectDrawer.bounds.height - yOffset - borderWidth
+                        ? drawer.bounds.height - yOffset - borderWidth
                         : minCenterTextureSize.height;
 
-                textureDrawer.render(
+                drawer.render(
                         xOffset,
                         yOffset,
                         borderWidth,
@@ -91,7 +83,7 @@ public class ElasticTextureDrawable implements Drawable {
                 );
 
                 if (xOffset == borderWidth)
-                    textureDrawer.render(
+                    drawer.render(
                             0,
                             yOffset,
                             0,
@@ -101,7 +93,7 @@ public class ElasticTextureDrawable implements Drawable {
                     );
 
                 if (lastXSegment) {
-                    textureDrawer.render(
+                    drawer.render(
                             centerAndSideSegmentSize.width,
                             yOffset,
                             centerAndSideSegmentTextureSize.width,
@@ -112,7 +104,7 @@ public class ElasticTextureDrawable implements Drawable {
                 }
             }
 
-            textureDrawer.render(
+            drawer.render(
                     xOffset,
                     0,
                     borderWidth,
@@ -121,7 +113,7 @@ public class ElasticTextureDrawable implements Drawable {
                     borderWidth
             );
 
-            textureDrawer.render(
+            drawer.render(
                     xOffset,
                     centerAndSideSegmentSize.height,
                     borderWidth,
@@ -143,7 +135,7 @@ public class ElasticTextureDrawable implements Drawable {
             @NotNull ResourceLocation source,
             int borderWidth
     ) {
-       return InitOnGet.of(
+       return InitOnGet.build(
                () -> new ElasticTextureDrawable(source, TextureDrawer.getTextureSize(source), borderWidth)
        );
     }
@@ -153,7 +145,7 @@ public class ElasticTextureDrawable implements Drawable {
             int borderWidth,
             @NotNull Vector2fInterface uv
     ) {
-       return InitOnGet.of(
+       return InitOnGet.build(
                () -> new ElasticTextureDrawable(source, TextureDrawer.getTextureSize(source), borderWidth).setUV(uv)
        );
     }
@@ -164,12 +156,15 @@ public class ElasticTextureDrawable implements Drawable {
             float u,
             float v
     ) {
-       return InitOnGet.of(
+       return InitOnGet.build(
                () -> new ElasticTextureDrawable(source, TextureDrawer.getTextureSize(source), borderWidth).setUV(u, v)
        );
     }
 
-    public static @NotNull ElasticTextureDrawable of(@NotNull TextureDrawable textureDrawable, int borderWidth) {
+    public static <T extends AbstractTextureDrawable<?>> @NotNull ElasticTextureDrawable of(
+            @NotNull T textureDrawable,
+            int borderWidth
+    ) {
         return new ElasticTextureDrawable(
                 textureDrawable.texture,
                 textureDrawable.textureSize,
@@ -177,10 +172,10 @@ public class ElasticTextureDrawable implements Drawable {
         ).setUV(textureDrawable.uv);
     }
 
-    public static @NotNull InitOnGet<ElasticTextureDrawable> of(
-            @NotNull InitOnGet<TextureDrawable> textureDrawableGetter,
+    public static <T extends AbstractTextureDrawable<?>> @NotNull InitOnGet<ElasticTextureDrawable> of(
+            @NotNull InitOnGet<T> textureDrawableGetter,
             int borderWidth
     ) {
-        return InitOnGet.of(() -> of(textureDrawableGetter.get(), borderWidth));
+        return InitOnGet.build(() -> of(textureDrawableGetter.getOrThrow(), borderWidth));
     }
 }

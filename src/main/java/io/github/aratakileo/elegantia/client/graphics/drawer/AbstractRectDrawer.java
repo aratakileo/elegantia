@@ -4,7 +4,7 @@ import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
 import io.github.aratakileo.elegantia.core.math.Rect2i;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractRectDrawer<D extends AbstractRectDrawer<D>> {
+public abstract class AbstractRectDrawer<D extends AbstractRectDrawer<?>> {
     public final ElGuiGraphics guiGraphics;
     public final Rect2i bounds;
 

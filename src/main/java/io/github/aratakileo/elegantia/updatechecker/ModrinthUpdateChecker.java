@@ -5,7 +5,6 @@ import io.github.aratakileo.elegantia.core.NoSuchModException;
 import io.github.aratakileo.elegantia.core.ModInfo;
 import io.github.aratakileo.elegantia.core.Namespace;
 import io.github.aratakileo.elegantia.core.Platform;
-import io.github.aratakileo.elegantia.util.Versions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -42,7 +41,7 @@ public class ModrinthUpdateChecker {
         this.mod = ModInfo.getOrThrow(namespace);
         this.projectId = projectId;
         this.minecraftVersion = Platform.getMinecraftVersion();
-        this.platform = mod.getKernelPlatform();
+        this.platform = mod.kernelPlatform();
     }
 
     public ModrinthUpdateChecker(
@@ -52,11 +51,11 @@ public class ModrinthUpdateChecker {
         this.mod = ModInfo.getOrThrow(modId);
         this.projectId = projectId;
         this.minecraftVersion = Platform.getMinecraftVersion();
-        this.platform = mod.getKernelPlatform();
+        this.platform = mod.kernelPlatform();
     }
 
     public @NotNull ModrinthUpdateChecker setModKernelPlatform() {
-        platform = mod.getKernelPlatform();
+        platform = mod.kernelPlatform();
         return this;
     }
 
@@ -83,8 +82,8 @@ public class ModrinthUpdateChecker {
                     .build();
 
             LOGGER.info(
-                    "Checking updates for mod with id `{}` (modrinth project id: {}) with request header `{}` for {}",
-                    mod.getId(),
+                    "Checking updates for mod with id `{}` (modrinth.com/project/{}) with request header `{}` for {}",
+                    mod.id(),
                     projectId,
                     requestHeader,
                     "%s platform (minecraft v%s)".formatted(platform, minecraftVersion)
@@ -92,44 +91,54 @@ public class ModrinthUpdateChecker {
 
             final var basicResponse = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
-            switch (basicResponse.statusCode()) {
-                case 404 -> {
-                    lastResponse = ModrinthResponse.ofFailed(
-                            this,
-                            FailReason.DOES_NOT_EXIST_AT_MODRINTH
-                    );
-                    return lastResponse;
-                }
-                case 200 -> {}
-                default -> throw new InvalidResponseCodeException(basicResponse.statusCode());
-            }
+            if (basicResponse.statusCode() != 200)
+                return reportUnacceptableResponse(basicResponse);
 
             final var versionMetadatas = JsonParser.parseString(basicResponse.body()).getAsJsonArray();
 
-            if (versionMetadatas.isEmpty()) {
-                lastResponse = ModrinthResponse.ofFailed(this, FailReason.NO_VERSIONS_FOUND);
-                return lastResponse;
-            }
+            if (versionMetadatas.isEmpty())
+                return reportResponseFail(FailReason.NO_VERSIONS_FOUND);
 
             lastResponse = ModrinthResponse.ofSuccessful(
                     this,
                     versionMetadatas.get(0).getAsJsonObject()
             );
-        } catch (IOException | Versions.InvalidVersionFormatException | NoSuchModException | InterruptedException e) {
+
+            return lastResponse;
+        } catch (IOException | NoSuchModException | InterruptedException e) {
             LOGGER.error("Failed to check updates for mod with id `%s` (modrinth project id: %s) v%s".formatted(
-                    mod.getId(),
+                    mod.id(),
                     projectId,
-                    mod.getVersion()
+                    mod.version()
             ), e);
 
-            lastResponse = ModrinthResponse.ofFailed(this, FailReason.UNKNOWN);
+           return reportResponseFail(FailReason.UNKNOWN);
         }
-
-        return lastResponse;
     }
 
     public @NotNull Optional<ModrinthResponse> getLastResponse() {
         return Optional.ofNullable(lastResponse);
+    }
+
+    private @NotNull ModrinthResponse reportResponseFail(@NotNull FailReason failReason) {
+        lastResponse = ModrinthResponse.ofFailed(this, failReason);
+        return lastResponse;
+    }
+
+    private @NotNull ModrinthResponse reportUnacceptableResponse(@NotNull HttpResponse<String> basicResponse) {
+        LOGGER.warn(
+                "Got unacceptable server response {} with body:\n{}",
+                basicResponse.statusCode(),
+                basicResponse.body()
+        );
+
+        return reportResponseFail(switch (basicResponse.statusCode()) {
+            case 400 -> FailReason.BAD_REQUEST;
+            case 403 -> FailReason.ACCESS_FORBIDDEN;
+            case 404 -> FailReason.DOES_NOT_EXIST_AT_MODRINTH;
+            case 502 -> FailReason.INTERNAL_MODRINTH_ERROR;
+            default -> FailReason.UNKNOWN;
+        });
     }
 
     private @NotNull String getRequestUrl(@NotNull Platform platform) {
@@ -141,14 +150,14 @@ public class ModrinthUpdateChecker {
     private @NotNull String getRequestHeader() {
         final var baseRequestHeader = getVersionedSourcePath(ModInfo.get(Namespace.ELEGANTIA).orElseThrow()).orElseThrow();
 
-        if (Namespace.ELEGANTIA.equals(mod.getId()))
+        if (Namespace.ELEGANTIA.equals(mod.id()))
             return baseRequestHeader;
 
-        final var modInfo = ModInfo.get(mod.getId()).orElseThrow();
+        final var modInfo = ModInfo.get(mod.id()).orElseThrow();
 
         return "%s for 3rd party mod %s".formatted(
                 baseRequestHeader,
-                getVersionedSourcePath(modInfo).orElse("`%s` (mod id: %s)".formatted(modInfo.getName(), mod.getId()))
+                getVersionedSourcePath(modInfo).orElse("`%s` (mod id: %s)".formatted(modInfo.name(), mod.id()))
         );
     }
 
@@ -161,19 +170,9 @@ public class ModrinthUpdateChecker {
     }
 
     private static @NotNull Optional<String> getVersionedSourcePath(@NotNull ModInfo modInfo) {
-        return modInfo.getSourcesUrl().map(sourceUrl -> "%s@%s".formatted(
+        return modInfo.sourcesUrl().map(sourceUrl -> "%s@%s".formatted(
                 sourceUrl.strip().replaceFirst("^https?://", ""),
-                modInfo.getVersion()
+                modInfo.version()
         ));
-    }
-
-    public static class InvalidResponseCodeException extends RuntimeException {
-        public InvalidResponseCodeException(int code) {
-            super(String.valueOf(code));
-        }
-
-        public InvalidResponseCodeException(@NotNull String message) {
-            super(message);
-        }
     }
 }

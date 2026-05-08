@@ -34,7 +34,7 @@ public class ConfigScreen extends AbstractScreen {
     ) {
         super(parent, Component.translatable(
                 "elegantia.gui.config.title",
-                configInstance.getNamespace().getMod().map(ModInfo::getName).orElse("Unknown")
+                configInstance.getNamespace().getMod().map(ModInfo::name).orElse("Unknown")
         ));
         this.configInstance = configInstance;
     }

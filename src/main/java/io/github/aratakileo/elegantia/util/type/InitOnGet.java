@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -14,7 +16,7 @@ public class InitOnGet<T> {
     private @Nullable Supplier<T> getter = null;
     private @Nullable T value = null;
 
-    private InitOnGet(@NotNull T value) {
+    private InitOnGet(@Nullable T value) {
         this.value = value;
     }
 
@@ -22,8 +24,8 @@ public class InitOnGet<T> {
         this.getter = getter;
     }
 
-    public @NotNull T get() {
-        if (value == null) {
+    public @Nullable T get() {
+        if (getter != null) {
             value = Objects.requireNonNull(getter).get();
             getter = null;
         }
@@ -31,11 +33,44 @@ public class InitOnGet<T> {
         return value;
     }
 
-    public static <T> @NotNull InitOnGet<T> of(@NotNull T value) {
+    public @NotNull T getOrThrow() {
+        return Objects.requireNonNull(get());
+    }
+
+    public @NotNull Optional<T> getOptional() {
+        return Optional.ofNullable(get());
+    }
+
+    public static <T> @NotNull InitOnGet<T> of(@Nullable T value) {
         return new InitOnGet<>(value);
     }
 
-    public static <T> @NotNull InitOnGet<T> of(@NotNull Supplier<T> getter) {
+    public static <T> @NotNull InitOnGet<T> build(@NotNull Supplier<T> getter) {
         return new InitOnGet<>(getter);
+    }
+
+    public static <T, E> @NotNull InitOnGet<T> build(@NotNull E inputValue, @NotNull Function<E, T> builder) {
+        return new InitOnGet<>(() -> builder.apply(inputValue));
+    }
+
+    public static <T, E> @NotNull InitOnGet<T> buildOn(
+            @NotNull InitOnGet<E> inputValue,
+            @NotNull Function<E, T> builder
+    ) {
+        return new InitOnGet<>(() -> builder.apply(inputValue.get()));
+    }
+
+    public static <T, E> @NotNull InitOnGet<T> buildOptionalOn(
+            @NotNull InitOnGet<E> inputValue,
+            @NotNull Function<E, Optional<T>> builder
+    ) {
+        return new InitOnGet<>(() -> builder.apply(inputValue.get()).orElse(null));
+    }
+
+    public static <T, E> @NotNull InitOnGet<T> buildOptional(
+            @NotNull E inputValue,
+            @NotNull Function<E, Optional<T>> builder
+    ) {
+        return new InitOnGet<>(() -> builder.apply(inputValue).orElse(null));
     }
 }

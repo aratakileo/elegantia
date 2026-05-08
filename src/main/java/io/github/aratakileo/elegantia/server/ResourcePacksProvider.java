@@ -80,7 +80,7 @@ public final class ResourcePacksProvider {
             LOGGER.error(
                     "Resourcepack `{}` could not be registered because resourcepacks directory `{}` does not exist",
                     location,
-                    ownerMod.getRootPaths().get(0) + ownerMod.getFileSystem().getSeparator() + packsDirPath
+                    ownerMod.rootPaths().get(0) + ownerMod.fileSystem().getSeparator() + packsDirPath
             );
             return false;
         }
@@ -122,9 +122,9 @@ public final class ResourcePacksProvider {
             @NotNull Component finishedDisplayName
     ) {
         final var knownPack = new KnownPack(
-                ownerMod.getId(),
+                ownerMod.id(),
                 packId,
-                ownerMod.getVersion()
+                ownerMod.version().toString()
         );
         final var packSource = new PackSource() {
             @Override

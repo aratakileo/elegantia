@@ -15,7 +15,7 @@ public enum Platform {
         if (ModInfo.isModLoaded("neoforge")) return NEOFORGE;
 
         if (ModInfo.isModLoaded("forge")) return ModInfo.get("forge").map(
-                mod -> mod.getName().equalsIgnoreCase("neoforge") ? NEOFORGE : FORGE
+                mod -> mod.name().equalsIgnoreCase("neoforge") ? NEOFORGE : FORGE
         ).orElseThrow();
 
         return ModInfo.isModLoaded("quilt_loader") ? QUILT : FABRIC;

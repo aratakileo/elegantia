@@ -2,7 +2,6 @@ package io.github.aratakileo.elegantia.client.graphics.drawable;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import io.github.aratakileo.elegantia.client.graphics.ElGuiGraphics;
-import io.github.aratakileo.elegantia.client.graphics.drawer.RectDrawer;
 import io.github.aratakileo.elegantia.client.graphics.drawer.TextureDrawer;
 import io.github.aratakileo.elegantia.core.math.*;
 import io.github.aratakileo.elegantia.util.type.InitOnGet;
@@ -11,13 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public class TexturedProgressDrawable implements Drawable {
-    protected final ResourceLocation texture;
-    protected final Size2ic textureSize;
+public class TexturedProgressDrawable extends AbstractTextureDrawable<TexturedProgressDrawable> {
     protected final Direction direction;
     protected final Supplier<Float> progressGetter;
-
-    public Vector2fInterface uv = Vector2fc.ZERO;
 
     public TexturedProgressDrawable(
             @NotNull ResourceLocation texture,
@@ -25,26 +20,15 @@ public class TexturedProgressDrawable implements Drawable {
             @NotNull Direction direction,
             @NotNull Supplier<Float> progressGetter
     ) {
-        this.texture = texture;
-        this.textureSize = Size2ic.of(textureSize);
+        super(texture, textureSize);
         this.direction = direction;
         this.progressGetter = progressGetter;
     }
 
-    public @NotNull TexturedProgressDrawable setUV(@NotNull Vector2fInterface uv) {
-        this.uv = uv;
-        return this;
-    }
-
-    public @NotNull TexturedProgressDrawable setUV(float u, float v) {
-        this.uv = new Vector2fc(u, v);
-        return this;
-    }
-
     @Override
-    public void render(@NotNull RectDrawer rectDrawer) {
-        final var renderAreaSize = rectDrawer.bounds.getSize();
-        final var newBounds = rectDrawer.bounds.copy();
+    public void render(@NotNull TextureDrawer drawer) {
+        final var renderAreaSize = drawer.bounds.getSize();
+        final var newBounds = drawer.bounds.copy();
         final var newUV = Vector2f.of(uv);
         final var renderAreaSizeScaledByProgress = renderAreaSize.scale(progressGetter.get());
         final var remainedRenderAreaSize = renderAreaSize.shrink(renderAreaSizeScaledByProgress);
@@ -67,9 +51,7 @@ public class TexturedProgressDrawable implements Drawable {
             case RIGHT -> newBounds.width = renderAreaSizeScaledByProgress.width;
         }
 
-        rectDrawer.texture(texture, textureSize, newBounds)
-                .setUV(newUV)
-                .render();
+        drawer.withNewBounds(newBounds).setUV(newUV).render();
     }
 
     public static @NotNull TexturedProgressDrawable autoSize(
@@ -85,8 +67,8 @@ public class TexturedProgressDrawable implements Drawable {
         );
     }
 
-    public static @NotNull TexturedProgressDrawable of(
-            @NotNull TextureDrawable textureDrawable,
+    public static <T extends AbstractTextureDrawable<?>> @NotNull TexturedProgressDrawable of(
+            @NotNull T textureDrawable,
             @NotNull Direction direction,
             @NotNull Supplier<Float> progressGetter
     ) {
@@ -98,26 +80,24 @@ public class TexturedProgressDrawable implements Drawable {
         ).setUV(textureDrawable.uv);
     }
 
-    public static @NotNull InitOnGet<TexturedProgressDrawable> of(
-            @NotNull InitOnGet<TextureDrawable> textureDrawable,
+    public static <T extends AbstractTextureDrawable<?>> @NotNull InitOnGet<TexturedProgressDrawable> of(
+            @NotNull InitOnGet<T> textureDrawable,
             @NotNull Direction direction,
             @NotNull Supplier<Float> progressGetter
     ) {
-        return InitOnGet.of(
-                () -> new TexturedProgressDrawable(
-                        textureDrawable.get().texture,
-                        textureDrawable.get().textureSize,
-                        direction,
-                        progressGetter
-                ).setUV(textureDrawable.get().uv)
-        );
+        return InitOnGet.buildOn(textureDrawable, drawable -> new TexturedProgressDrawable(
+                drawable.texture,
+                drawable.textureSize,
+                direction,
+                progressGetter
+        ).setUV(drawable.uv));
     }
 
     /**
      * Returns a supplier that automatically generates a smooth increase in progress
      * according to the specified animation speed
      */
-    public static Supplier<Float> demoProgressAnimation(float speed) {
+    public static @NotNull Supplier<Float> demoProgressAnimation(float speed) {
         final var counter = new AtomicDouble(0);
 
         return () -> {

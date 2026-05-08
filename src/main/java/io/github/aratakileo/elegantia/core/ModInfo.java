@@ -3,6 +3,7 @@ package io.github.aratakileo.elegantia.core;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import io.github.aratakileo.elegantia.Elegantia;
+import io.github.aratakileo.elegantia.core.version.Version;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.Person;
 import net.minecraft.client.gui.screens.Screen;
@@ -15,23 +16,23 @@ import java.util.*;
 import java.util.function.Function;
 
 public abstract class ModInfo {
-    public abstract @NotNull String getId();
+    public abstract @NotNull String id();
 
-    public @NotNull Namespace getNamespace() {
-        return Namespace.of(getId());
+    public @NotNull Namespace namespace() {
+        return Namespace.of(id());
     }
 
-    public abstract @NotNull String getVersion();
-    public abstract @NotNull String getName();
-    public abstract @NotNull String getDescription();
-    public abstract @NotNull Collection<String> getAuthors();
-    public abstract @NotNull Collection<String> getContributors();
-    public abstract @NotNull Optional<Map<String, String>> getUrls();
-    public abstract @NotNull Environment getEnvironment();
-    public abstract @NotNull List<Path> getRootPaths();
+    public abstract @NotNull Version version();
+    public abstract @NotNull String name();
+    public abstract @NotNull String description();
+    public abstract @NotNull Collection<String> authors();
+    public abstract @NotNull Collection<String> contributors();
+    public abstract @NotNull Optional<Map<String, String>> urls();
+    public abstract @NotNull Environment environment();
+    public abstract @NotNull List<Path> rootPaths();
 
     public @NotNull Optional<Path> findPath(@NotNull String relativePath) {
-        for (final var rootPath : getRootPaths()) {
+        for (final var rootPath : rootPaths()) {
             final var path = rootPath.resolve(relativePath.replace("/", rootPath.getFileSystem().getSeparator()));
             if (Files.exists(path)) return Optional.of(path);
         }
@@ -39,23 +40,23 @@ public abstract class ModInfo {
         return Optional.empty();
     }
 
-    public @NotNull FileSystem getFileSystem() {
-        return getRootPaths().get(0).getFileSystem();
+    public @NotNull FileSystem fileSystem() {
+        return rootPaths().get(0).getFileSystem();
     }
 
     public @NotNull Optional<String> getUrl(@NotNull String key) {
-        return getUrls().map(map -> map.get(key));
+        return urls().map(map -> map.get(key));
     }
 
-    public @NotNull Optional<String> getSourcesUrl() {
+    public @NotNull Optional<String> sourcesUrl() {
         return getUrl("sources");
     }
 
-    public @NotNull Optional<String> getIssuesUrl() {
+    public @NotNull Optional<String> issuesUrl() {
         return getUrl("issues");
     }
 
-    public @NotNull Optional<String> getHomepageUrl() {
+    public @NotNull Optional<String> homepageUrl() {
         return getUrl("homepage");
     }
 
@@ -64,7 +65,7 @@ public abstract class ModInfo {
      * In some cases does not distinguish good between Forge and Neoforge.
      * If the mod is written for Neoforge, it might return Forge.
      */
-    public @NotNull Platform getKernelPlatform() {
+    public @NotNull Platform kernelPlatform() {
         if (findPath("fabric.mod.json").map(Files::exists).orElse(false))
             return Platform.FABRIC;
 
@@ -103,10 +104,10 @@ public abstract class ModInfo {
             field.setAccessible(true);
 
             final var configScreenFactories = (HashMap<String, ConfigScreenFactory<?>>) field.get(null);
-            configScreenFactories.put(getId(), configScreenGetter::apply);
+            configScreenFactories.put(id(), configScreenGetter::apply);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             Elegantia.LOGGER.error(
-                    "Something went wrong while trying to set config screen getter for mod id `" + getId() + '`',
+                    "Something went wrong while trying to set config screen getter for mod id `" + id() + '`',
                     e
             );
         }
@@ -128,42 +129,42 @@ public abstract class ModInfo {
 
         return Optional.of(new ModInfo() {
             @Override
-            public @NotNull String getId() {
+            public @NotNull String id() {
                 return modMetadata.getId();
             }
 
             @Override
-            public @NotNull String getVersion() {
-                return modMetadata.getVersion().getFriendlyString();
+            public @NotNull Version version() {
+                return Version.parse(modMetadata.getVersion().getFriendlyString());
             }
 
             @Override
-            public @NotNull String getName() {
+            public @NotNull String name() {
                 return modMetadata.getName();
             }
 
             @Override
-            public @NotNull String getDescription() {
+            public @NotNull String description() {
                 return modMetadata.getDescription();
             }
 
             @Override
-            public @NotNull Collection<String> getAuthors() {
+            public @NotNull Collection<String> authors() {
                 return modMetadata.getAuthors().stream().map(Person::getName).toList();
             }
 
             @Override
-            public @NotNull Collection<String> getContributors() {
+            public @NotNull Collection<String> contributors() {
                 return modMetadata.getContributors().stream().map(Person::getName).toList();
             }
 
             @Override
-            public @NotNull Optional<Map<String, String>> getUrls() {
+            public @NotNull Optional<Map<String, String>> urls() {
                 return Optional.ofNullable(modMetadata.getContact().asMap());
             }
 
             @Override
-            public @NotNull Environment getEnvironment() {
+            public @NotNull Environment environment() {
                 return switch (modMetadata.getEnvironment()) {
                     case CLIENT -> Environment.CLIENT;
                     case SERVER -> Environment.SERVER;
@@ -172,7 +173,7 @@ public abstract class ModInfo {
             }
 
             @Override
-            public @NotNull List<Path> getRootPaths() {
+            public @NotNull List<Path> rootPaths() {
                 return modContainer.getRootPaths();
             }
         });

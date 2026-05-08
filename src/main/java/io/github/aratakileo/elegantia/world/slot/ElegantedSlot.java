@@ -84,7 +84,7 @@ public class ElegantedSlot extends Slot {
         if (icon == null)
             return Optional.empty();
 
-        return Optional.of(icon.get());
+        return icon.getOptional();
     }
 
     public @NotNull Optional<TextureDrawable> getIconForRender() {
