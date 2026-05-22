@@ -1,0 +1,27 @@
+plugins {
+    id 'groovy-gradle-plugin'
+    id 'groovy'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation localGroovy()
+    implementation gradleApi()
+
+    implementation 'org.ow2.asm:asm:9.6'
+    implementation 'org.ow2.asm:asm-commons:9.6'
+}
+
+gradlePlugin {
+    plugins {
+        elegantia {
+            id = 'io.github.aratakileo.elegantia'
+            implementationClass = 'io.github.aratakileo.elegantia.ElegantiaPlugin'
+            displayName = 'Elegantia Multi-Loader Plugin'
+            description = 'Helper for building and running multi-loader Minecraft mods'
+        }
+    }
+}

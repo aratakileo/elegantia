@@ -1,0 +1,53 @@
+plugins {
+    id 'multiloader-common'
+    id 'net.neoforged.moddev'
+}
+
+dependencies {
+    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+    // fabric and neoforge both bundle mixinextras, so it is safe to use it in common
+    compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
+    annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
+
+}
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.elements.get().first().asFile
+    commonResources sourceSets.main.resources.sourceDirectories.elements.get().first().asFile
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : mod_name,
+                "Specification-Vendor"    : "Arataki Leo",
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : mod_name,
+                "Implementation-Version"  : project.version,
+                "Implementation-Vendor"   : "Arataki Leo",
+
+                // Перечисляем несколько миксинов через запятую без пробелов:
+                "MixinConfigs"            : "${mod_id}.mixins.json,${mod_id}.client.mixins.json"
+        ])
+    }
+}
+
+compileJava {
+    options.compilerArgs += [
+            // Отключает панику процессора миксинов, если он не видит карту обфускации в Common
+            "-Amixin.checks.interfaces=false",
+            "-Amixin.defaultRequire=0"
+    ]
+}

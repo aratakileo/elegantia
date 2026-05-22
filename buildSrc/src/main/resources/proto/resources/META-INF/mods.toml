@@ -1,0 +1,18 @@
+modLoader = "javafml"
+loaderVersion = "${forge_loader}"
+license = "${license}"
+?{issues}issueTrackerURL = "${issues}"
+showAsResourcePack = ${show_resource_pack}
+clientSideOnly = ${client_side}
+
+[[mods]]
+modId = "${mod_id}"
+version = "${version}"
+displayName = "${mod_name}"
+?{homepage}displayURL = "${homepage}"
+?{icon}logoFile = "${icon}"
+?{authors}authors = ${authors}
+?{description}description = '''${description}'''
+?{forge_mixins}mixinConfigs = ${forge_mixins}
+
+?{dependencies}${dependencies}
