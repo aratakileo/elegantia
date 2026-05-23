@@ -110,13 +110,18 @@ public final class Result<T> {
         return this;
     }
 
+    public @NotNull Result<T> runFinally(@NotNull Runnable runnable) {
+        runnable.run();
+        return this;
+    }
+
     public @NotNull T orElse(@NotNull T elseValue) {
         return ok == null ? elseValue : ok;
     }
 
     public static <T> @NotNull Result<T> fromOk(@NotNull T ok) {
         if (Objects.requireNonNull(ok) instanceof Optional<?>)
-            throw new IllegalArgumentException(String.format("optional value `%s`", ok));
+            throw new IllegalArgumentException(Strings.format("optional value `{}`", ok));
 
         return new Result<>(ok, null);
     }

@@ -1,7 +1,6 @@
 package io.github.aratakileo.elegantia.core.mixin;
 
 import io.github.aratakileo.elegantia.core.DeltaTimeSupplier;
-import io.github.aratakileo.elegantia.core.environment.Origin;
 import io.github.aratakileo.elegantia.framework.event.GuiTicker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Util;
@@ -30,7 +29,6 @@ public abstract class MinecraftMixin implements DeltaTimeSupplier {
 
     @Inject(method = "runTick", at = @At("TAIL"))
     private void elegantia$runTick(boolean renderLevel, @NotNull CallbackInfo ci) {
-//        Origin.ELEGANTIA.logger().info("Ticking {}ms", deltaTime());
         GuiTicker.TICK.invoker().onTick(deltaTime());
         elegantia$lastSystemTime = Util.getMillis();
     }

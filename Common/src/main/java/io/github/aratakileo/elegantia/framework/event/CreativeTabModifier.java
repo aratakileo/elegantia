@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.framework.event;
 
-import io.github.aratakileo.elegantia.framework.resource.registry.RegistryContainer;
+import io.github.aratakileo.elegantia.framework.resource.RegistryContainer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;

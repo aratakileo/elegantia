@@ -2,7 +2,7 @@ package io.github.aratakileo.elegantia.graphics;
 
 import io.github.aratakileo.elegantia.core.environment.Origin;
 import io.github.aratakileo.elegantia.core.mixin.GuiGraphicsAccessors;
-import io.github.aratakileo.elegantia.framework.resource.association.AssociatedResourceRegistry;
+import io.github.aratakileo.elegantia.framework.resource.AssociatedResourceRegistry;
 import io.github.aratakileo.elegantia.graphics.render.ResourceRenderer;
 import io.github.aratakileo.elegantia.util.Exceptions;
 import net.minecraft.client.Minecraft;

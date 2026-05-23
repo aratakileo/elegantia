@@ -3,7 +3,9 @@ package io.github.aratakileo.elegantia.framework.data.impl;
 import com.mojang.serialization.Codec;
 import io.github.aratakileo.elegantia.framework.data.AttachmentKey;
 import io.github.aratakileo.elegantia.core.environment.Origin;
-import io.github.aratakileo.elegantia.framework.data.AttachmentRegistry;import net.minecraft.resources.Identifier;
+import io.github.aratakileo.elegantia.framework.data.AttachmentRegistry;
+import io.github.aratakileo.elegantia.util.Strings;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,8 +43,8 @@ public final class AttachmentImpl<T> implements AttachmentKey<T> {
 
     @Override
     public String toString() {
-        return String.format(
-                "%s{ `%s` -> `%s` or default `%s` }",
+        return Strings.format(
+                "{}[`{}` -> `{}` or default `{}`]",
                 this.getClass().getSimpleName(),
                 id,
                 persistentCodec,

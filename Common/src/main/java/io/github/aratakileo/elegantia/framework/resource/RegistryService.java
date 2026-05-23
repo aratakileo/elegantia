@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.framework.resource.registry;
+package io.github.aratakileo.elegantia.framework.resource;
 
 import io.github.aratakileo.elegantia.core.environment.Origin;
 import io.github.aratakileo.elegantia.util.Exceptions;

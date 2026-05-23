@@ -1,8 +1,7 @@
-package io.github.aratakileo.elegantia.framework.resource.association;
+package io.github.aratakileo.elegantia.graphics.render;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import io.github.aratakileo.elegantia.framework.event.GuiTicker;
-import io.github.aratakileo.elegantia.graphics.render.ImageRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -10,14 +9,14 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
 
-public final class GifAssociated implements GuiTicker.Listener, ImageRenderer {
+public final class GifRenderer implements GuiTicker.Listener, ImageRenderer {
     private final int frameHeight, frameWidth, duration;
     private final int[] frameDurations;
 
     private int frameIndex;
     private long elapsedDuration, durationThreshold;
 
-    public GifAssociated(int frameWidth, int frameHeight, int duration, int[] frameDurations) {
+    public GifRenderer(int frameWidth, int frameHeight, int duration, int[] frameDurations) {
         this.frameHeight = frameHeight;
         this.frameWidth = frameWidth;
         this.duration = duration;

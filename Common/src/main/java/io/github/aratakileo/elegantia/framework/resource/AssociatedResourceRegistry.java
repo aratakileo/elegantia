@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.framework.resource.association;
+package io.github.aratakileo.elegantia.framework.resource;
 
 import io.github.aratakileo.elegantia.core.environment.Origin;
 import io.github.aratakileo.elegantia.util.Exceptions;
@@ -31,6 +31,10 @@ public final class AssociatedResourceRegistry {
 
     public static @NotNull Optional<Object> optional(@NotNull Identifier id) {
         return Optional.ofNullable(ASSOCIATED.get(id));
+    }
+
+    public static boolean has(@NotNull Identifier id) {
+        return ASSOCIATED.containsKey(id);
     }
 
     static {

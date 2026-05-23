@@ -2,7 +2,7 @@ package io.github.aratakileo.elegantia.graphics;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.aratakileo.elegantia.core.Result;
-import io.github.aratakileo.elegantia.framework.resource.association.GifAssociated;
+import io.github.aratakileo.elegantia.graphics.render.GifRenderer;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -44,16 +44,16 @@ public final class GifImage implements AutoCloseable {
         return frameDurations.length;
     }
 
-    public int fullDuration() {
+    public int fullDurationMs() {
         return Arrays.stream(frameDurations).sum();
     }
 
-    public int[] frameDurations() {
+    public int[] frameDurationsMs() {
         return Arrays.copyOf(frameDurations, frameDurations.length);
     }
 
-    public @NotNull GifAssociated association() {
-        return new GifAssociated(width, height, fullDuration(), frameDurations);
+    public @NotNull GifRenderer renderer() {
+        return new GifRenderer(width, height, fullDurationMs(), frameDurations);
     }
 
     public @NotNull NativeImage stitchFrames() {
@@ -123,7 +123,7 @@ public final class GifImage implements AutoCloseable {
     public static @NotNull Result<GifImage> read(byte[] fileData) {
         final var byteBuffer = MemoryUtil.memAlloc(fileData.length);
 
-        final var result = Result.fromFactory(() -> {
+        return Result.fromFactory(() -> {
             byteBuffer.put(fileData);
             byteBuffer.position(0);
 
@@ -155,13 +155,12 @@ public final class GifImage implements AutoCloseable {
                 final var delays = new int[frames];
                 delaysIntBuffer.get(delays);
 
+                // centiseconds to milliseconds
+                for (var i = 0; i < delays.length; i++) delays[i] *= 10;
+
                 return new GifImage(width, height, frames, gifByteBuffer, delays);
             }
-        });
-
-        MemoryUtil.memFree(byteBuffer);
-
-        return result;
+        }).runFinally(() -> MemoryUtil.memFree(byteBuffer));
     }
 
     @Override

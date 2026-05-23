@@ -1,8 +1,8 @@
 package io.github.aratakileo.elegantia.util;
 
 import io.github.aratakileo.elegantia.core.environment.Origin;
-import io.github.aratakileo.elegantia.framework.resource.registry.RegistryContainer;
-import io.github.aratakileo.elegantia.framework.resource.registry.RegistryService;
+import io.github.aratakileo.elegantia.framework.resource.RegistryContainer;
+import io.github.aratakileo.elegantia.framework.resource.RegistryService;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
