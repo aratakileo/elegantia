@@ -10,12 +10,14 @@ import org.jetbrains.annotations.NotNull;
 public class ForgeEntry {
     public ForgeEntry(@NotNull FMLJavaModLoadingContext context) {
         ForgeInitialisation.init(context);
+        ${mod_prelaunch_entry}
         ${mod_common_entry}
         FMLLoadCompleteEvent.getBus(context.getModBusGroup()).addListener(this::setup);
     }
 
     private void setup(final @NotNull FMLLoadCompleteEvent event) {
         if (isClient()) ${mod_client_entry}
+        else ${mod_server_entry}
     }
 
     private static boolean isClient() {

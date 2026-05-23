@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface ModEntry {
-    @NotNull Side value();
+    @NotNull EntryPoint value();
 }

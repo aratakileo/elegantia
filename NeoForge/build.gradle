@@ -6,10 +6,10 @@ plugins {
 neoForge {
     version = neoforge_version
 
-    parchment {
-        minecraftVersion = parchment_minecraft
-        mappingsVersion = parchment_version
-    }
+//    parchment {
+//        minecraftVersion = parchment_minecraft
+//        mappingsVersion = parchment_version
+//    }
 
     def generateAccessFilesTask = project.rootProject.project(":Common").tasks.named("generateAccessFiles")
 

@@ -11,6 +11,7 @@ import java.util.Objects;
 @Mod("${mod_id}")
 public class NeoForgeEntry {
     public NeoForgeEntry(@NotNull ModContainer container) {
+        ${mod_prelaunch_entry}
         ${mod_common_entry}
 
         Objects.requireNonNull(container.getEventBus()).addListener(this::setup);
@@ -18,6 +19,7 @@ public class NeoForgeEntry {
 
     private void setup(final @NotNull FMLLoadCompleteEvent event) {
         if (isClient()) ${mod_client_entry}
+        else ${mod_server_entry}
     }
 
     private static boolean isClient() {

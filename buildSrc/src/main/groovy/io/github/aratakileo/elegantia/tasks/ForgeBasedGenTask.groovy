@@ -93,11 +93,19 @@ abstract class ForgeBasedGenTask extends GenTask {
                 package_name: "${entriesData.platform_package}.${platformId}",
                 mod_id: mod_id,
                 mod_common_entry: entriesData.entries.common
-                        ? "${entriesData.entries.common}();"
+                        ? "${entriesData.entries.common.path}();"
                         : "// No common entries",
 
+                mod_prelaunch_entry: entriesData.entries.prelaunch
+                        ? "${entriesData.entries.prelaunch.path}();"
+                        : "// No prelaunch entries",
+
+                mod_server_entry: entriesData.entries.server
+                        ? "${entriesData.entries.server.path}();"
+                        : "{ /* No server entries */ }",
+
                 mod_client_entry: entriesData.entries.client
-                        ? "${entriesData.entries.client}();"
+                        ? "${entriesData.entries.client.path}();"
                         : "{ /* No client entries */ }"
         ]
 

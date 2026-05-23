@@ -12,12 +12,14 @@ import java.util.Objects;
 public class NeoForgeEntry {
     public NeoForgeEntry(@NotNull ModContainer container) {
         NeoForgeInitialisation.init(container);
+        ${mod_prelaunch_entry}
         ${mod_common_entry}
         Objects.requireNonNull(container.getEventBus()).addListener(this::setup);
     }
 
     private void setup(final @NotNull FMLLoadCompleteEvent event) {
         if (isClient()) ${mod_client_entry}
+        else ${mod_server_entry}
     }
 
     private static boolean isClient() {

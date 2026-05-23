@@ -1,6 +1,8 @@
 package io.github.aratakileo.elegantia.core.entrypoint;
 
-public enum Side {
+public enum EntryPoint {
     CLIENT,
-    COMMON
+    SERVER,
+    COMMON,
+    PRELAUNCH
 }

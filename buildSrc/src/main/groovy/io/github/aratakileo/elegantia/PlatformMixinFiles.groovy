@@ -4,6 +4,7 @@ import groovy.io.FileType
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.annotations.NotNull
 
 import java.util.regex.Pattern
@@ -20,10 +21,10 @@ final class PlatformMixinFiles {
     @NotNull List<String> process() {
         final var commonResources = project.rootProject.project(":Common").file(Constants.Dirs.MAIN_RESOURCES)
         final var subprojectResources = project.file(Constants.Dirs.MAIN_RESOURCES)
-//        final var refmapFileName = "${project.findProperty("mod_id")}-${project.name.toLowerCase()}-refmap.json"
+        final var refmapFileName = "${project.findProperty("mod_id")}-${project.name.toLowerCase()}-refmap.json"
 
-//        configureMixinPlugin(project, refmapFileName)
-//        configureMixinPlugin(project, "${project.findProperty("mod_id")}-common-refmap.json")
+        configureMixinPlugin(project, refmapFileName)
+        configureMixinPlugin(project, "${project.findProperty("mod_id")}-common-refmap.json")
 
         final var subprojectGeneratedResources = project.layout.buildDirectory.file(Constants.Dirs.GENERATED_RESOURCES)
                 .get().asFile
@@ -48,7 +49,7 @@ final class PlatformMixinFiles {
 
                 final var srcData = new JsonSlurper().parse(srcFile) as Map
 
-//                srcData.put("refmap", refmapFileName)
+                srcData.put("refmap", refmapFileName)
 
                 newFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(srcData))
 
@@ -59,16 +60,35 @@ final class PlatformMixinFiles {
         return mixinPaths
     }
 
-    static void configureMixinPlugin(@NotNull Project project, @NotNull String refmapName) {
-        def mixinExtension = project.extensions.findByName("mixin")
+    static void configureMixinPlugin(Project project, String refmapName) {
+        // Находим расширение loom как generic Object, без каста к классам Loom
+        final var loomExtension = project.extensions.findByName("loom")
+        if (loomExtension == null) {
+            project.logger.warn("[Elegantia] Loom plugin not found in project :${project.name}, skipping mixin configuration.")
+            return
+        }
 
-        if (mixinExtension != null) {
-            def mainSourceSet = project.sourceSets.main
-            mixinExtension.add(mainSourceSet, refmapName)
+        try {
+            if (loomExtension instanceof org.gradle.api.plugins.ExtensionAware) {
+                // Достаем mixin-расширение по строковому имени
+                final var mixinExtension = loomExtension.extensions.findByName("mixin")
 
-            project.logger.info("Mixin configured: refmap set to ${refmapName}")
-        } else {
-            project.logger.error("Mixin plugin not found! Make sure it's applied in build.gradle")
+                if (mixinExtension != null) {
+                    final var mainSourceSet = project.sourceSets.main
+
+                    // Вызываем метод add() динамически. Groovy сам найдет нужный метод под капотом!
+                    mixinExtension.add(mainSourceSet, refmapName)
+                    project.logger.lifecycle("[Elegantia] Successfully registered refmap '${refmapName}' for :${project.name}")
+                }
+            }
+        } catch (Exception e) {
+            project.logger.error("[Elegantia] Failed to configure mixin via reflection/dynamic call", e)
+        }
+
+        // Принудительно заставляем процессор аннотаций компилятора Java не падать,
+        // если маппинги для Common еще не успели синхронизироваться.
+        project.tasks.withType(org.gradle.api.tasks.compile.JavaCompile).configureEach {
+            options.compilerArgs << "-Asilent=true"
         }
     }
 

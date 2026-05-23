@@ -3,10 +3,10 @@ package io.github.aratakileo.elegantia;
 import io.github.aratakileo.elegantia.core.environment.Origin;
 import io.github.aratakileo.elegantia.core.entrypoint.EntryInitializer;
 import io.github.aratakileo.elegantia.core.entrypoint.ModEntry;
-import io.github.aratakileo.elegantia.core.entrypoint.Side;
+import io.github.aratakileo.elegantia.core.entrypoint.EntryPoint;
 import io.github.aratakileo.elegantia.util.GameUtils;
 
-@ModEntry(Side.COMMON)
+@ModEntry(value = EntryPoint.PRELAUNCH)
 public class Elegantia {
     @EntryInitializer
     public static void init() {

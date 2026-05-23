@@ -10,17 +10,18 @@ repositories {
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
 
-    mappings loom.layered {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
-    }
+    mappings loom.officialMojangMappings()
 
-    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+//    mappings loom.layered {
+//        officialMojangMappings()
+//        parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
+//    }
 
     modApi("com.terraformersmc:modmenu:17.0.0-alpha.1") { exclude(module: "fabric-api") }
 
-//    annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
+    modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
 
     annotationProcessor project(":Common")
 }
@@ -28,6 +29,7 @@ dependencies {
 loom {
      mixin {
         defaultRefmapName = "${mod_id}.refmap.json"
+         useLegacyMixinAp = true
      }
 
     runs {

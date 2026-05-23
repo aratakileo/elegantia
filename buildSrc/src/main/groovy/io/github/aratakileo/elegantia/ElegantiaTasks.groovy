@@ -79,22 +79,18 @@ class ElegantiaTasks {
                     destinationDirectory = project.rootProject.layout.buildDirectory.dir(Constants.Dirs.LIBS)
                     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-                    // ПРОВЕРКА: Если это Fabric, забираем файлы из готового remapJar
                     if (sub.name.toLowerCase() == "fabric") {
                         def remapJarTask = sub.tasks.named("remapJar")
                         dependsOn remapJarTask
 
-                        // zipTree распакует перемапленный джарник, чтобы пересобрать его в thinJar
                         from { project.zipTree(remapJarTask.get().archiveFile) }
                     } else {
-                        // Для остальных платформ оставляем стандартное поведение
                         from sub.sourceSets.main.output
                         dependsOn sub.tasks.named("classes")
                     }
 
                     if (commonProject) {
                         from commonProject.sourceSets.main.output
-                        // Используем безопасный синтаксис для таски common-проекта
                         dependsOn commonProject.tasks.named("sourcesJar")
                     }
 
@@ -119,7 +115,7 @@ class ElegantiaTasks {
                         group = "elegantia"
                         archiveBaseName = "${project.mod_id}-${sub.name.toLowerCase()}"
                         archiveVersion = "${project.version}+${project.minecraft_version}"
-                        archiveClassifier = 'sources' // Добавит '-sources.jar' в конец файла
+                        archiveClassifier = 'sources'
                         destinationDirectory = project.rootProject.layout.buildDirectory.dir(Constants.Dirs.LIBS)
                         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
@@ -245,22 +241,18 @@ class ElegantiaTasks {
                               def neoRunTask = neoProject.tasks.named("runClient", JavaExec).get()
                               def jarFile = universalJarTask.get().archiveFile.get().asFile
 
-                              // 1. Очищаем переменные окружения, через которые NeoGradle насильно пихает бинарники подпроекта
                               if (neoRunTask.environment.containsKey("MOD_CLASSES")) {
                                     neoRunTask.environment.remove("MOD_CLASSES")
                                   }
 
-                              // Полностью переписываем MOD_CLASSES, указывая только наш JAR файл
                               neoRunTask.environment("MOD_CLASSES", "${project.mod_id}%%${jarFile.absolutePath}")
 
-                              // 2. Вырезаем папки классов из classpath на всякий случай
                               neoRunTask.classpath = neoRunTask.classpath.filter { file ->
                                     !file.path.contains("build/classes") &&
                                         !file.path.contains("build/resources") &&
                                         !file.path.contains("out/production")
                                   }
 
-                              // 3. Передаем аргументы запуска для сканирования JAR
                               neoRunTask.jvmArgs(
                                           "-Dneo.subsystems.modFolder=${jarFile.parentFile.absolutePath}",
                                           "-Dneoforge.forceModFile=${jarFile.absolutePath}"

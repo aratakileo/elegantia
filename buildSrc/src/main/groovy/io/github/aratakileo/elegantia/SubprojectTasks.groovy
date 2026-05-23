@@ -77,20 +77,29 @@ class SubprojectTasks {
             outputs.file(outputFile)
 
             doLast {
-                final var entries = findEntryPointsInBytecode()
+                final var entriesList = new EntryPointScanner(project.rootProject.project(":Common")).scanCommonProject()
 
-                if (entries == null) {
+                if (entriesList.isEmpty()) {
                     outputFile.text = "{}"
                     return
                 }
 
-                final var targetClassPath = entries.common ?: entries.client
+                final var entries = new HashMap()
 
-                if (!targetClassPath) {
+                for (final var entry: entriesList) {
+                    entries.put(entry.type.toLowerCase(), [
+                            path: entry.fullPath
+                    ])
+                }
+
+                final var targetEntry = entries.prelaunch ?: entries.common ?: entries.server ?: entries.client
+
+                if (!targetEntry) {
                     project.elegantia.err "mod entry points have classes but all of them have no any entry methods"
                     return
                 }
 
+                final var targetClassPath = targetEntry.path
                 final var fullClassName = targetClassPath.substring(0, targetClassPath.lastIndexOf('.'))
                 final var mod_id = project.elegantia.findPropWithNotifOnFail("mod_id")
 
@@ -200,11 +209,10 @@ class SubprojectTasks {
                 final var fileRelativePath = Utils.normalizeSlashes(mainResources.toPath().relativize(srcFile.toPath()))
                 final var newFile = new File("${generatedResources}/${fileRelativePath}")
                 final var srcData = new JsonSlurper().parse(srcFile) as Map
-//                final var refmapFileName = "${project.findProperty("mod_id")}-common-refmap.json"
+                final var refmapFileName = "${project.findProperty("mod_id")}-common-refmap.json"
 
-//                PlatformMixinFiles.configureMixinPlugin(commonProj, refmapFileName)
-
-//                srcData.put("refmap", refmapFileName)
+                PlatformMixinFiles.configureMixinPlugin(commonProj, refmapFileName)
+                srcData.put("refmap", refmapFileName)
 
                 newFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(srcData))
             }
@@ -327,6 +335,7 @@ class SubprojectTasks {
         return resultData
     }
 
+    @Deprecated
     private @Nullable Map<String, String> findEntryPointsInBytecode() {
         def result = [common: null, client: null]
         def commonProject = project.findProject(":Common")
