@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "elegantia",
+  "version": "${version}",
+  "name": "Elegantia",
+  "description": "Library mod that makes other mods elegant!",
+  "authors": [
+    "Arataki Leo",
+    "Dogs"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/elegantia",
+    "sources": "https://github.com/aratakileo/elegantia",
+    "issues": "https://github.com/aratakileo/elegantia/issues",
+    "email": "aratakileo@gmail.com"
+  },
+  "license": "LGPL-3.0",
+  "icon": "assets/elegantia/icon.png",
+  "environment": "*",
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ]
+    }
+  },
+  "depends": {
+    "minecraft": ">=${minecraft_version}"
+  },
+  "mixins": ["elegantia.mixins.json"]
+}
