@@ -3,7 +3,7 @@
   "id": "elegantia",
   "version": "${version}",
   "name": "Elegantia",
-  "description": "Library mod that makes other mods elegant!",
+  "description": "The library mod that makes your mods elegant with less boilerplate and more convenient architectural solutions!",
   "authors": [
     "Arataki Leo",
     "Dogs"
