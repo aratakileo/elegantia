@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.forge;
 
 import io.github.aratakileo.elegantia.common.environment.Loader;
-import io.github.aratakileo.elegantia.forge.profile.ForgeProfileProvider;
+import io.github.aratakileo.elegantia.forge.profile.ForgeProfileProviderImpl;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus;
@@ -13,7 +13,7 @@ public final class ForgeInitialisation {
     private ForgeInitialisation() {}
 
     public static void init(@NotNull FMLJavaModLoadingContext context) {
-        Loader.setProfileProvider(ForgeProfileProvider.INSTANCE);
-        RegistryServiceImpl.impl(context);
+        Loader.setProfileProvider(ForgeProfileProviderImpl.INSTANCE);
+        ForgeRegistryServiceImpl.impl(context);
     }
 }

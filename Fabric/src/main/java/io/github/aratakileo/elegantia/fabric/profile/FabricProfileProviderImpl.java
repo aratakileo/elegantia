@@ -7,15 +7,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public final class FabricProfileProvider implements ProfileProvider {
-    public static final FabricProfileProvider INSTANCE = new FabricProfileProvider();
+public final class FabricProfileProviderImpl implements ProfileProvider {
+    public static final FabricProfileProviderImpl INSTANCE = new FabricProfileProviderImpl();
 
-    private FabricProfileProvider() {}
+    private FabricProfileProviderImpl() {}
 
     @Override
     public @NotNull Optional<ModProfile> modOptional(@NotNull String id) {
         return FabricLoader.getInstance()
                 .getModContainer(id)
-                .map(FabricModProfile::from);
+                .map(FabricModProfileImpl::from);
     }
 }

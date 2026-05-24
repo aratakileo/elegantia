@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public final class FabricModProfile implements ModProfile {
+public final class FabricModProfileImpl implements ModProfile {
     private final Collection<String> licenses;
 
     private final Collection<Person> authors, contributors;
@@ -18,7 +18,7 @@ public final class FabricModProfile implements ModProfile {
 
     private final Contacts contacts;
 
-    private FabricModProfile(@NotNull ModContainer src) {
+    private FabricModProfileImpl(@NotNull ModContainer src) {
         final var meta = src.getMetadata();
 
         id = meta.getId();
@@ -40,8 +40,8 @@ public final class FabricModProfile implements ModProfile {
         contacts = Contacts.create(meta.getContact().asMap());
     }
 
-    public static @NotNull FabricModProfile from(@NotNull ModContainer src) {
-        return new FabricModProfile(src);
+    public static @NotNull FabricModProfileImpl from(@NotNull ModContainer src) {
+        return new FabricModProfileImpl(src);
     }
 
     @Override

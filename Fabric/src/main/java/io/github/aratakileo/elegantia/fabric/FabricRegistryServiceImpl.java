@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public final class RegistryServiceImpl implements RegistryService {
+public final class FabricRegistryServiceImpl implements RegistryService {
     @Override
     public <T> @NotNull RegistryContainer<T> register(@NotNull Registry<T> registry, @NotNull Identifier id, @NotNull Supplier<T> fabric) {
         return RegistryContainer.create(Registry.register(registry, id, fabric.get()));
@@ -20,9 +20,9 @@ public final class RegistryServiceImpl implements RegistryService {
         return Optional.ofNullable(registry.getValue(id));
     }
 
-    private RegistryServiceImpl() {}
+    private FabricRegistryServiceImpl() {}
 
     public static void impl() {
-        RegistryService.setInstance(new RegistryServiceImpl());
+        RegistryService.setInstance(new FabricRegistryServiceImpl());
     }
 }

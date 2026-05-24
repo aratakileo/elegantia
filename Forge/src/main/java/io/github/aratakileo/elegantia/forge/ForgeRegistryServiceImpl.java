@@ -1,24 +1,23 @@
-package io.github.aratakileo.elegantia.neoforge;
+package io.github.aratakileo.elegantia.forge;
 
 import io.github.aratakileo.elegantia.common.environment.Origin;
 import io.github.aratakileo.elegantia.common.resource.RegistryContainer;
 import io.github.aratakileo.elegantia.common.resource.RegistryService;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public final class RegistryServiceImpl implements RegistryService {
+public final class ForgeRegistryServiceImpl implements RegistryService {
     private final static HashMap<Registry<?>, HashMap<Origin, DeferredRegister<?>>> REGISTRIES;
-    private static ModContainer contextInstance = null;
+    private static FMLJavaModLoadingContext contextInstance = null;
 
     @Override
     public <T> @NotNull RegistryContainer<T> register(
@@ -32,13 +31,13 @@ public final class RegistryServiceImpl implements RegistryService {
 
     @Override
     public @NotNull <T> Optional<T> getValue(@NotNull Registry<T> registry, @NotNull Identifier id) {
-        return Optional.ofNullable(registry.getValue(id));
+        return Optional.ofNullable(minecraftToForgeRegistry(registry).getValue(id));
     }
 
-    private RegistryServiceImpl() {}
+    private ForgeRegistryServiceImpl() {}
 
-    public static void impl(@NotNull ModContainer context) {
-        RegistryService.setInstance(new RegistryServiceImpl());
+    public static void impl(@NotNull FMLJavaModLoadingContext context) {
+        RegistryService.setInstance(new ForgeRegistryServiceImpl());
         contextInstance = context;
     }
 
@@ -50,14 +49,19 @@ public final class RegistryServiceImpl implements RegistryService {
         final var registries = REGISTRIES.get(registry);
 
         if (!registries.containsKey(namespace)) {
-            final var newRegister = DeferredRegister.create(registry, namespace.key);
+            final var newRegister = DeferredRegister.create(minecraftToForgeRegistry(registry), namespace.key);
 
-            newRegister.register(Objects.requireNonNull(contextInstance.getEventBus()));
+            newRegister.register(contextInstance.getModBusGroup());
 
             registries.put(namespace, newRegister);
         }
 
         return (DeferredRegister<T>) registries.get(namespace);
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static <T> @NotNull IForgeRegistry<T> minecraftToForgeRegistry(@NotNull Registry<T> minecraftRegistry) {
+        return RegistryManager.ACTIVE.getRegistry(minecraftRegistry.key());
     }
 
     static {

@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.fabric;
 
 import io.github.aratakileo.elegantia.common.environment.Loader;
-import io.github.aratakileo.elegantia.fabric.profile.FabricProfileProvider;
+import io.github.aratakileo.elegantia.fabric.profile.FabricProfileProviderImpl;
 import io.github.aratakileo.elegantia.client.event.CreativeTabModifier;
 import io.github.aratakileo.elegantia.common.event.LootTableModifier;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -11,9 +11,9 @@ public final class FabricInitialisation {
     private FabricInitialisation() {}
 
     public static void init() {
-        Loader.setProfileProvider(FabricProfileProvider.INSTANCE);
+        Loader.setProfileProvider(FabricProfileProviderImpl.INSTANCE);
 
-        RegistryServiceImpl.impl();
+        FabricRegistryServiceImpl.impl();
 
         CreativeTabModifier.SUBSCRIBERS.register(
                 ((tab, event) -> ItemGroupEvents.modifyEntriesEvent(tab)

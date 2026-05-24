@@ -9,7 +9,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 @Mod("${mod_id}")
-public class ForgeEntry {
+public final class ForgeEntry {
     public ForgeEntry(@NotNull FMLJavaModLoadingContext context) {
         ForgeInitialisation.init(context);
         ${mod_prelaunch_entry}

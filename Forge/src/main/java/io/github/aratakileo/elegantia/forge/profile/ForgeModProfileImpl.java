@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public final class ForgeModProfile implements ModProfile {
+public final class ForgeModProfileImpl implements ModProfile {
     private final Collection<String> licenses;
 
     private final Collection<Person> authors, contributors;
@@ -25,7 +25,7 @@ public final class ForgeModProfile implements ModProfile {
 
     private final Contacts contacts;
 
-    private ForgeModProfile(@NotNull ModContainer src) {
+    private ForgeModProfileImpl(@NotNull ModContainer src) {
         final var meta = src.getModInfo();
 
         id = src.getModId();
@@ -39,8 +39,8 @@ public final class ForgeModProfile implements ModProfile {
         contacts = getContacts(meta);
     }
 
-    public static @NotNull ForgeModProfile from(@NotNull ModContainer src) {
-        return new ForgeModProfile(src);
+    public static @NotNull ForgeModProfileImpl from(@NotNull ModContainer src) {
+        return new ForgeModProfileImpl(src);
     }
 
     @Override

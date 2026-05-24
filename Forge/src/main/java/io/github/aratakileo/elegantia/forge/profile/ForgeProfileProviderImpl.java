@@ -9,13 +9,13 @@ import java.util.Optional;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public final class ForgeProfileProvider implements ProfileProvider {
-    public static final ForgeProfileProvider INSTANCE = new ForgeProfileProvider();
+public final class ForgeProfileProviderImpl implements ProfileProvider {
+    public static final ForgeProfileProviderImpl INSTANCE = new ForgeProfileProviderImpl();
 
-    private ForgeProfileProvider() {}
+    private ForgeProfileProviderImpl() {}
 
     @Override
     public @NotNull Optional<ModProfile> modOptional(@NotNull String id) {
-        return ModList.get().getModContainerById(id).map(ForgeModProfile::from);
+        return ModList.get().getModContainerById(id).map(ForgeModProfileImpl::from);
     }
 }

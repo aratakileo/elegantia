@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @ApiStatus.Internal
-public final class NeoForgeModProfile implements ModProfile {
+public final class NeoForgeModProfileImpl implements ModProfile {
     private final Collection<String> licenses;
 
     private final Collection<Person> authors, contributors;
@@ -25,7 +25,7 @@ public final class NeoForgeModProfile implements ModProfile {
 
     private final Contacts contacts;
 
-    private NeoForgeModProfile(@NotNull ModContainer src) {
+    private NeoForgeModProfileImpl(@NotNull ModContainer src) {
         final var meta = src.getModInfo();
         
         id = meta.getModId();
@@ -39,8 +39,8 @@ public final class NeoForgeModProfile implements ModProfile {
         contacts = getContacts(meta);
     }
 
-    public static @NotNull NeoForgeModProfile from(@NotNull ModContainer src) {
-        return new NeoForgeModProfile(src);
+    public static @NotNull NeoForgeModProfileImpl from(@NotNull ModContainer src) {
+        return new NeoForgeModProfileImpl(src);
     }
 
     @Override

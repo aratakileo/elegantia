@@ -5,10 +5,12 @@ import io.github.aratakileo.elegantia.common.data.AttachmentKey;
 import io.github.aratakileo.elegantia.common.environment.Origin;
 import io.github.aratakileo.elegantia.common.data.AttachmentRegistry;
 import io.github.aratakileo.elegantia.core.util.Strings;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public final class AttachmentImpl<T> implements AttachmentKey<T> {
@@ -86,6 +88,46 @@ public final class AttachmentImpl<T> implements AttachmentKey<T> {
 
             this.persistentCodec = (Codec<T>) codec;
             return (Builder<A>) this;
+        }
+
+        public @NotNull Builder<Byte> persistentByte() {
+            return persistent(Codec.BYTE);
+        }
+
+        public @NotNull Builder<Short> persistentShort() {
+            return persistent(Codec.SHORT);
+        }
+
+        public @NotNull Builder<Integer> persistentInt() {
+            return persistent(Codec.INT);
+        }
+
+        public @NotNull Builder<Long> persistentLong() {
+            return persistent(Codec.LONG);
+        }
+
+        public @NotNull Builder<Float> persistentFloat() {
+            return persistent(Codec.FLOAT);
+        }
+
+        public @NotNull Builder<Double> persistentDouble() {
+            return persistent(Codec.DOUBLE);
+        }
+
+        public @NotNull Builder<Boolean> persistentBool() {
+            return persistent(Codec.BOOL);
+        }
+
+        public @NotNull Builder<String> persistentString() {
+            return persistent(Codec.STRING);
+        }
+
+        public @NotNull Builder<Identifier> persistentId() {
+            return persistent(Identifier.CODEC);
+        }
+
+        public @NotNull Builder<UUID> persistentUuid() {
+            return persistent(UUIDUtil.CODEC);
         }
 
         public @NotNull AttachmentImpl<T> build() {

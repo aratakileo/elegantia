@@ -11,7 +11,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 @Mod("${mod_id}")
-public class NeoForgeEntry {
+public final class NeoForgeEntry {
     public NeoForgeEntry(@NotNull ModContainer container) {
         NeoForgeInitialisation.init(container);
         ${mod_prelaunch_entry}

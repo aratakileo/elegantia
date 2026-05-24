@@ -9,13 +9,13 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.Optional;
 
 @ApiStatus.Internal
-public final class NeoForgeProfileProvider implements ProfileProvider {
-    public static final NeoForgeProfileProvider INSTANCE = new NeoForgeProfileProvider();
+public final class NeoForgeProfileProviderImpl implements ProfileProvider {
+    public static final NeoForgeProfileProviderImpl INSTANCE = new NeoForgeProfileProviderImpl();
 
-    private NeoForgeProfileProvider() {}
+    private NeoForgeProfileProviderImpl() {}
 
     @Override
     public @NotNull Optional<ModProfile> modOptional(@NotNull String id) {
-        return ModList.get().getModContainerById(id).map(NeoForgeModProfile::from);
+        return ModList.get().getModContainerById(id).map(NeoForgeModProfileImpl::from);
     }
 }
