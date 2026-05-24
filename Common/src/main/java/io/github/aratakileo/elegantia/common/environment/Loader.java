@@ -56,7 +56,7 @@ public enum Loader {
      * @return {@code true} if the loader platform is defined and else otherwise
      */
     public static boolean currentDefined() {
-        return !LOADER.initialized();
+        return LOADER.initialized();
     }
 
     public static @NotNull String gameVersion() {
