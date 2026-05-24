@@ -1,8 +1,8 @@
 package io.github.aratakileo.elegantia.core.mixin;
 
-import io.github.aratakileo.elegantia.framework.data.AttachmentHolder;
-import io.github.aratakileo.elegantia.framework.data.AttachmentKey;
-import io.github.aratakileo.elegantia.framework.data.impl.AttachmentGroupImpl;
+import io.github.aratakileo.elegantia.common.data.AttachmentHolder;
+import io.github.aratakileo.elegantia.common.data.AttachmentKey;
+import io.github.aratakileo.elegantia.common.data.impl.AttachmentGroupImpl;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;

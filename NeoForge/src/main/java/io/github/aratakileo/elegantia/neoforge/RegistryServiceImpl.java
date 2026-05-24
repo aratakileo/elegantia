@@ -1,8 +1,8 @@
 package io.github.aratakileo.elegantia.neoforge;
 
-import io.github.aratakileo.elegantia.core.environment.Origin;
-import io.github.aratakileo.elegantia.framework.resource.RegistryContainer;
-import io.github.aratakileo.elegantia.framework.resource.RegistryService;
+import io.github.aratakileo.elegantia.common.environment.Origin;
+import io.github.aratakileo.elegantia.common.resource.RegistryContainer;
+import io.github.aratakileo.elegantia.common.resource.RegistryService;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.neoforged.fml.ModContainer;

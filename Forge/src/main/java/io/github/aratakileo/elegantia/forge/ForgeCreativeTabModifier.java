@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.forge;
 
-import io.github.aratakileo.elegantia.framework.event.CreativeTabModifier;
+import io.github.aratakileo.elegantia.client.event.CreativeTabModifier;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

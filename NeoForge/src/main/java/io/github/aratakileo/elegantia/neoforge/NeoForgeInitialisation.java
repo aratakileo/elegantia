@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.neoforge;
 
-import io.github.aratakileo.elegantia.core.environment.Loader;
+import io.github.aratakileo.elegantia.common.environment.Loader;
 import io.github.aratakileo.elegantia.neoforge.profile.NeoForgeProfileProvider;
 import net.neoforged.fml.ModContainer;
 import org.jetbrains.annotations.NotNull;

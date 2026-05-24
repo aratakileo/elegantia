@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.neoforge;
 
-import io.github.aratakileo.elegantia.framework.event.CreativeTabModifier;
+import io.github.aratakileo.elegantia.client.event.CreativeTabModifier;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;

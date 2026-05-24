@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.forge;
 
-import io.github.aratakileo.elegantia.util.Strings;
+import io.github.aratakileo.elegantia.core.util.Strings;
 import net.minecraft.world.level.storage.loot.LootPool;
 import org.jetbrains.annotations.NotNull;
 

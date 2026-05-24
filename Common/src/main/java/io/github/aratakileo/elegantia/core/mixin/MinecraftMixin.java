@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.core.mixin;
 
 import io.github.aratakileo.elegantia.core.DeltaTimeSupplier;
-import io.github.aratakileo.elegantia.framework.event.GuiTicker;
+import io.github.aratakileo.elegantia.client.event.GuiTicker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;

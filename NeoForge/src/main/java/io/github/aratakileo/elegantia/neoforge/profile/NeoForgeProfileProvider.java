@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.neoforge.profile;
 
-import io.github.aratakileo.elegantia.core.environment.ModProfile;
-import io.github.aratakileo.elegantia.core.environment.ProfileProvider;
+import io.github.aratakileo.elegantia.common.environment.ModProfile;
+import io.github.aratakileo.elegantia.common.environment.ProfileProvider;
 import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 

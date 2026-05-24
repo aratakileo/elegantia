@@ -1,9 +1,10 @@
 package io.github.aratakileo.elegantia.core;
 
-import io.github.aratakileo.elegantia.core.environment.Origin;
-import io.github.aratakileo.elegantia.util.Arrays;
-import io.github.aratakileo.elegantia.util.Exceptions;
-import io.github.aratakileo.elegantia.util.Strings;
+import io.github.aratakileo.elegantia.common.environment.Origin;
+import io.github.aratakileo.elegantia.core.reflection.ValueContainer;
+import io.github.aratakileo.elegantia.core.util.Arrays;
+import io.github.aratakileo.elegantia.core.util.Exceptions;
+import io.github.aratakileo.elegantia.core.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -14,13 +15,21 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class Result<T> {
+public class Result<T> {
     private final T ok;
     private final Throwable err;
 
     private Result(@Nullable T ok, @Nullable Throwable err) {
         this.ok = ok;
         this.err = err;
+    }
+
+    protected Result(@NotNull T ok) {
+        this(ok, null);
+    }
+
+    protected Result(@NotNull Throwable err) {
+        this(null, err);
     }
 
     public boolean isOkay() {
@@ -53,6 +62,13 @@ public final class Result<T> {
         if (err != null) return Result.fromError(err);
 
         return Objects.requireNonNull((Result<U>) mapper.apply(ok));
+    }
+
+    public <U> @NotNull U match(
+            @NotNull Function<? super T, ? extends U> onOkay,
+            @NotNull Function<? super Throwable, ? extends U> onError
+    ) {
+        return isOkay() ? onOkay.apply(ok) : onError.apply(err);
     }
 
     public @NotNull Result<T> logIfError(@NotNull Origin origin) {
@@ -123,15 +139,15 @@ public final class Result<T> {
         if (Objects.requireNonNull(ok) instanceof Optional<?>)
             throw new IllegalArgumentException(Strings.format("optional value `{}`", ok));
 
-        return new Result<>(ok, null);
+        return new Result<>(ok);
     }
 
     public static <T> @NotNull Result<T> fromError(@NotNull Throwable error) {
-        return new Result<>(null, Objects.requireNonNull(error));
+        return new Result<>(Objects.requireNonNull(error));
     }
 
     public static <T> @NotNull Result<T> fromError(@NotNull Supplier<? extends Throwable> exceptionFactory) {
-        return new Result<>(null, Objects.requireNonNull(exceptionFactory.get()));
+        return new Result<>(Objects.requireNonNull(exceptionFactory.get()));
     }
 
     public static <T> @NotNull Result<T> fromError(
@@ -141,7 +157,7 @@ public final class Result<T> {
     ) {
         final var formattedMessage = Strings.format(exceptionMessage, messageArgs);
 
-        return new Result<>(null, Objects.requireNonNull(exceptionFactory.apply(formattedMessage)));
+        return new Result<>(Objects.requireNonNull(exceptionFactory.apply(formattedMessage)));
     }
 
     public static <T> @NotNull Result<T> fromFactory(@NotNull Result.ThrowableFactory<T> factory) {

@@ -1,9 +1,9 @@
 package io.github.aratakileo.elegantia.forge.profile;
 
-import io.github.aratakileo.elegantia.core.environment.ContactKey;
-import io.github.aratakileo.elegantia.core.environment.Contacts;
-import io.github.aratakileo.elegantia.core.environment.ModProfile;
-import io.github.aratakileo.elegantia.core.environment.Person;
+import io.github.aratakileo.elegantia.common.environment.ContactKey;
+import io.github.aratakileo.elegantia.common.environment.Contacts;
+import io.github.aratakileo.elegantia.common.environment.ModProfile;
+import io.github.aratakileo.elegantia.common.environment.Person;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.jetbrains.annotations.NotNull;

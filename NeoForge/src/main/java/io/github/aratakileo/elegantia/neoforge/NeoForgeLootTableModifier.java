@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.neoforge;
 
-import io.github.aratakileo.elegantia.framework.event.LootTableModifier;
-import io.github.aratakileo.elegantia.util.Strings;
+import io.github.aratakileo.elegantia.common.event.LootTableModifier;
+import io.github.aratakileo.elegantia.core.util.Strings;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;

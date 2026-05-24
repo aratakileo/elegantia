@@ -1,6 +1,6 @@
 package io.github.aratakileo.elegantia.forge;
 
-import io.github.aratakileo.elegantia.core.environment.Loader;
+import io.github.aratakileo.elegantia.common.environment.Loader;
 import io.github.aratakileo.elegantia.forge.profile.ForgeProfileProvider;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.NotNull;

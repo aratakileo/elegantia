@@ -1,8 +1,8 @@
 package io.github.aratakileo.elegantia.fabric.profile;
 
-import io.github.aratakileo.elegantia.core.environment.Person;
-import io.github.aratakileo.elegantia.core.environment.Contacts;
-import io.github.aratakileo.elegantia.core.environment.ModProfile;
+import io.github.aratakileo.elegantia.common.environment.Person;
+import io.github.aratakileo.elegantia.common.environment.Contacts;
+import io.github.aratakileo.elegantia.common.environment.ModProfile;
 import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.NotNull;
 

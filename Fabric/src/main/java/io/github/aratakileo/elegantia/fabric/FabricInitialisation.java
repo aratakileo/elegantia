@@ -1,9 +1,9 @@
 package io.github.aratakileo.elegantia.fabric;
 
-import io.github.aratakileo.elegantia.core.environment.Loader;
+import io.github.aratakileo.elegantia.common.environment.Loader;
 import io.github.aratakileo.elegantia.fabric.profile.FabricProfileProvider;
-import io.github.aratakileo.elegantia.framework.event.CreativeTabModifier;
-import io.github.aratakileo.elegantia.framework.event.LootTableModifier;
+import io.github.aratakileo.elegantia.client.event.CreativeTabModifier;
+import io.github.aratakileo.elegantia.common.event.LootTableModifier;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 
