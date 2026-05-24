@@ -1,9 +1,11 @@
 package io.github.aratakileo.elegantia.common.environment;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+@ApiStatus.Internal
 public interface ModProfile {
     @NotNull String id();
 

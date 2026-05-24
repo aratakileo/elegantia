@@ -5,7 +5,9 @@ import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 @Mod.EventBusSubscriber(modid = ForgeInitialisation.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class ForgeCreativeTabModifier {
     private ForgeCreativeTabModifier() {}

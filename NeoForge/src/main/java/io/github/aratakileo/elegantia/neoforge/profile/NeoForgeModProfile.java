@@ -9,11 +9,13 @@ import net.neoforged.neoforgespi.language.IModInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@ApiStatus.Internal
 public final class NeoForgeModProfile implements ModProfile {
     private final Collection<String> licenses;
 

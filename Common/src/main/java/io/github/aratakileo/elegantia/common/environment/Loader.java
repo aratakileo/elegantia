@@ -6,6 +6,7 @@ import io.github.aratakileo.elegantia.core.util.Classes;
 import io.github.aratakileo.elegantia.core.util.Exceptions;
 import io.github.aratakileo.elegantia.core.LazySafeInitializer;
 import net.minecraft.SharedConstants;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -100,6 +101,7 @@ public enum Loader {
         return Optional.ofNullable(profile);
     }
 
+    @ApiStatus.Internal
     public static void setProfileProvider(@NotNull ProfileProvider provider) {
         if (Exceptions.throwOrLogIf(
                 PROFILE_PROVIDER != null,

@@ -13,7 +13,9 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public final class ForgeModProfile implements ModProfile {
     private final Collection<String> licenses;
 

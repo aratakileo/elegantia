@@ -7,7 +7,9 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 @Mod("${mod_id}")
 public class NeoForgeEntry {
     public NeoForgeEntry(@NotNull ModContainer container) {

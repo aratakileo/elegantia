@@ -3,7 +3,9 @@ package io.github.aratakileo.elegantia.forge;
 import io.github.aratakileo.elegantia.core.util.Strings;
 import net.minecraft.world.level.storage.loot.LootPool;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public final class ForgeLootPools {
     private static long counter = 0;
 

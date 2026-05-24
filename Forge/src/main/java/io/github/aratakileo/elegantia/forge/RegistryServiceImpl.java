@@ -12,7 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public final class RegistryServiceImpl implements RegistryService {
     private final static HashMap<Registry<?>, HashMap<Origin, DeferredRegister<?>>> REGISTRIES;
     private static FMLJavaModLoadingContext contextInstance = null;

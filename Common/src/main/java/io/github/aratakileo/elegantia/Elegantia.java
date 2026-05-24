@@ -5,7 +5,9 @@ import io.github.aratakileo.elegantia.common.environment.Origin;
 import io.github.aratakileo.elegantia.core.entrypoint.EntryInitializer;
 import io.github.aratakileo.elegantia.core.entrypoint.ModEntry;
 import io.github.aratakileo.elegantia.core.entrypoint.EntryPoint;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 @ModEntry(EntryPoint.PRELAUNCH)
 public class Elegantia {
     @EntryInitializer

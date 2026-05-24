@@ -11,7 +11,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 @EventBusSubscriber(modid = NeoForgeInitialisation.MOD_ID)
 public final class NeoForgeLootTableModifier {
     private NeoForgeLootTableModifier() {}

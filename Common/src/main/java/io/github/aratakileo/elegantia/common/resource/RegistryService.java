@@ -4,11 +4,13 @@ import io.github.aratakileo.elegantia.common.environment.Origin;
 import io.github.aratakileo.elegantia.core.util.Exceptions;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@ApiStatus.Internal
 public interface RegistryService {
     <T> @NotNull RegistryContainer<T> register(
             @NotNull Registry<T> registry,

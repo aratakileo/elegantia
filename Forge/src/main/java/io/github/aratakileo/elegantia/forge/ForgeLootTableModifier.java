@@ -11,7 +11,9 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 @Mod.EventBusSubscriber(modid = ForgeInitialisation.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class ForgeLootTableModifier {
     private ForgeLootTableModifier() {}

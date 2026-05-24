@@ -5,7 +5,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 @Mod("${mod_id}")
 public class ForgeEntry {
     public ForgeEntry(@NotNull FMLJavaModLoadingContext context) {

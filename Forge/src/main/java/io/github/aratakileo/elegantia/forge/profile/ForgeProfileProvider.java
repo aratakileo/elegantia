@@ -6,7 +6,9 @@ import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public final class ForgeProfileProvider implements ProfileProvider {
     public static final ForgeProfileProvider INSTANCE = new ForgeProfileProvider();
 

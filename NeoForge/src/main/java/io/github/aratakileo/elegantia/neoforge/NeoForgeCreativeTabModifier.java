@@ -5,7 +5,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 @EventBusSubscriber(modid = NeoForgeInitialisation.MOD_ID)
 public final class NeoForgeCreativeTabModifier {
     private NeoForgeCreativeTabModifier() {}

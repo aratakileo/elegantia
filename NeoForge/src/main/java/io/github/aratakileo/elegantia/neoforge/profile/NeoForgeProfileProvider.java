@@ -4,9 +4,11 @@ import io.github.aratakileo.elegantia.common.environment.ModProfile;
 import io.github.aratakileo.elegantia.common.environment.ProfileProvider;
 import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Optional;
 
+@ApiStatus.Internal
 public final class NeoForgeProfileProvider implements ProfileProvider {
     public static final NeoForgeProfileProvider INSTANCE = new NeoForgeProfileProvider();
 
