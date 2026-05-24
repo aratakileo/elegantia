@@ -3,7 +3,8 @@ package io.github.aratakileo.elegantia.core.util;
 import io.github.aratakileo.elegantia.core.Result;
 import io.github.aratakileo.elegantia.common.environment.Loader;
 import io.github.aratakileo.elegantia.common.environment.Origin;
-import io.github.aratakileo.elegantia.core.ThreadSafeInitializer;
+import io.github.aratakileo.elegantia.core.LazySafeInitializer;
+import io.github.aratakileo.elegantia.core.reflection.ClassContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +14,8 @@ import java.util.Arrays;
 
 @ApiStatus.Experimental
 public final class Classes {
-    private final static ThreadSafeInitializer<Object> MAPPING_RESOLVER;
+    private final static LazySafeInitializer<Object> MAPPING_RESOLVER;
+    private final static LazySafeInitializer<RuntimeMapping> RUNTIME_MAPPING;
 
     private Classes() {}
 
@@ -57,13 +59,7 @@ public final class Classes {
         if (!Loader.current().fabricBased() || !MAPPING_RESOLVER.initialized())
             return RuntimeMapping.MOJANG;
 
-        return Result.fromFactory(
-                () -> (String)MAPPING_RESOLVER.unwrap().getClass()
-                        .getMethod("getCurrentRuntimeNamespace")
-                        .invoke(MAPPING_RESOLVER.unwrap())
-        ).map(mappingName -> mappingName.equals("official") ? RuntimeMapping.MOJANG : RuntimeMapping.OBFUSCATED)
-                .throwOrLogIfError(Origin.ELEGANTIA)
-                .orElse(RuntimeMapping.MOJANG);
+        return RUNTIME_MAPPING.unwrap();
     }
 
     public static @NotNull String obfuscated(final @NotNull String name) {
@@ -75,6 +71,7 @@ public final class Classes {
         if (runtimeMapping() == RuntimeMapping.MOJANG) return name;
         if (!name.startsWith("net.minecraft.") || !MAPPING_RESOLVER.initialized()) return name;
 
+        // DO NOT USE REFLECTION CONTAINERS HERE FOR PERFORMANCE REASONS
         return Result.fromFactory(
                 () -> (String)MAPPING_RESOLVER.unwrap().getClass()
                         .getMethod("mapClassName", String.class, String.class)
@@ -105,19 +102,27 @@ public final class Classes {
     }
 
     static {
-        MAPPING_RESOLVER = ThreadSafeInitializer.from(() -> {
-            try {
-                final var loader = load(context(), "net.fabricmc.loader.api.FabricLoader")
-                        .getMethod("getInstance")
-                        .invoke(null);
+        MAPPING_RESOLVER = LazySafeInitializer.create(() -> ClassContainer.load("net.fabricmc.loader.api.FabricLoader")
+                .method("getInstance")
+                .containedStaticCall()
+                .methodCaller("getMappingResolver")
+                .call()
+                .throwOrLogIfError(Origin.ELEGANTIA)
+                .orElse(null) // ignore warnings
+        );
 
-                return loader.getClass()
-                        .getMethod("getMappingResolver")
-                        .invoke(loader);
-            } catch (Exception e) {
-                Exceptions.throwOrLog(Origin.ELEGANTIA, () -> e);
-                return null;
-            }
+        RUNTIME_MAPPING = LazySafeInitializer.create(() -> {
+            final Object resolver = MAPPING_RESOLVER.unwrap();
+
+            return ClassContainer.create(resolver.getClass())
+                    .method("getCurrentRuntimeNamespace")
+                    .instanceCall(resolver)
+                    .map(
+                            mappingName -> mappingName.equals("official")
+                                    ? RuntimeMapping.MOJANG
+                                    : RuntimeMapping.OBFUSCATED
+                    ).throwOrLogIfError(Origin.ELEGANTIA)
+                    .orElse(RuntimeMapping.MOJANG);
         });
     }
 }

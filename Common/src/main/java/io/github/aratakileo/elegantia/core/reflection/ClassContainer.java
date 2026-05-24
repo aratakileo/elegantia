@@ -13,12 +13,16 @@ public final class ClassContainer {
         this.clazz = clazz;
     }
 
-    public @NotNull Result<MethodContainer> method(@NotNull String name, @NotNull Class<?> @NotNull... types) {
-        return Result.fromFactory(() -> clazz.getMethod(name, types)).map(MethodContainer::new);
+    public @NotNull MethodResult method(@NotNull String name, @NotNull Class<?> @NotNull... types) {
+        return Result.fromFactory(() -> clazz.getMethod(name, types))
+                .map(MethodContainer::new)
+                .match(MethodResult::new, MethodResult::new);
     }
 
-    public @NotNull Result<FieldContainer> field(@NotNull String name) {
-        return Result.fromFactory(() -> clazz.getField(name)).map(FieldContainer::new);
+    public @NotNull FieldResult field(@NotNull String name) {
+        return Result.fromFactory(() -> clazz.getField(name))
+                .map(FieldContainer::new)
+                .match(FieldResult::new, FieldResult::new);
     }
 
     public static @NotNull ClassResult load(@NotNull String className) {

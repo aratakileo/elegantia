@@ -16,12 +16,12 @@ import java.util.function.Supplier;
  * @param <T> the type of the memoized value
  */
 @ApiStatus.Experimental
-public final class ThreadSafeInitializer<T> {
+public final class LazySafeInitializer<T> {
     private final Supplier<? extends T> factory;
     private volatile Object value = NO_VALUE;
     private static final Object NO_VALUE = new Object();
 
-    private ThreadSafeInitializer(@NotNull Supplier<? extends T> factory) {
+    private LazySafeInitializer(@NotNull Supplier<? extends T> factory) {
         this.factory = Objects.requireNonNull(factory);
     }
 
@@ -48,7 +48,7 @@ public final class ThreadSafeInitializer<T> {
     public @NotNull T unwrap() {
         return Objects.requireNonNull(
                 raw(),
-                Strings.format("{} contains a null value!", ThreadSafeInitializer.class.getSimpleName())
+                () -> Strings.format("{} contains a null value!", LazySafeInitializer.class.getSimpleName())
         );
     }
 
@@ -103,7 +103,7 @@ public final class ThreadSafeInitializer<T> {
         return value != NO_VALUE;
     }
 
-    public static <T> @NotNull ThreadSafeInitializer<T> from(@NotNull Supplier<? extends T> factory) {
-        return new ThreadSafeInitializer<>(factory);
+    public static <T> @NotNull LazySafeInitializer<T> create(@NotNull Supplier<? extends T> factory) {
+        return new LazySafeInitializer<>(factory);
     }
 }

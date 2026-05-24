@@ -2,7 +2,7 @@ package io.github.aratakileo.elegantia.common.resource;
 
 import io.github.aratakileo.elegantia.core.Result;
 import io.github.aratakileo.elegantia.common.environment.Origin;
-import io.github.aratakileo.elegantia.core.ThreadSafeInitializer;
+import io.github.aratakileo.elegantia.core.LazySafeInitializer;
 import io.github.aratakileo.elegantia.core.util.Strings;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
@@ -16,13 +16,13 @@ public final class RegistryContainer<T> {
     private Registry<T> registry;
 
     private final String errMessage;
-    private final ThreadSafeInitializer<T> initializer;
+    private final LazySafeInitializer<T> initializer;
 
     private RegistryContainer(@Nullable Registry<T> registry, @Nullable Identifier id, @Nullable T value) {
         this.registry = registry;
         this.id = id;
 
-        this.initializer = ThreadSafeInitializer.from(() -> {
+        this.initializer = LazySafeInitializer.create(() -> {
             if (value != null) return value;
 
             final var fetched = RegistryService.instance().getValue(this.registry, this.id).orElse(null);

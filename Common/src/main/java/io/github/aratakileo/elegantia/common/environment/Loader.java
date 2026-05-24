@@ -4,7 +4,7 @@ import io.github.aratakileo.elegantia.core.Result;
 import io.github.aratakileo.elegantia.core.reflection.ClassContainer;
 import io.github.aratakileo.elegantia.core.util.Classes;
 import io.github.aratakileo.elegantia.core.util.Exceptions;
-import io.github.aratakileo.elegantia.core.ThreadSafeInitializer;
+import io.github.aratakileo.elegantia.core.LazySafeInitializer;
 import net.minecraft.SharedConstants;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,8 +18,8 @@ public enum Loader {
     NEOFORGE("NeoForge"),
     VANILLA("Minecraft");
 
-    private static final ThreadSafeInitializer<EnvironmentType> ENVIRONMENT;
-    private static final ThreadSafeInitializer<Loader> LOADER;
+    private static final LazySafeInitializer<EnvironmentType> ENVIRONMENT;
+    private static final LazySafeInitializer<Loader> LOADER;
 
     private static volatile ProfileProvider PROFILE_PROVIDER = null;
 
@@ -117,7 +117,7 @@ public enum Loader {
     }
 
     static {
-        ENVIRONMENT = ThreadSafeInitializer.from(() -> {
+        ENVIRONMENT = LazySafeInitializer.create(() -> {
             final var defaultValue = Classes.anyExists(
                     "net.minecraft.client.Minecraft",
                     "org.lwjgl.glfw.GLFW",
@@ -156,7 +156,7 @@ public enum Loader {
             };
         });
 
-        LOADER = ThreadSafeInitializer.from(() -> {
+        LOADER = LazySafeInitializer.create(() -> {
             if (Classes.exists("org.quiltmc.loader.api.QuiltLoader")) return QUILT;
             if (Classes.exists("net.fabricmc.loader.api.FabricLoader")) return FABRIC;
             if (Classes.exists("net.neoforged.neoforge.common.NeoForge")) return NEOFORGE;
