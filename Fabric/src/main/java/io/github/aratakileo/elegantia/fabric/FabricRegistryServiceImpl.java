@@ -4,11 +4,13 @@ import io.github.aratakileo.elegantia.common.resource.RegistryContainer;
 import io.github.aratakileo.elegantia.common.resource.RegistryService;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@ApiStatus.Internal
 public final class FabricRegistryServiceImpl implements RegistryService {
     @Override
     public <T> @NotNull RegistryContainer<T> register(@NotNull Registry<T> registry, @NotNull Identifier id, @NotNull Supplier<T> fabric) {

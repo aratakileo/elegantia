@@ -2,7 +2,7 @@ package io.github.aratakileo.elegantia.core.mixin;
 
 import io.github.aratakileo.elegantia.common.environment.Loader;
 import io.github.aratakileo.elegantia.client.event.HudRenderer;
-import io.github.aratakileo.elegantia.client.graphics.ElegantiaGui;
+import io.github.aratakileo.elegantia.client.gui.graphics.ElegantiaGui;
 import net.minecraft.client.DeltaTracker;
 
 import net.minecraft.client.gui.Gui;

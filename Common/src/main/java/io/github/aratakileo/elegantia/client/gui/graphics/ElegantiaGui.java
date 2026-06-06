@@ -1,9 +1,9 @@
-package io.github.aratakileo.elegantia.client.graphics;
+package io.github.aratakileo.elegantia.client.gui.graphics;
 
 import io.github.aratakileo.elegantia.common.environment.Origin;
 import io.github.aratakileo.elegantia.core.mixin.GuiGraphicsAccessors;
 import io.github.aratakileo.elegantia.client.resource.AssociatedResourceRegistry;
-import io.github.aratakileo.elegantia.client.graphics.render.ResourceRenderer;
+import io.github.aratakileo.elegantia.client.gui.render.ResourceRenderer;
 import io.github.aratakileo.elegantia.core.util.Exceptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

@@ -1,4 +1,4 @@
-package io.github.aratakileo.elegantia.client.graphics.render;
+package io.github.aratakileo.elegantia.client.gui.render;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import io.github.aratakileo.elegantia.client.event.GuiTicker;

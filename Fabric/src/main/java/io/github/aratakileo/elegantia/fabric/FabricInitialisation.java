@@ -6,7 +6,9 @@ import io.github.aratakileo.elegantia.client.event.CreativeTabModifier;
 import io.github.aratakileo.elegantia.common.event.LootTableModifier;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public final class FabricInitialisation {
     private FabricInitialisation() {}
 

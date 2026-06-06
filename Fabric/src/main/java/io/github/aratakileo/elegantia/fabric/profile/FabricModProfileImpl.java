@@ -4,11 +4,13 @@ import io.github.aratakileo.elegantia.common.environment.Person;
 import io.github.aratakileo.elegantia.common.environment.Contacts;
 import io.github.aratakileo.elegantia.common.environment.ModProfile;
 import net.fabricmc.loader.api.ModContainer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@ApiStatus.Internal
 public final class FabricModProfileImpl implements ModProfile {
     private final Collection<String> licenses;
 

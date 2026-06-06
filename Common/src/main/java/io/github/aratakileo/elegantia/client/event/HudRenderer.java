@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.client.event;
 
 import io.github.aratakileo.elegantia.core.Event;
-import io.github.aratakileo.elegantia.client.graphics.ElegantiaGui;
+import io.github.aratakileo.elegantia.client.gui.graphics.ElegantiaGui;
 import io.github.aratakileo.elegantia.client.util.GameUtils;
 import org.jetbrains.annotations.NotNull;
 

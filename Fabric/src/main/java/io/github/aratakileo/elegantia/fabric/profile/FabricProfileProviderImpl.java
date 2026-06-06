@@ -3,10 +3,12 @@ package io.github.aratakileo.elegantia.fabric.profile;
 import io.github.aratakileo.elegantia.common.environment.ModProfile;
 import io.github.aratakileo.elegantia.common.environment.ProfileProvider;
 import net.fabricmc.loader.api.FabricLoader;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
+@ApiStatus.Internal
 public final class FabricProfileProviderImpl implements ProfileProvider {
     public static final FabricProfileProviderImpl INSTANCE = new FabricProfileProviderImpl();
 

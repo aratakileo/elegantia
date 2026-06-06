@@ -1,7 +1,7 @@
-package io.github.aratakileo.elegantia.client.graphics.render;
+package io.github.aratakileo.elegantia.client.gui.render;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import io.github.aratakileo.elegantia.client.graphics.ElegantiaGui;
+import io.github.aratakileo.elegantia.client.gui.graphics.ElegantiaGui;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 

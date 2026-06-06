@@ -1,10 +1,10 @@
 package io.github.aratakileo.elegantia.core;
 
 import io.github.aratakileo.elegantia.common.environment.Origin;
-import io.github.aratakileo.elegantia.core.reflection.ValueContainer;
 import io.github.aratakileo.elegantia.core.util.Arrays;
 import io.github.aratakileo.elegantia.core.util.Exceptions;
 import io.github.aratakileo.elegantia.core.util.Strings;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -24,10 +24,12 @@ public class Result<T> {
         this.err = err;
     }
 
+    @ApiStatus.Internal
     protected Result(@NotNull T ok) {
         this(ok, null);
     }
 
+    @ApiStatus.Internal
     protected Result(@NotNull Throwable err) {
         this(null, err);
     }

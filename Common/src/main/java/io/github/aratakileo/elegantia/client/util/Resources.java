@@ -1,7 +1,7 @@
 package io.github.aratakileo.elegantia.client.util;
 
 import io.github.aratakileo.elegantia.core.Result;
-import io.github.aratakileo.elegantia.client.graphics.GifImage;
+import io.github.aratakileo.elegantia.client.gui.graphics.GifImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;

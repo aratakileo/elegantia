@@ -1,8 +1,8 @@
-package io.github.aratakileo.elegantia.client.graphics;
+package io.github.aratakileo.elegantia.client.gui.graphics;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.aratakileo.elegantia.core.Result;
-import io.github.aratakileo.elegantia.client.graphics.render.GifRenderer;
+import io.github.aratakileo.elegantia.client.gui.render.GifRenderer;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
