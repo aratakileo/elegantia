@@ -9,7 +9,9 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 @ModEntry(EntryPoint.PRELAUNCH)
-public class Elegantia {
+public final class Elegantia {
+    private Elegantia() {}
+
     @EntryInitializer
     public static void init() {
         Origin.ELEGANTIA.logger().info(

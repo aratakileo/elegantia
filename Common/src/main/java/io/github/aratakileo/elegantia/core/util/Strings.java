@@ -102,4 +102,18 @@ public final class Strings {
         if (Objects.requireNonNull(args).length == 0) return message;
         return MessageFormatter.arrayFormat(message, args).getMessage();
     }
+
+    public static @NotNull String camelToSnake(@NotNull String value) {
+        if (value.isEmpty()) return value;
+
+        return camelToSnake(value, '_');
+    }
+
+    public static @NotNull String camelToSnake(@NotNull String value, char separator) {
+        final var statement = "$1" + separator + "$2";
+
+        return value.replaceAll("([A-Z]+)([A-Z][a-z])", statement)
+                .replaceAll("([a-z])([A-Z])", statement)
+                .toLowerCase();
+    }
 }
